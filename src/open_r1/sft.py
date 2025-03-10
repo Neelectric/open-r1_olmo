@@ -122,7 +122,7 @@ def main(script_args, training_args, model_args):
         attn_implementation=model_args.attn_implementation,
         torch_dtype=torch_dtype,
         use_cache=False if training_args.gradient_checkpointing else True,
-        device_map=get_kbit_device_map() if quantization_config is not None else None,
+        _map=get_kbit_device_map() if quantization_config is not None else None,
         quantization_config=quantization_config,
     )
     training_args.model_init_kwargs = model_kwargs
