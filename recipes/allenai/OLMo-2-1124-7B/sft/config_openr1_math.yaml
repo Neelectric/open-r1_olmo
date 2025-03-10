@@ -1,0 +1,44 @@
+# To start the training, run the following command:
+# sbatch -N 4 --job-name=mistral_sft slurm/train.slurm Mistral-Small-24B-Instruct-2501 sft numina zero3
+
+model_name_or_path: allenai/OLMo-2-1124-7B
+model_revision: main
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+
+# Data training arguments
+# dataset_name: yentinglin/s1K-1.1-trl-format
+# dataset_name: yentinglin/OpenR1-Math-220k-trl-format
+dataset_name: open-r1/OpenR1-Math-220k
+preprocessing_num_workers: 8
+
+# SFT trainer config
+bf16: true
+do_eval: true
+eval_strategy: no
+gradient_accumulation_steps: 4
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: allenai/OLMo-2-1124-7B
+hub_strategy: every_save
+learning_rate: 2.0e-05
+log_level: info
+logging_steps: 1
+logging_strategy: steps
+lr_scheduler_type: cosine
+packing: true
+# max_length: 32768
+max_length: 1024
+max_steps: 10000
+num_train_epochs: 5
+output_dir: data/allenai/OLMo-2-1124-7B-Open-R1-Distill
+overwrite_output_dir: true
+per_device_eval_batch_size: 1
+per_device_train_batch_size: 1
+push_to_hub: true
+report_to:
+- wandb
+save_strategy: epoch
+seed: 42
+warmup_ratio: 0.1
