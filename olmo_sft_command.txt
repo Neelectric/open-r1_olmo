@@ -45,3 +45,6 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero2.yaml \
     src/open_r1/sft.py \
     --config recipes/allenai/OLMo-2-1124-7B/sft/config_openr1_math_mps.yaml
+
+ACCELERATE_LOG_LEVEL=info accelerate launch src/open_r1/sft.py \
+    --config recipes/allenai/OLMo-2-1124-7B/sft/config_openr1_math_mps.yaml
