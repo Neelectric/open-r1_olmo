@@ -14,7 +14,7 @@ DS_ZERO_QUANTIZED_WEIGHTS=true DS_ZERO_SHARED_PARAM=true accelerate launch --con
     --dataloader_num_workers 2 \
     --gradient_accumulation_steps 2 \
     --max_steps 10000
-    --deepspeed recipes/allenai/OLMo-2-1124-7B-Instruct/sft/ds_config.json
+    --deepspeed recipes/allenai/OLMo-2-1124-7B/sft/ds_config.json
 
 
 
@@ -30,11 +30,11 @@ deepspeed --num_gpus=2 src/open_r1/sft.py \
     --output_dir data/allenai/OLMo-2-1124-7B-Open-R1-Distill \
     --dataloader_num_workers 4 \
     --gradient_accumulation_steps 4 \
-    --deepspeed recipes/allenai/OLMo-2-1124-7B-Instruct/sft/ds_config.json
+    --deepspeed recipes/allenai/OLMo-2-1124-7B/sft/ds_config.json
 
 # Train via YAML config
 accelerate launch --config_file recipes/accelerate_configs/zero3.yaml src/open_r1/sft.py \
-    --config recipes/allenai/OLMo-2-1124-7B-Instruct/sft/config_openr1_math.yaml
+    --config recipes/allenai/OLMo-2-1124-7B/sft/config_openr1_math.yaml
 
 
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero2.yaml \
@@ -48,3 +48,30 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 
 ACCELERATE_LOG_LEVEL=info accelerate launch src/open_r1/sft.py \
     --config recipes/allenai/OLMo-2-1124-7B/sft/config_openr1_math_mps.yaml
+
+
+accelerate launch --config_file=recipes/accelerate_configs/default_config.yaml src/open_r1/sft.py \
+    --model_name_or_path allenai/OLMo-2-1124-7B \
+    --dataset_name open-r1/OpenR1-Math-220k \
+    --learning_rate 1.0e-5 \
+    --num_train_epochs 1 \
+    --max_seq_length 128 \
+    --per_device_train_batch_size 1 \
+    --gradient_checkpointing \
+    --bf16 \
+    --output_dir data/allenai/OLMo-2-1124-7B-Open-R1-Distill \
+    --dataloader_num_workers 2 \
+    --gradient_accumulation_steps 2 \
+    --max_steps 10000
+
+
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero2.yaml \
+    --num_processes=1 src/open_r1/grpo.py \
+    --config recipes/allenai/OLMo-1B-0724-hf/grpo/config_demo.yaml
+    
+
+
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero2.yaml \
+    --num_processes=1 src/open_r1/grpo.py \
+    --config recipes/nvidia/AceMath-1.5B-Instruct/grpo/config_demo.yaml \
+    --wandb_entity huggingface --wandb_project open-r1 --run_name nvidia/AceMath-1.5B-Instruct
