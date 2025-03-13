@@ -1,12 +1,12 @@
-# Model arguments
-model_name_or_path: nvidia/AceMath-1.5B-Instruct
+# Model arguments # inspired in part by https://github.com/huggingface/open-r1/blob/smollm-grpo-configs/recipes/SmolLM2-1.7B-Instruct/grpo/config_v04.00.yaml
+model_name_or_path: HuggingFaceTB/SmolLM2-1.7B-Instruct
 model_revision: main
 torch_dtype: bfloat16
 attn_implementation: flash_attention_2
 
 # Data training arguments
 # We edit the DeepSeek chat template to ensure (a) the reasoning block within <think> and </think> is included in the completion and (b) the <think> tag is not part of the prefill so that the format reward works
-chat_template: "{%- for message in messages %}\n{%- if message.role == 'user' %}\n{{- '<|im_start|>' + message.role + '\n' + message.content + '\nPlease give a step-by-step answer and use a \\boxed command to denote the final answer.' + '<|im_end|>' + '\n' }}\n{%- else %}\n{{- '<|im_start|>' + message.role + '\n' + message.content + '<|im_end|>' + '\n' }}{%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n{{- '<|im_start|>assistant\n' }}\n{%- endif %}\n"
+chat_template: "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful AI assistant named SmolLM, trained by Hugging Face<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
     
 
 dataset_name: open-r1/OpenR1-Math-220k
@@ -22,9 +22,9 @@ gradient_accumulation_steps: 4
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id: nvidia/AceMath-1.5B-Instruct
+hub_model_id: HuggingFaceTB/SmolLM2-1.7B-Instruct
 hub_strategy: every_save
-learning_rate: 1.0e-06
+learning_rate: 1.0e-05 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
 log_completions: true
 log_level: info
 logging_first_step: true
@@ -34,14 +34,14 @@ lr_scheduler_type: cosine_with_min_lr
 lr_scheduler_kwargs:
   min_lr_rate: 0.1
 max_prompt_length: 512
-max_completion_length: 2048
-max_steps: -1
-num_generations: 4
+max_completion_length: 4096
+max_steps: 4687 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 means 23,433 total steps takes 260hrs. bsz=2 means 46,866 total steps, 
+num_generations: 2
 num_train_epochs: 1
-output_dir: data/nvidia/AceMath-1.5B-Instruct
+output_dir: data/HuggingFaceTB/SmolLM2-1.7B-Instruct
 overwrite_output_dir: true
-per_device_eval_batch_size: 4
-per_device_train_batch_size: 4
+per_device_eval_batch_size: 1
+per_device_train_batch_size: 2
 push_to_hub: true
 report_to:
 - wandb
@@ -51,10 +51,18 @@ reward_funcs:
 - tag_count
 reward_weights:
 - 1.0
-- 1.0
-- 1.0
+- 0.5
+- 0.3
 save_strategy: "epoch"
 save_total_limit: 1
 seed: 42
-temperature: 0.7
+temperature: 0.9 #take from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching
 warmup_ratio: 0.1
+
+#  eval callbacks
+callbacks:
+- push_to_hub_revision
+benchmarks:
+- math_500_8k
+- aime24_8k
+- gsm8k_8k
