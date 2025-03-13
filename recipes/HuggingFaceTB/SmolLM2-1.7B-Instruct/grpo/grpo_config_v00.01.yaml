@@ -50,9 +50,9 @@ reward_funcs:
 - format
 - tag_count
 reward_weights:
+- 2.0
 - 1.0
-- 0.5
-- 0.5
+- 1.0
 save_strategy: "epoch"
 save_total_limit: 1
 seed: 42
