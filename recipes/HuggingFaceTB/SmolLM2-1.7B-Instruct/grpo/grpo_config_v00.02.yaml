@@ -16,7 +16,7 @@ system_prompt: "You are a helpful AI Assistant that provides well-reasoned and d
 bf16: true
 use_vllm: true
 vllm_device: "auto"
-vllm_gpu_memory_utilization: 0.5
+vllm_gpu_memory_utilization: 0.9
 do_eval: false
 gradient_accumulation_steps: 8
 gradient_checkpointing: true
@@ -35,8 +35,8 @@ lr_scheduler_kwargs:
   min_lr_rate: 0.1
 max_prompt_length: 500
 max_completion_length: 2048
-max_steps: 2344 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 means 23,433 total steps takes 260hrs. bsz=2 means 46,866 total steps, so 4687 for 5%. bsz=1 means 2344 for 5%
-num_generations: 1
+max_steps: 2000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 means 23,433 total steps takes 260hrs. bsz=2 means 46,866 total steps, so 4687 for 5%. bsz=1 means 2344 for 5%
+num_generations: 2
 num_train_epochs: 1
 output_dir: data/HuggingFaceTB/SmolLM2-1.7B-Instruct
 overwrite_output_dir: true
