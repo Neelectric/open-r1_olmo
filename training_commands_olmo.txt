@@ -74,4 +74,5 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 ### Train via GRPO
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero2.yaml \
     --num_processes=1 src/open_r1/grpo.py \
-    --config recipes/Qwen2.5-Math-7B/grpo/config_simple_rl.yaml
+    --config recipes/allenai/OLMo-2-1124-7B/grpo/grpo_config_v00.01.yaml
+    --wandb_entity Neelectric --wandb_project open-r1 --run_name allenai/OLMo-2-1124-7B_GRPOv00.01
