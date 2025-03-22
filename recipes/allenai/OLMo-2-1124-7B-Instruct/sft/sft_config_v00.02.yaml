@@ -6,7 +6,7 @@ attn_implementation: flash_attention_2
 
 # Data training arguments
 dataset_name: open-r1/OpenR1-Math-220k
-dataset_num_proc: 4
+dataset_num_proc: 8
 
 # SFT trainer config
 bf16: true
