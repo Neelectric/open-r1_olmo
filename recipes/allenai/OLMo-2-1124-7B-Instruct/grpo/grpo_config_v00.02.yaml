@@ -16,9 +16,9 @@ system_prompt: "You are a helpful AI Assistant that provides well-reasoned and d
 bf16: true
 use_vllm: true
 vllm_device: "auto"
-vllm_gpu_memory_utilization: 0.7
+vllm_gpu_memory_utilization: 0.75
 do_eval: false
-gradient_accumulation_steps: 2
+gradient_accumulation_steps: 8
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
@@ -48,11 +48,11 @@ report_to:
 reward_funcs:
 - accuracy
 - format # maybe enforce "formatting reward as a flat 0.2 bonus that only applies when the judgement is also correct." as per https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
-- tag_count
+# - tag_count
 reward_weights:
 - 2.5
-- 0.5
-- 0.5
+- 0.25
+# - 0.5
 save_strategy: "epoch"
 save_total_limit: 1
 seed: 42
