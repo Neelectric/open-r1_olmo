@@ -16,7 +16,7 @@ dataset_name: open-r1/OpenR1-Math-220k
 bf16: true
 use_vllm: true
 vllm_device: "auto"
-vllm_gpu_memory_utilization: 0.65
+vllm_gpu_memory_utilization: 0.6
 do_eval: false
 gradient_accumulation_steps: 8
 gradient_checkpointing: true
