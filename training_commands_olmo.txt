@@ -73,8 +73,8 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 ### Train via SFT
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero2.yaml \
     --num_processes=3 src/open_r1/sft.py \
-    --config recipes/allenai/OLMo-2-1124-7B/grpo/sft_config_v00.01.yaml \
-    --wandb_entity Neelectric --wandb_project open-r1 --run_name allenai/OLMo-2-1124-7B_SFTv00.01
+    --config recipes/allenai/OLMo-2-1124-7B-Instruct/grpo/sft_config_v00.01.yaml \
+    --wandb_entity Neelectric --wandb_project open-r1 --run_name allenai/OLMo-2-1124-7B-Instruct_SFTv00.01
 
 ### Train via GRPO
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero2.yaml \
