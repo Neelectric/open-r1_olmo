@@ -18,8 +18,8 @@ def get_tokenizer(
         trust_remote_code=model_args.trust_remote_code,
     )
     if "allenai/OLMo-2-1124-7B" in model_args.model_name_or_path:
-        print("TRAINING SOME KIND OF OLMO2 MODEL! CHANGING TOKENIZER TEMPLATE")
-        tokenizer.chat_template = "{{ eos_token }}{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
+        print("TRAINING SOME KIND OF OLMO2 MODEL! BUT NO LONGER CHANGING TOKENIZER TEMPLATE")
+    #     tokenizer.chat_template = "{{ eos_token }}{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
 
     if training_args.chat_template is not None:
         tokenizer.chat_template = training_args.chat_template
