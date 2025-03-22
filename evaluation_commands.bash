@@ -1,7 +1,8 @@
 # MODEL=Neelectric/SmolLM2-1.7B-Instruct_GRPO
 # MODEL=Neelectric/SmolLM2-1.7B-Instruct_GRPO
 MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFT
-MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,max_model_length=4096,gpu_memory_utilization=0.95,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
+NUM_GPUS=3
+MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.95,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
 OUTPUT_DIR=data/evals/$MODEL
 
 # # AIME 2024
