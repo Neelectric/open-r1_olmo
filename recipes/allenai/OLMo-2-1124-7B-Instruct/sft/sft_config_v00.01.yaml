@@ -39,6 +39,6 @@ report_to:
 save_strategy: "epoch"
 save_total_limit: 1
 seed: 42
-torch_compile: true
+# torch_compile: true
 use_liger: true
 warmup_ratio: 0.05
