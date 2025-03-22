@@ -16,15 +16,15 @@ dataset_name: open-r1/OpenR1-Math-220k
 bf16: true
 use_vllm: true
 vllm_device: "auto"
-vllm_gpu_memory_utilization: 0.9
+vllm_gpu_memory_utilization: 0.7
 do_eval: false
-gradient_accumulation_steps: 4
+gradient_accumulation_steps: 8
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
 hub_model_id: Neelectric/OLMo-2-1124-7B_GRPO
 hub_strategy: every_save
-learning_rate: 1.0e-04 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
+learning_rate: 3.0e-06 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
 log_completions: true
 log_level: info
 logging_first_step: true
@@ -33,9 +33,9 @@ logging_strategy: steps
 lr_scheduler_type: constant_with_warmup #inspired by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 lr_scheduler_kwargs:
   min_lr_rate: 0.1
-max_completion_length: 1024
+max_completion_length: 512
 max_grad_norm: 0.2 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
-max_prompt_length: 500
+max_prompt_length: 512
 max_steps: 2000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 means 23,433 total steps takes 260hrs. bsz=2 means 46,866 total steps, so 4687 for 5%. bsz=1 means 2344 for 5%
 num_generations: 2
 num_train_epochs: 1
