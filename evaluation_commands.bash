@@ -34,7 +34,6 @@ lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
 # # #     --output-dir $OUTPUT_DIR 
 
 # # # GSM8k
-# # TASK=leaderboard|gsm8k
 # lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
 #     --use-chat-template \
 #     --output-dir $OUTPUT_DIR
