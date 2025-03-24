@@ -14,9 +14,9 @@ system_prompt: "You are a helpful AI Assistant that provides well-reasoned and d
 bf16: true
 use_vllm: true
 vllm_device: "auto"
-vllm_gpu_memory_utilization: 0.75
+vllm_gpu_memory_utilization: 0.8
 do_eval: false
-gradient_accumulation_steps: 4
+gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
@@ -34,7 +34,7 @@ lr_scheduler_kwargs:
 max_completion_length: 2048
 max_grad_norm: 0.2 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 max_prompt_length: 512
-max_steps: 2000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
+max_steps: 1000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
 num_generations: 4
 num_train_epochs: 1
 output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
