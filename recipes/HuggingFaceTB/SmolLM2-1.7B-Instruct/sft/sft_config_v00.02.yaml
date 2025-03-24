@@ -46,7 +46,7 @@ use_liger: true
 warmup_ratio: 0.1
 wandb_entity: Neelectric
 wandb_project: open-r1
-run_name: nvidia/AceInstruct-1.5B_GRPO${VERSION}
+run_name: HuggingFaceTB/SmolLM2-1.7B-Instruct_SFT${VERSION}
 
 #  eval callbacks
 callbacks:
