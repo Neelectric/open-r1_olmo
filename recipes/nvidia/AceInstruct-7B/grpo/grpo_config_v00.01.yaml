@@ -41,7 +41,7 @@ num_generations: 8
 num_train_epochs: 1
 output_dir: data/Neelectric/AceInstruct-7B_GRPO${VERSION}
 overwrite_output_dir: true
-per_device_train_batch_size: 4
+per_device_train_batch_size: 2
 push_to_hub: true
 report_to:
 - wandb
