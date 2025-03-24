@@ -3,7 +3,7 @@ model_name_or_path: allenai/OLMo-2-1124-7B-Instruct
 model_revision: main
 torch_dtype: bfloat16
 attn_implementation: flash_attention_2
-version: &version v00.04
+# version: &version v00.04
 
 # Data training arguments
 # We edit the DeepSeek chat template to ensure (a) the reasoning block within <think> and </think> is included in the completion and (b) the <think> tag is not part of the prefill so that the format reward works
@@ -21,8 +21,9 @@ gradient_accumulation_steps: 4
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id_base: &hub_model_id_base Neelectric/OLMo-2-1124-7B-Instruct_GRPO
-hub_model_id: *hub_model_id_base*version
+# hub_model_id_base: &hub_model_id_base Neelectric/OLMo-2-1124-7B-Instruct_GRPO
+# hub_model_id: *hub_model_id_base*version
+hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 hub_strategy: every_save
 learning_rate: 3.0e-05 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
 log_completions: true
@@ -39,8 +40,9 @@ max_prompt_length: 512
 max_steps: 2000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
 num_generations: 4
 num_train_epochs: 1
-output_dir_base: &output_dir_base data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO
-output_dir: *output_dir_base*version
+# output_dir_base: &output_dir_base data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO
+# output_dir: *output_dir_base*version
+output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 overwrite_output_dir: true
 per_device_train_batch_size: 2
 push_to_hub: true
@@ -63,8 +65,9 @@ temperature: 0.9 #take from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?n
 warmup_ratio: 0.1
 wandb_entity: Neelectric
 wandb_project: open-r1
-run_name_base: &run_name_base allenai/OLMo-2-1124-7B-Instruct_GRPO
-run_name: *run_name_base*version
+# run_name_base: &run_name_base allenai/OLMo-2-1124-7B-Instruct_GRPO
+# run_name: *run_name_base*version
+run_name: allenai/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 
 #  eval callbacks
 callbacks:
