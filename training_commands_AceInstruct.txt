@@ -1,0 +1,14 @@
+### Train via SFT
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero2.yaml \
+    --num_processes=3 src/open_r1/sft.py \
+    --config recipes/allenai/OLMo-2-1124-7B-Instruct/sft/sft_config_v00.02.yaml \
+    --wandb_entity Neelectric --wandb_project open-r1 --run_name allenai/OLMo-2-1124-7B-Instruct_SFTv00.02
+
+### Train via GRPO
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml \
+    --num_processes=2 src/open_r1/grpo.py \
+    --config recipes/nvidia/AceInstruct-1.5B/grpo/grpo_config_v00.01.yaml \
+    --wandb_entity Neelectric --wandb_project open-r1 --run_name nvidia/AceInstruct-1.5B_GRPOv00.01
+
+### GRPO with envsubst
+VERSION=v00.01 ACCELERATE_LOG_LEVEL=info envsubst < recipes/nvidia/AceInstruct-1.5B/grpo/grpo_config_v00.01.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero3.yaml --num_processes=2 src/open_r1/grpo.py --config temp_config.yaml

@@ -1,0 +1,72 @@
+# Model arguments # inspired in part by https://github.com/huggingface/open-r1/blob/smollm-grpo-configs/recipes/SmolLM2-1.7B-Instruct/grpo/config_v04.00.yaml
+model_name_or_path: nvidia/AceInstruct-1.5B
+model_revision: main
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+
+# Data training arguments
+# We edit the DeepSeek chat template to ensure (a) the reasoning block within <think> and </think> is included in the completion and (b) the <think> tag is not part of the prefill so that the format reward works
+# chat_template: "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|endoftext|><|system|>\nYou are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>\n' }}{% endif %}{{'<|user|>' + '\n' + message['content'] '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|assistant|>' }}{% endif %}"
+dataset_name: open-r1/OpenR1-Math-220k
+system_prompt: "You are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>"
+
+# GRPO trainer config
+bf16: true
+# beta: 0.08
+use_vllm: true
+vllm_device: "auto"
+vllm_gpu_memory_utilization: 0.8
+do_eval: false
+gradient_accumulation_steps: 4
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: Neelectric/AceInstruct-1.5B_GRPO${VERSION}
+hub_strategy: every_save
+learning_rate: 1.0e-04 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
+log_completions: true
+log_level: info
+logging_first_step: true
+logging_steps: 2
+logging_strategy: steps
+lr_scheduler_type: constant_with_warmup #inspired by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
+lr_scheduler_kwargs:
+  min_lr_rate: 0.1
+max_completion_length: 4096
+max_grad_norm: 0.5 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
+max_prompt_length: 512
+max_steps: 2000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
+num_generations: 8
+num_train_epochs: 1
+output_dir: data/Neelectric/AceInstruct-1.5B_GRPO${VERSION}
+overwrite_output_dir: true
+per_device_train_batch_size: 8
+push_to_hub: true
+report_to:
+- wandb
+reward_funcs:
+- accuracy
+- format # maybe enforce "formatting reward as a flat 0.2 bonus that only applies when the judgement is also correct." as per https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
+# - tag_count
+reward_weights:
+- 2.5
+- 0.1
+# - 0.1
+save_strategy: "epoch"
+save_total_limit: 1
+seed: 42
+torch_compile: true
+use_liger_kernel: true
+temperature: 0.9 #take from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching
+warmup_ratio: 0.1
+wandb_entity: Neelectric
+wandb_project: open-r1
+run_name: nvidia/AceInstruct-1.5B_GRPO${VERSION}
+
+#  eval callbacks
+callbacks:
+- push_to_hub_revision
+benchmarks:
+- math_500_8k
+- aime24_8k
+- gsm8k_8k #uncommented for now out of worry this will crash the process at the end
