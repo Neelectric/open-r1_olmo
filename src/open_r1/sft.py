@@ -107,6 +107,7 @@ def main(script_args, training_args, model_args):
     ################
     tokenizer = get_tokenizer(model_args, training_args)
     tokenizer.pad_token = tokenizer.eos_token
+    
 
     ###################
     # Model init kwargs
