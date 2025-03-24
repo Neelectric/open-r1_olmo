@@ -21,7 +21,7 @@ gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id: Neelectric/AceInstruct-1.5B_GRPO${VERSION}
+hub_model_id: Neelectric/AceInstruct-1.5B_GRPOv00.02
 hub_strategy: every_save
 learning_rate: 1.0e-05 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
 log_completions: true
@@ -35,10 +35,10 @@ lr_scheduler_kwargs:
 max_completion_length: 4096
 max_grad_norm: 0.5 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 max_prompt_length: 512
-max_steps: 1000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
-num_generations: 8
+max_steps: 2000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
+num_generations: 16
 num_train_epochs: 1
-output_dir: data/Neelectric/AceInstruct-1.5B_GRPO${VERSION}
+output_dir: data/Neelectric/AceInstruct-1.5B_GRPOv00.02
 overwrite_output_dir: true
 per_device_train_batch_size: 4
 push_to_hub: true
@@ -61,7 +61,7 @@ temperature: 0.9 #take from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?n
 warmup_ratio: 0.1
 wandb_entity: Neelectric
 wandb_project: open-r1
-run_name: nvidia/AceInstruct-1.5B_GRPO${VERSION}
+run_name: nvidia/AceInstruct-1.5B_GRPOv00.02
 
 #  eval callbacks
 callbacks:
