@@ -12,7 +12,7 @@ system_prompt: "You are a helpful AI Assistant that provides well-reasoned and d
 
 # GRPO trainer config
 bf16: true
-beta: 0.001 # hyperparameter to scale the negative D_{KL} term in GRPO objective. So the higher the beta, the more we penalize moving away from our reference policy.
+beta: 0.002 # hyperparameter to scale the negative D_{KL} term in GRPO objective. So the higher the beta, the more we penalize moving away from our reference policy.
 epsilon: 0.2 # by default, 0.2. This dictates the clipping like in PPO, so where r = ratio(current policy/old policy), we use e for clip(r, 1 - e, 1 + e) * Advantage. So for 0.2 we clip the ratio to be within [0.98, 1.02]. Smaller e = tighter clip!
 use_vllm: true
 vllm_device: "auto"
@@ -33,7 +33,7 @@ logging_strategy: steps
 lr_scheduler_type: constant_with_warmup #inspired by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 lr_scheduler_kwargs:
   min_lr_rate: 0.1
-max_completion_length: 4096
+max_completion_length: 1048
 max_grad_norm: 0.5 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 max_prompt_length: 512
 max_steps: 1000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
@@ -58,7 +58,7 @@ save_total_limit: 1
 seed: 42
 torch_compile: true
 use_liger_kernel: true
-temperature: 0.9 #taken from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching
+temperature: 0.7 #taken from https://wandb.ai/huggingface/open-r1/runs/buxgck91/overview
 warmup_ratio: 0.1
 wandb_entity: Neelectric
 wandb_project: open-r1
