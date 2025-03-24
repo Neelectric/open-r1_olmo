@@ -12,7 +12,7 @@ system_prompt: "You are a helpful AI Assistant that provides well-reasoned and d
 bf16: true
 use_vllm: true
 vllm_device: auto
-vllm_gpu_memory_utilization: 0.77
+vllm_gpu_memory_utilization: 0.75
 do_eval: false
 gradient_accumulation_steps: 1
 gradient_checkpointing: true
@@ -28,7 +28,7 @@ logging_steps: 1
 logging_strategy: steps
 lr_scheduler_type: cosine
 max_prompt_length: 512
-max_completion_length: 2048
+max_completion_length: 1024
 max_steps: 1000
 num_generations: 2
 num_train_epochs: 1
