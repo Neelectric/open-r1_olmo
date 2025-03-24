@@ -57,7 +57,7 @@ save_total_limit: 1
 seed: 42
 torch_compile: true
 use_liger_kernel: true
-temperature: 0.9 #take from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching
+temperature: 0.9 #taken from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching
 warmup_ratio: 0.1
 wandb_entity: Neelectric
 wandb_project: open-r1
