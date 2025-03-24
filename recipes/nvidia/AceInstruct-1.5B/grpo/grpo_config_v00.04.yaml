@@ -52,7 +52,7 @@ reward_funcs:
 # - tag_count
 reward_weights:
 - 2.0
-- 0.2
+- 0.4
 # - 0.1
 save_strategy: "epoch"
 save_total_limit: 1
