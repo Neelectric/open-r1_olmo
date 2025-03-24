@@ -11,8 +11,9 @@ dataset_num_proc: 16
 
 # SFT trainer config
 bf16: true
-do_eval: false
-eval_strategy: 'no'
+do_eval: true
+eval_strategy: 'epoch'
+eval_packing: false
 gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
