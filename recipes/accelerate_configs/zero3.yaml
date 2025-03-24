@@ -9,7 +9,14 @@ deepspeed_config:
   stage3_param_persistence_threshold: auto
   contiguous_gradients: true
   overlap_comm: true
-  pin_memory: true
+  # 
+  reduce_scatter: true
+  reduce_bucket_size: 5e7
+  prefetch_bucket_size: 5e7
+  stage3_max_live_parameters: 1e8
+  stage3_max_reuse_distance: 1e8
+  stage3_gather_16bit_weights_on_model_save: true
+  # pin_memory: true
   timeout: 60
 
 distributed_type: DEEPSPEED
