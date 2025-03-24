@@ -12,6 +12,7 @@ system_prompt: "You are a helpful AI Assistant that provides well-reasoned and d
 
 # GRPO trainer config
 bf16: true
+beta: 0.08
 use_vllm: true
 vllm_device: "auto"
 vllm_gpu_memory_utilization: 0.77
@@ -22,7 +23,7 @@ gradient_checkpointing_kwargs:
   use_reentrant: false
 hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 hub_strategy: every_save
-learning_rate: 2.0e-06 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
+learning_rate: 1.0e-06 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
 log_completions: true
 log_level: info
 logging_first_step: true
