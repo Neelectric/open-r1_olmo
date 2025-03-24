@@ -3,7 +3,7 @@ model_name_or_path: allenai/OLMo-2-1124-7B-Instruct
 model_revision: main
 torch_dtype: bfloat16
 attn_implementation: flash_attention_2
-version: &version v00.03
+version: &version v00.04
 
 # Data training arguments
 # We edit the DeepSeek chat template to ensure (a) the reasoning block within <think> and </think> is included in the completion and (b) the <think> tag is not part of the prefill so that the format reward works
@@ -61,6 +61,10 @@ torch_compile: true
 use_liger_kernel: true
 temperature: 0.9 #take from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching
 warmup_ratio: 0.1
+wandb_entity: Neelectric
+wandb_project: open-r1
+run_name_base: &run_name_base allenai/OLMo-2-1124-7B-Instruct_GRPO
+run_name: *run_name_base*version
 
 #  eval callbacks
 callbacks:
