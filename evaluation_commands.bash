@@ -36,7 +36,9 @@ lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
 # # #     --output-dir $OUTPUT_DIR 
 
 # # # GSM8k
-lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
+TASK=lighteval|gsm8k|5
+TASK=openai|gsm8k|5
+lighteval vllm $MODEL_ARGS "$TASK|0" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR
 
