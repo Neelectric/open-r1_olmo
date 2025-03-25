@@ -20,7 +20,7 @@ gradient_checkpointing_kwargs:
   use_reentrant: false
 hub_model_id: Neelectric/SmolLM2-1.7B-Instruct_SFT${VERSION}
 hub_strategy: every_save
-learning_rate: 5.0e-05
+learning_rate: 1.0e-05
 log_level: info
 logging_steps: 1
 logging_strategy: steps
