@@ -11,7 +11,7 @@ dataset_num_proc: 16
 
 # SFT trainer config
 bf16: true
-do_eval: true
+do_eval: false
 eval_strategy: 'no'
 eval_packing: false
 gradient_accumulation_steps: 1
