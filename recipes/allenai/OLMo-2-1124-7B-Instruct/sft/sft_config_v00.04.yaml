@@ -1,0 +1,58 @@
+# Model arguments
+model_name_or_path: allenai/OLMo-2-1124-7B-Instruct
+model_revision: main
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+
+# Data training arguments
+dataset_name: open-r1/OpenR1-Math-220k
+system_prompt: "You are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>"
+dataset_num_proc: 16
+
+# SFT trainer config
+bf16: true
+do_eval: false
+eval_strategy: 'no'
+eval_packing: false
+gradient_accumulation_steps: 1
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: Neelectric/OLMo-2-1124-7B-InstructSFT${VERSION}
+hub_strategy: every_save
+learning_rate: 5.0e-06
+log_level: info
+logging_steps: 1
+logging_strategy: steps
+lr_scheduler_type: cosine_with_min_lr
+lr_scheduler_kwargs:
+  min_lr_rate: 0.1
+packing: false
+max_grad_norm: 1.0
+max_length: 4096
+max_steps: 10000
+num_train_epochs: 1
+output_dir: data/allenai/OLMo-2-1124-7B-Instruct_SFT${VERSION}
+overwrite_output_dir: true
+padding_free: true
+per_device_train_batch_size: 4
+push_to_hub: true
+report_to:
+- wandb
+save_strategy: "epoch"
+save_total_limit: 1
+seed: 42
+torch_compile: true
+use_liger: true
+warmup_ratio: 0.1
+wandb_entity: Neelectric
+wandb_project: open-r1
+run_name: allenai/OLMo-2-1124-7B-Instruct_SFT${VERSION}
+
+#  eval callbacks
+callbacks:
+- push_to_hub_revision
+benchmarks:
+- math_500_8k
+- aime24_8k
+- gsm8k_8k #uncommented for now out of worry this will crash the process at the end
