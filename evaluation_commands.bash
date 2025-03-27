@@ -37,14 +37,14 @@ OUTPUT_DIR=data/evals/$MODEL
 # # #     --output-dir $OUTPUT_DIR 
 
 # # # GSM8k
-# TASK=lighteval|gsm8k|5
-# lighteval vllm $MODEL_ARGS "$TASK|0" \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+TASK=lighteval|gsm8k|5
+lighteval vllm $MODEL_ARGS "$TASK|0" \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
 # # MMLU
 # TASK=leaderboard|mmlu
-MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.5,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
-lighteval vllm $MODEL_ARGS "leaderboard|mmlu|0|1" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.5,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
+# lighteval vllm $MODEL_ARGS "leaderboard|mmlu|0|1" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR

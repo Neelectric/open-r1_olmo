@@ -5,7 +5,7 @@ torch_dtype: bfloat16
 attn_implementation: flash_attention_2
 
 # Data training arguments
-dataset_name: open-r1/OpenR1-Math-220k
+dataset_name: Neelectric/OpenR1-Math-220k_OLMo-2-1124-7B-Instruct_4096toks
 system_prompt: "You are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>"
 dataset_num_proc: 16
 
@@ -18,7 +18,7 @@ gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id: Neelectric/OLMo-2-1124-7B-InstructSFT${VERSION}
+hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_SFT${VERSION}
 hub_strategy: every_save
 learning_rate: 5.0e-06
 log_level: info
@@ -30,7 +30,7 @@ lr_scheduler_kwargs:
 packing: false
 max_grad_norm: 1.0
 max_length: 4096
-max_steps: 10000
+max_steps: -1
 num_train_epochs: 1
 output_dir: data/allenai/OLMo-2-1124-7B-Instruct_SFT${VERSION}
 overwrite_output_dir: true
@@ -55,4 +55,4 @@ callbacks:
 benchmarks:
 - math_500_8k
 - aime24_8k
-- gsm8k_8k #uncommented for now out of worry this will crash the process at the end
+- gsm8k_8k
