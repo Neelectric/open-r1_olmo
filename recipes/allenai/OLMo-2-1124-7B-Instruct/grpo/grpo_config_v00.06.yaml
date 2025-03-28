@@ -60,7 +60,7 @@ use_liger_kernel: true
 temperature: 0.7 #take from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching
 warmup_ratio: 0.1
 wandb_entity: Neelectric
-wandb_project: open-r1
+wandb_project: open-r1_GRPO
 run_name: allenai/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 
 #  eval callbacks
