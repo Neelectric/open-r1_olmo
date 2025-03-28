@@ -12,3 +12,7 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
     --num_processes=1 src/open_r1/grpo.py \
     --config recipes/HuggingFaceTB/SmolLM2-1.7B-Instruct/grpo/grpo_config_v00.02.yaml \
     --wandb_entity Neelectric --wandb_project open-r1 --run_name HuggingFaceTB/SmolLM2-1.7B-Instruct_GRPOv00.02
+
+
+### GRPO with envsubst
+VERSION=v00.04 ACCELERATE_LOG_LEVEL=info envsubst < recipes/HuggingFaceTB/SmolLM2-1.7B-Instruct/grpo/grpo_config_v00.04.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=5 src/open_r1/grpo.py --config temp_config.yaml
