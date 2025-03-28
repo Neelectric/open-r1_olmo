@@ -18,7 +18,7 @@ use_vllm: true
 vllm_device: "auto"
 vllm_gpu_memory_utilization: 0.7
 do_eval: false
-gradient_accumulation_steps: 2
+gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
@@ -33,16 +33,16 @@ logging_strategy: steps
 lr_scheduler_type: constant_with_warmup #inspired by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 lr_scheduler_kwargs:
   min_lr_rate: 0.1
-max_completion_length: 1024
+max_completion_length: 2048
 max_grad_norm: 0.5 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 max_prompt_length: 512
 max_steps: -1 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
-num_generations: 20
+num_generations: 40
 num_iterations: 4 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
 num_train_epochs: 1
 output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 overwrite_output_dir: true
-per_device_train_batch_size: 4
+per_device_train_batch_size: 8
 push_to_hub: true
 report_to:
 - wandb
