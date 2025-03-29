@@ -4,7 +4,7 @@
 # MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFT
 # MODEL=CohereForAI/c4ai-command-r7b-12-2024
 # MODEL=nvidia/AceInstruct-7B
-MODEL=Qwen/Qwen2.5-14B
+MODEL=deepseek-ai/DeepSeek-R1-Distill-Qwen-14B
 NUM_GPUS=6
 # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.95,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95,}"
 MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.8,generation_parameters={\"max_new_tokens\":4096,\"temperature\":0.6,\"top_p\":0.95}"
