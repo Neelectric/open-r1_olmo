@@ -11,36 +11,36 @@ MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_mo
 OUTPUT_DIR=data/evals/$MODEL
 
 # # # AIME 2024
-# TASK=aime24
-# lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
-#     --custom-tasks src/open_r1/evaluate.py \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+TASK=aime24
+lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
+    --custom-tasks src/open_r1/evaluate.py \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
-# # # # MATH-500
-# TASK=math_500
-# lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
-#     --custom-tasks src/open_r1/evaluate.py \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+# # # MATH-500
+TASK=math_500
+lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
+    --custom-tasks src/open_r1/evaluate.py \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
-# # # # GPQA Diamond
-# TASK=gpqa:diamond
-# lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
-#     --custom-tasks src/open_r1/evaluate.py \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+# # # GPQA Diamond
+TASK=gpqa:diamond
+lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
+    --custom-tasks src/open_r1/evaluate.py \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
-# # # # # LiveCodeBench
-# # # # lighteval vllm $MODEL_ARGS "extended|lcb:codegeneration|0|0" \
-# # # #     --use-chat-template \
-# # # #     --output-dir $OUTPUT_DIR 
+# # # # LiveCodeBench
+# # # lighteval vllm $MODEL_ARGS "extended|lcb:codegeneration|0|0" \
+# # #     --use-chat-template \
+# # #     --output-dir $OUTPUT_DIR 
 
-# # # # GSM8k
-# # TASK=lighteval|gsm8k|5|0
-# lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|1" \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+# # # GSM8k
+# TASK=lighteval|gsm8k|5|0
+lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|1" \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
 # # MMLU
 TASK=leaderboard|mmlu
