@@ -11,18 +11,18 @@ MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_mo
 OUTPUT_DIR=data/evals/$MODEL
 
 # # # AIME 2024
-TASK=aime24
-lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
-    --custom-tasks src/open_r1/evaluate.py \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# TASK=aime24
+# lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
+#     --custom-tasks src/open_r1/evaluate.py \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
-# # # MATH-500
-TASK=math_500
-lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
-    --custom-tasks src/open_r1/evaluate.py \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # # # MATH-500
+# TASK=math_500
+# lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
+#     --custom-tasks src/open_r1/evaluate.py \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
 # # # GPQA Diamond
 TASK=gpqa:diamond
@@ -37,14 +37,12 @@ lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
 # # #     --output-dir $OUTPUT_DIR 
 
 # # # GSM8k
-# TASK=lighteval|gsm8k|5|0
-lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|1" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|1" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
-# # MMLU
-TASK=leaderboard|mmlu
-MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.5,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
-lighteval vllm $MODEL_ARGS "leaderboard|mmlu|0|1" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # # MMLU
+# MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.5,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
+# lighteval vllm $MODEL_ARGS "leaderboard|mmlu|0|1" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
