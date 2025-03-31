@@ -1,0 +1,77 @@
+# Model arguments # inspired in part by https://github.com/huggingface/open-r1/blob/smollm-grpo-configs/recipes/SmolLM2-1.7B-Instruct/grpo/config_v04.00.yaml
+model_name_or_path: Qwen/Qwen2.5-7B-Instruct
+model_revision: main
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+
+# Data training arguments
+# We edit the DeepSeek chat template to ensure (a) the reasoning block within <think> and </think> is included in the completion and (b) the <think> tag is not part of the prefill so that the format reward works
+chat_template: "{{ bos_token }}{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer><|im_end|>\n<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% elif message['role'] == 'system' %}{{ '<|im_start|>system\n' + message['content'] + '<|im_end|>\n' }}{% elif message['role'] == 'user' %}{{ '<|im_start|>user\n' + message['content'] + '<|im_end|>' + '\n' }}{% elif message['role'] == 'assistant' %}{% if not loop.last %}{{ '<|im_start|>assistant\n' + message['content'] + '<|im_end|>' + '\n' + eos_token + '\n' }}{% else %}{{ '<|im_start|>assistant\n'  + message['content'] + '<|im_end|>' + '\n' + eos_token }}{% endif %}{% endif %}{% if loop.last and add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}{% endfor %}"
+system_prompt: "You are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>"
+
+dataset_name: open-r1/OpenR1-Math-220k
+
+# GRPO trainer config
+bf16: true
+beta: 0.00 # following DeepSeekMath paper # hyperparameter to scale the negative D_{KL} term in GRPO objective. So the higher the beta, the more we penalize moving away from our reference policy.
+epsilon: 0.2 # by default, 0.2. This dictates the clipping like in PPO, so where r = ratio(current policy/old policy), we use e for clip(r, 1 - e, 1 + e) * Advantage. So for 0.2 we clip the ratio to be within [0.98, 1.02]. Smaller e = tighter clip!
+use_vllm: true
+vllm_device: "auto"
+vllm_gpu_memory_utilization: 0.7
+do_eval: false
+gradient_accumulation_steps: 32
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: Neelectric/Qwen2.5-7B-Instruct_GRPO${VERSION}
+hub_strategy: every_save
+learning_rate: 1.0e-06 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
+log_completions: true
+log_level: info
+logging_first_step: true
+logging_steps: 1
+logging_strategy: steps
+lr_scheduler_type: constant_with_warmup #inspired by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
+lr_scheduler_kwargs:
+  min_lr_rate: 0.01
+max_completion_length: 2048
+max_grad_norm: 0.2 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
+max_prompt_length: 1024
+max_steps: 500 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
+num_generations: 20 #following DeepSeekMath paper
+num_iterations: 4 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
+num_train_epochs: 1
+output_dir: data/Neelectric/Qwen2.5-7B-Instruct_GRPO${VERSION}
+overwrite_output_dir: true
+per_device_train_batch_size: 8
+push_to_hub: true
+report_to:
+- wandb
+reward_funcs:
+- accuracy
+- format # maybe enforce "formatting reward as a flat 0.2 bonus that only applies when the judgement is also correct." as per https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
+# - tag_count
+reward_weights:
+- 1.0
+- 0.2
+# - 0.1
+save_strategy: "steps"
+save_steps: 0.1
+# save_total_limit: 1
+scale_rewards: true #true according to https://wandb.ai/huggingface/open-r1/runs/3j51s8ub/overview #false according to https://github.com/huggingface/trl/releases/tag/v0.16.0
+seed: 42
+torch_compile: true
+use_liger_kernel: true
+temperature: 0.7 #taken from https://wandb.ai/huggingface/open-r1/runs/buxgck91/overview
+warmup_ratio: 0.1
+wandb_entity: Neelectric
+wandb_project: open-r1_GRPO
+run_name: Qwen/Qwen2.5-7B-Instruct_GRPO${VERSION}
+
+#  eval callbacks
+callbacks:
+- push_to_hub_revision
+benchmarks:
+- math_500_8k
+- aime24_8k
+- gsm8k_8k #uncommented for now out of worry this will crash the process at the end
