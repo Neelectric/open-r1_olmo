@@ -13,13 +13,13 @@ dataset_name: open-r1/OpenR1-Math-220k
 
 # GRPO trainer config
 bf16: true
-beta: 0.00 # following DeepSeekMath paper # hyperparameter to scale the negative D_{KL} term in GRPO objective. So the higher the beta, the more we penalize moving away from our reference policy.
+beta: 0.005 # following DeepSeekMath paper # hyperparameter to scale the negative D_{KL} term in GRPO objective. So the higher the beta, the more we penalize moving away from our reference policy.
 epsilon: 0.2 # by default, 0.2. This dictates the clipping like in PPO, so where r = ratio(current policy/old policy), we use e for clip(r, 1 - e, 1 + e) * Advantage. So for 0.2 we clip the ratio to be within [0.98, 1.02]. Smaller e = tighter clip!
 use_vllm: true
 vllm_device: "auto"
 vllm_gpu_memory_utilization: 0.7
 do_eval: false
-gradient_accumulation_steps: 16
+gradient_accumulation_steps: 32
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
@@ -34,10 +34,10 @@ logging_strategy: steps
 lr_scheduler_type: constant_with_warmup #inspired by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 lr_scheduler_kwargs:
   min_lr_rate: 0.01
-max_completion_length: 4096
+max_completion_length: 1500
 max_grad_norm: 0.2 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 max_prompt_length: 1024
-max_steps: 2000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
+max_steps: 250 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
 num_generations: 20 #following DeepSeekMath paper
 num_iterations: 4 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
 num_train_epochs: 1
@@ -53,7 +53,7 @@ reward_funcs:
 # - tag_count
 reward_weights:
 - 1.0
-- 0.2
+- 0.1
 # - 0.1
 save_strategy: "steps"
 save_steps: 0.1
