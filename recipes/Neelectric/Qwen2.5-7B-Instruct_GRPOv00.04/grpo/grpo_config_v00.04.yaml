@@ -1,5 +1,5 @@
 # Model arguments # inspired in part by https://github.com/huggingface/open-r1/blob/smollm-grpo-configs/recipes/SmolLM2-1.7B-Instruct/grpo/config_v04.00.yaml
-model_name_or_path: Neelectric/Qwen2.5-7B-Instruct_GPROv00.04
+model_name_or_path: Neelectric/Qwen2.5-7B-Instruct_GRPOv00.04
 model_revision: main
 torch_dtype: bfloat16
 attn_implementation: flash_attention_2
