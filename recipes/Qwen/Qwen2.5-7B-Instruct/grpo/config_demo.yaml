@@ -33,7 +33,7 @@ max_grad_norm: 0.2
 max_prompt_length: 1024
 max_completion_length: 4096
 max_steps: -1
-num_generations: 16
+num_generations: 10
 num_train_epochs: 1
 output_dir: data/Neelectric/Qwen2.5-7B-Instruct_GRPO${VERSION}demo
 overwrite_output_dir: true
