@@ -1,7 +1,8 @@
 # MODEL=Neelectric/SmolLM2-1.7B-Instruct_GRPO
 # MODEL=Neelectric/SmolLM2-1.7B-Instruct_GRPO
 # MODEL=Qwen/Qwen2.5-Math-1.5B
-MODEL=Neelectric/Qwen2.5-7B-Instruct_GRPOv00.05
+# MODEL=Neelectric/Qwen2.5-7B-Instruct_GRPOv00.05
+MODEL=Qwen/Qwen2.5-7B-Instruct
 # MODEL=CohereForAI/c4ai-command-r7b-12-2024
 # MODEL=nvidia/AceInstruct-7B
 # MODEL=Qwen/Qwen2.5-32B
