@@ -1,5 +1,8 @@
 ### Train via SFT
 VERSION=v00.01 ACCELERATE_LOG_LEVEL=info envsubst < recipes/Qwen2.5-1.5B-Instruct/sft/sft_config_v00.01.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=3 src/open_r1/sft.py --config temp_config.yaml
 
+### demo GRPO with envsubst
+VERSION=v00.08 ACCELERATE_LOG_LEVEL=info envsubst < recipes/Qwen/Qwen2.5-7B-Instruct/grpo/config_demo.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=5 src/open_r1/grpo.py --config temp_config.yaml
+
 ### GRPO with envsubst
 VERSION=v00.07 ACCELERATE_LOG_LEVEL=info envsubst < recipes/Qwen/Qwen2.5-7B-Instruct/grpo/grpo_config_v00.07.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=5 src/open_r1/grpo.py --config temp_config.yaml
