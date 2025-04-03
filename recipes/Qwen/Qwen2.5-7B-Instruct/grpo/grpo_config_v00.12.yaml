@@ -38,7 +38,7 @@ lr_scheduler_kwargs:
 max_completion_length: 4096
 max_grad_norm: 0.2 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 max_prompt_length: 1024
-max_steps: -1 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
+max_steps: 1000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
 num_generations: 20 #following DeepSeekMath paper
 num_iterations: 1 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
 num_train_epochs: 1
