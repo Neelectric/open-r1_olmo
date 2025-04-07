@@ -35,7 +35,7 @@ logging_steps: 1
 logging_strategy: steps
 lr_scheduler_type: constant_with_warmup #inspired by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 # lr_scheduler_kwargs:
-  # min_lr_rate: 0.01
+#   min_lr_rate: 0.01
 max_completion_length: 2048
 max_grad_norm: 0.2 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 max_prompt_length: 512
