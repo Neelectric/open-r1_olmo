@@ -66,7 +66,7 @@ class PushToHubRevisionCallback(TrainerCallback):
             )  # don't push the optimizer states
             print("avoiding pushing optimizer states apparently")
             
-            if len(args.benchmarks > 0):
+            if len(args.benchmarks) > 0:
                 if is_slurm_available() or ("Neelectric" in args.hub_model_id):
                     dummy_config.benchmarks = args.benchmarks
                     print("Trying to run benchmarks...")
