@@ -34,7 +34,7 @@ gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
 hub_model_id: Qwen/Qwen2.5-7B-Instruct
-push_to_hub_model_id: Neelectric/Qwen2.5-7B-Instruct_SFT${VERSION}
+push_to_hub_model_id: Qwen2.5-7B-Instruct_SFT${VERSION}
 hub_model_revision: ${VERSION}
 hub_strategy: every_save
 log_level: info
