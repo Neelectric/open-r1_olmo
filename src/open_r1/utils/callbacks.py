@@ -55,6 +55,7 @@ class PushToHubRevisionCallback(TrainerCallback):
                 hub_model_revision=f"{args.hub_model_revision}-step-{global_step:09d}",
                 output_dir=f"{args.output_dir}/checkpoint-{global_step}",
                 system_prompt=args.system_prompt,
+                model_name_or_path=args.model_name_or_path,
             )
 
             future = push_to_hub_revision(
@@ -63,6 +64,7 @@ class PushToHubRevisionCallback(TrainerCallback):
 
             if is_slurm_available() or ("Neelectric" in args.hub_model_id):
                 dummy_config.benchmarks = args.benchmarks
+                print("Trying to run benchmarks...")
 
                 def run_benchmark_callback(_):
                     print(f"Checkpoint {global_step} pushed to hub.")
