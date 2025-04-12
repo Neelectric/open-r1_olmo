@@ -121,7 +121,11 @@ def get_gpu_count_for_vllm(model_name: str, revision: str = "main", num_gpus: in
     """vLLM enforces a constraint that the number of attention heads must be divisible by the number of GPUs and 64 must be divisible by the number of GPUs.
     This function calculates the number of GPUs to use for decoding based on the number of attention heads in the model.
     """
-    config = AutoConfig.from_pretrained(model_name, revision=revision, trust_remote_code=True)
+    config = AutoConfig.from_pretrained(
+        model_name, 
+        revision=revision, 
+        trust_remote_code=True
+        )
     # Get number of attention heads
     num_heads = config.num_attention_heads
     # Reduce num_gpus so that num_heads is divisible by num_gpus and 64 is divisible by num_gpus
