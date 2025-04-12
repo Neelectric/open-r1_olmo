@@ -28,7 +28,7 @@ lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR 
 
-# # # GPQA Diamond
+# # # gsm8k
 TASK=lighteval|gsm8k|5|1
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 lighteval vllm $MODEL_ARGS "custom|$TASK|0|0" \
