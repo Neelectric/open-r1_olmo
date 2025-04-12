@@ -68,11 +68,13 @@ def run_lighteval_job(
     # model_name = training_args.model_name_or_path
     model_revision = "main"
     print(model_args)
-    model_name = training_args.base_model_name_or_path
+    base_model_name = model_args.model_name_or_path
+    model_name = training_args.hub_model_id
+    # model_name = training_args.base_model_name_or_path
     # model_revision = training_args.hub_model_revision
     # For large models >= 30b params or those running the MATH benchmark, we need to shard them across the GPUs to avoid OOM
-    num_gpus = get_gpu_count_for_vllm(model_name, model_revision)
-    if get_param_count_from_repo_id(model_name) >= 30_000_000_000:
+    num_gpus = get_gpu_count_for_vllm(base_model_name, model_revision)
+    if get_param_count_from_repo_id(base_model_name) >= 30_000_000_000:
         tensor_parallel = True
     else:
         num_gpus = 8
