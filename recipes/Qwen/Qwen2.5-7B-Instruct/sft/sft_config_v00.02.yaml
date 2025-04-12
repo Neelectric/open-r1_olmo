@@ -20,8 +20,8 @@ lr_scheduler_type: linear
 warmup_ratio: 0.1
 learning_rate: 5.0e-05
 gradient_accumulation_steps: 1
-per_device_eval_batch_size: 8
-per_device_train_batch_size: 8
+per_device_eval_batch_size: 6
+per_device_train_batch_size: 6
 
 # SFT trainer config
 max_steps: 100 #701/3348
@@ -60,4 +60,5 @@ benchmarks:
 - aime24
 - math_500
 - gpqa
+- ifeval
 - gsm8k_8k #uncommented for now out of worry this will crash the process at the end
