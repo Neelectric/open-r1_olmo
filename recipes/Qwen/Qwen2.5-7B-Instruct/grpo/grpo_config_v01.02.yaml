@@ -17,7 +17,7 @@ bf16: true
 beta: 0.0 # following DeepSeekMath paper # hyperparameter to scale the negative D_{KL} term in GRPO objective. So the higher the beta, the more we penalize moving away from our reference policy.
 epsilon: 0.2 # by default, 0.2. This dictates the clipping like in PPO, so where r = ratio(current policy/old policy), we use e for clip(r, 1 - e, 1 + e) * Advantage. So for 0.2 we clip the ratio to be within [0.98, 1.02]. Smaller e = tighter clip!
 use_vllm: true
-vllm_device: "cuda:6"
+vllm_device: "cuda:7"
 vllm_gpu_memory_utilization: 0.7
 do_eval: false
 gradient_accumulation_steps: 16
