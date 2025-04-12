@@ -65,10 +65,10 @@ def run_lighteval_job(
     benchmark: str, training_args: Union["SFTConfig", "GRPOConfig"], model_args: "ModelConfig"
 ) -> None:
     task_list = LIGHTEVAL_TASKS[benchmark]
-    model_name = training_args.model_name_or_path
+    # model_name = training_args.model_name_or_path
     model_revision = "main"
     print(model_args)
-    # model_name = training_args.hub_model_id
+    model_name = training_args.hub_model_id
     # model_revision = training_args.hub_model_revision
     # For large models >= 30b params or those running the MATH benchmark, we need to shard them across the GPUs to avoid OOM
     num_gpus = get_gpu_count_for_vllm(model_name, model_revision)

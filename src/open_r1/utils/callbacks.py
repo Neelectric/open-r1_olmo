@@ -50,17 +50,20 @@ class PushToHubRevisionCallback(TrainerCallback):
 
             # WARNING: if you use dataclasses.replace(args, ...) the accelerator dist state will be broken, so I do this workaround
             # Also if you instantiate a new SFTConfig, the accelerator dist state will be broken
+            print(args.model_init_kwargs)
+            print(args)
             dummy_config = DummyConfig(
                 hub_model_id=args.hub_model_id,
                 hub_model_revision=f"{args.hub_model_revision}-step-{global_step:09d}",
                 output_dir=f"{args.output_dir}/checkpoint-{global_step}",
                 system_prompt=args.system_prompt,
-                model_name_or_path=args.model_name_or_path,
+                # model_name_or_path=args.model_name_or_path,
             )
 
             future = push_to_hub_revision(
                 dummy_config, extra_ignore_patterns=["*.pt"]
             )  # don't push the optimizer states
+            print("avoiding pushing optimizer states apparently")
 
             if is_slurm_available() or ("Neelectric" in args.hub_model_id):
                 dummy_config.benchmarks = args.benchmarks
