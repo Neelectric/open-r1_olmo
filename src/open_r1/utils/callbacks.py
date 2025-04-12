@@ -50,14 +50,15 @@ class PushToHubRevisionCallback(TrainerCallback):
 
             # WARNING: if you use dataclasses.replace(args, ...) the accelerator dist state will be broken, so I do this workaround
             # Also if you instantiate a new SFTConfig, the accelerator dist state will be broken
-            print(args.model_init_kwargs)
             print(args)
+            run_name = args.run_name
+            base_model_name_or_path = run_name.split("_")[0]
             dummy_config = DummyConfig(
                 hub_model_id=args.hub_model_id,
                 hub_model_revision=f"{args.hub_model_revision}-step-{global_step:09d}",
                 output_dir=f"{args.output_dir}/checkpoint-{global_step}",
                 system_prompt=args.system_prompt,
-                # model_name_or_path=args.model_name_or_path,
+                base_model_name_or_path=base_model_name_or_path,
             )
 
             future = push_to_hub_revision(
