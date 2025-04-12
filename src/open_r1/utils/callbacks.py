@@ -61,7 +61,7 @@ class PushToHubRevisionCallback(TrainerCallback):
                 dummy_config, extra_ignore_patterns=["*.pt"]
             )  # don't push the optimizer states
 
-            if is_slurm_available():
+            if is_slurm_available() or ("Neelectric" in args.hub_model_id):
                 dummy_config.benchmarks = args.benchmarks
 
                 def run_benchmark_callback(_):
