@@ -50,6 +50,7 @@ save_strategy: "steps"
 save_steps: 0.1
 save_total_limit: 2
 seed: 42
+torch_compile: true
 use_liger_kernel: true
 wandb_entity: Neelectric
 wandb_project: open-r1_SFT
