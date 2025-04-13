@@ -52,7 +52,16 @@ lighteval vllm $MODEL_ARGS "extended|ifeval|0|1" \
 #     --output-dir $OUTPUT_DIR
 
 # # # # MMLU
-# MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.85,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
+# MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.9,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
 # lighteval vllm $MODEL_ARGS "leaderboard|mmlu|0|1" \
 #     --use-chat-template \
 #     --output-dir $OUTPUT_DIR
+
+# MMMLU-Pro 
+# leaderboard_mmlu_pro
+lm_eval --model vllm \
+    --model_args pretrained={$MODEL},tensor_parallel_size={1},dtype=auto,gpu_memory_utilization=0.8,data_parallel_size={$NUM_GPUS}, generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95} \
+    --tasks leaderboard_mmlu_pro \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
+    # --batch_size auto
