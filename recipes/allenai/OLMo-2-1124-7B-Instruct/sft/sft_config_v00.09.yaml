@@ -26,7 +26,7 @@ max_grad_norm: 0.5
 
 # SFT trainer config
 max_steps: -1 #701/3348
-num_train_epochs: 3
+num_train_epochs: 1
 bf16: true
 do_eval: false
 eval_strategy: 'no'
