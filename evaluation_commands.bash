@@ -61,7 +61,7 @@ OUTPUT_DIR=data/evals/$MODEL
 # MMMLU-Pro 
 # leaderboard_mmlu_pro
 accelerate launch -m lm_eval --model hf \
-    --model_args pretrained=$MODEL,dtype=auto,gpu_memory_utilization=0.8,data_parallel_size=$NUM_GPUS \
+    --model_args pretrained=$MODEL,dtype=auto,gpu_memory_utilization=0.8, \
     --tasks leaderboard_mmlu_pro \
     --apply_chat_template \
     --output_path $OUTPUT_DIR
