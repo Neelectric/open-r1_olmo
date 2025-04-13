@@ -5,8 +5,8 @@
 # MODEL=Qwen/Qwen2.5-7B-Instruct
 # MODEL=CohereForAI/c4ai-command-r7b-12-2024
 # MODEL=nvidia/AceInstruct-7B
-# MODEL=allenai/OLMo-2-1124-7B-Instruct_SFT
-MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.08
+MODEL=allenai/OLMo-2-1124-7B-Instruct
+# MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.08
 # MODEL=Qwen/Qwen2.5-32B
 NUM_GPUS=8
 # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.95,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95,}"
@@ -52,16 +52,22 @@ OUTPUT_DIR=data/evals/$MODEL
 #     --output-dir $OUTPUT_DIR
 
 # # # # MMLU
-MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.7,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
-lighteval vllm $MODEL_ARGS "leaderboard|mmlu|0|1" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.7,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
+# lighteval vllm $MODEL_ARGS "leaderboard|mmlu|0|1" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
+
 
 # MMMLU-Pro 
 # leaderboard_mmlu_pro
 lm_eval --model vllm \
-    --model_args pretrained={$MODEL},tensor_parallel_size={1},dtype=auto,gpu_memory_utilization=0.8,data_parallel_size={$NUM_GPUS}, generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95} \
+    --model_args pretrained=$MODEL,dtype=auto,gpu_memory_utilization=0.8,data_parallel_size=$NUM_GPUS \
     --tasks leaderboard_mmlu_pro \
     --apply_chat_template \
     --output_path $OUTPUT_DIR
     # --batch_size auto
+
+MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.7,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
+lighteval vllm $MODEL_ARGS "leaderboard|mmlu_pro|0|1" \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
