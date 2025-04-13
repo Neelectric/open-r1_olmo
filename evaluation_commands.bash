@@ -40,10 +40,10 @@ OUTPUT_DIR=data/evals/$MODEL
 # # # #     --use-chat-template \
 # # # #     --output-dir $OUTPUT_DIR 
 
-# # ifeval
-lighteval vllm $MODEL_ARGS "extended|ifeval|0|1" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # # ifeval
+# lighteval vllm $MODEL_ARGS "extended|ifeval|0|1" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
 
 # # # GSM8k
