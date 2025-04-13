@@ -179,3 +179,5 @@ results/
 
 .vscode/
 .python-version
+
+lm-evaluation-harness/
