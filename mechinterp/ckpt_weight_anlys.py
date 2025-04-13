@@ -62,13 +62,13 @@ def compare_base_and_ckpt(base_model_id: str, ft_model_id: str, checkpoint_id: s
     rel_diff = norm_of_diff / norm_of_base if norm_of_base > 0 else float('inf')
     comparison_results[name] = {
       "frob_norm_of_diff": norm_of_diff,
-      "forb_norm_of_rel_diff": rel_diff,
+      "frob_norm_of_rel_diff": rel_diff,
       'param_size': base_param.numel()
     }
     # assert norm_of_diff == 0.0
   return comparison_results
 
-def sort_by_diff_norm(comparison_results, metric='forb_norm_of_rel_diff'):
+def sort_by_diff_norm(comparison_results, metric='frob_norm_of_rel_diff'):
     """
     Sort the comparison results by the specified metric in descending order.
     
@@ -129,15 +129,15 @@ def aggregate_by_matrix_type(comparison_results):
                 break
         
         # Update aggregated statistics
-        aggregated[matrix_type]['total_absolute_diff'] += values['absolute_diff_norm']
+        aggregated[matrix_type]['total_absolute_diff'] += values['frob_norm_of_diff']
         aggregated[matrix_type]['total_parameters'] += values['param_size']
         aggregated[matrix_type]['max_absolute_diff'] = max(
             aggregated[matrix_type]['max_absolute_diff'], 
-            values['absolute_diff_norm']
+            values['frob_norm_of_diff']
         )
         aggregated[matrix_type]['max_relative_diff'] = max(
             aggregated[matrix_type]['max_relative_diff'], 
-            values['relative_diff_norm']
+            values['frob_norm_of_rel_diff']
         )
         aggregated[matrix_type]['param_names'].append(name)
     
@@ -178,13 +178,17 @@ def main():
   revisions = list_revisions(ft_model_id)
   print(revisions)
   
-  comparison_results = compare_base_and_ckpt(base_model_id, ft_model_id, revisions[0])
-  sorted_results = sort_by_diff_norm(comparison_results)
-  for name,val in sorted_results:
-    print(name, val["forb_norm_of_rel_diff"])
-    
-  aggregated_results = aggregate_by_matrix_type(comparison_results)
-  print_matrix_type_summary(aggregated_results)
+  for revision in revisions:
+    print("*"*100)
+    print(f"NOW COMPARING TO REVISION {revision}")
+    print("*"*100)
+    comparison_results = compare_base_and_ckpt(base_model_id, ft_model_id, revision)
+    sorted_results = sort_by_diff_norm(comparison_results)
+    # for name,val in sorted_results:
+    #   print(name, val["frob_norm_of_rel_diff"])
+      
+    aggregated_results = aggregate_by_matrix_type(comparison_results)
+    print_matrix_type_summary(aggregated_results)
   
 
   
