@@ -65,8 +65,8 @@ accelerate launch -m lm_eval --model hf \
     --tasks leaderboard_mmlu_pro \
     --num_processes $NUM_GPUS \
     --num_machines 1 \
-    --mixed_precision no\
-    --dynamo_backend no\
+    --mixed_precision no \
+    --dynamo_backend no \
     --apply_chat_template \
     --output_path $OUTPUT_DIR \
     --batch_size auto
