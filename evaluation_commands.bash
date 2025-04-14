@@ -1,4 +1,4 @@
-MODEL=Qwen/Qwen2.5-Math-7B
+MODEL=deepseek-ai/DeepSeek-R1-Distill-Qwen-7B
 # MODEL=Neelectric/Qwen2.5-7B-Instruct_GRPOv00.05
 # MODEL=Qwen/Qwen2.5-7B-Instruct
 # MODEL=CohereForAI/c4ai-command-r7b-12-2024
