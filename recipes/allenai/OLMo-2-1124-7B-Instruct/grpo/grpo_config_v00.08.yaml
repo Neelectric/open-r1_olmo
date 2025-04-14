@@ -21,7 +21,7 @@ use_vllm: true
 vllm_device: "cuda:7"
 vllm_gpu_memory_utilization: 0.7
 do_eval: false
-gradient_accumulation_steps: 8
+gradient_accumulation_steps: 16
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
@@ -37,11 +37,11 @@ logging_strategy: steps
 lr_scheduler_type: constant_with_warmup #inspired by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 # lr_scheduler_kwargs:
 #   min_lr_rate: 0.1
-max_completion_length: 1200
+max_completion_length: 100
 max_grad_norm: 0.2 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 max_prompt_length: 512
 max_steps: 1 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
-num_generations: 28
+num_generations: 56
 num_iterations: 4 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
 num_train_epochs: 1
 output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
