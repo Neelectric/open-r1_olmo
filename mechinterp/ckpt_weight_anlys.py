@@ -33,7 +33,7 @@ def list_revisions(model_id: str) -> list[str]:
   refs = api.list_repo_refs(model_id)
   branch_names = [branch.name for branch in refs.branches]
   revisions = branch_names[:0:-1] 
-  return revisions
+  return revisions + ["main"]
 
 # def compare_base_and_ckpt(base_model_id: str, ft_model_id: str, checkpoint_id: str) -> dict:
 #   """Compares the weights of a base model and a given checkpoint, using the normalized Frobenius norm of differences and standard deviations."""
