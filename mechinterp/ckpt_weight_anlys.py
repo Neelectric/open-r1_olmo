@@ -190,13 +190,27 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
   comparison_results = {}
   total = len(base_params)
   for name, base_param in tqdm(base_model.named_parameters(), dynamic_ncols=True, total=total):
+    ckpt_param = ckpt_params[name]
     print(name)
     print(base_param.shape)
-    ckpt_param = ckpt_params[name]
-    frob_norm_base = torch.linalg.norm(base_param).item()
-    frob_norm_diff = torch.linalg.norm(ckpt_param - base_param).item()
+    print(base_param)
+    print(ckpt_param)
+    
+    frob_norm_base = torch.linalg.norm(base_param, ord="fro")
+    frob_norm_ckpt = torch.linalg.norm(ckpt_param, ord="fro")
+    frob_norm_diff = torch.linalg.norm(ckpt_param - base_param)
     normed_frob_norm_diff = frob_norm_diff / frob_norm_base if frob_norm_base > 0 else float('inf')
+    
+    square_abs_diff = torch.square(torch.abs(ckpt_param - base_param))
+    sum_square_abs_diff = torch.sum(torch.square(torch.abs(ckpt_param - base_param)))
+    sqrt_sum_square_abs_diff = torch.sqrt(torch.sum(torch.square(torch.abs(ckpt_param - base_param))))
+    
+    torch.set_printoptions(precision=10, sci_mode=False)
     print("frob_norm_base", frob_norm_base)
+    print("frob_norm_ckpt", frob_norm_ckpt)
+    print("square_abs_diff", square_abs_diff)
+    print("sum_square_abs_diff", sum_square_abs_diff)
+    print("sqrt_sum_square_abs_diff", sqrt_sum_square_abs_diff)
     print("frob_norm_diff", frob_norm_diff)
     print("normed_frob_norm_diff", normed_frob_norm_diff)
     
@@ -229,7 +243,6 @@ def main():
     compare_base_and_ckpt(base_model_id, ft_model_id, revision)
     break
     
-  
   
   # fire.Fire(hello)
 
