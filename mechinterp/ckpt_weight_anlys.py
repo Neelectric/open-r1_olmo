@@ -190,7 +190,19 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
   comparison_results = {}
   total = len(base_params)
   for name, base_param in tqdm(base_model.named_parameters(), dynamic_ncols=True, total=total):
-    pass
+    print(name)
+    print(base_param.shape)
+    ckpt_param = ckpt_params[name]
+    frob_norm_base = torch.linalg.norm(base_param).item()
+    frob_norm_diff = torch.linalg.norm(ckpt_param - base_param).item()
+    normed_frob_norm_diff = frob_norm_diff / frob_norm_base if frob_norm_base > 0 else float('inf')
+    print("frob_norm_base", frob_norm_base)
+    print("frob_norm_diff", frob_norm_diff)
+    print("normed_frob_norm_diff", normed_frob_norm_diff)
+    
+    
+    
+    break
   return
 
 
@@ -214,9 +226,10 @@ def main():
       
     # aggregated_results = aggregate_by_matrix_type(comparison_results)
     # print_matrix_type_summary(aggregated_results)
+    compare_base_and_ckpt(base_model_id, ft_model_id, revision)
+    break
     
   
-    break
   
   # fire.Fire(hello)
 
