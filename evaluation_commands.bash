@@ -61,7 +61,6 @@ OUTPUT_DIR=data/evals/$MODEL
 accelerate launch -m lm_eval --model hf \
     --model_args pretrained=$MODEL,dtype=auto, \
     --tasks leaderboard_mmlu_pro \
-    --apply_chat_template \
     --system_instruction "You are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>"\
     --output_path $OUTPUT_DIR \
     --batch_size 16
