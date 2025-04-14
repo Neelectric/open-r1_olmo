@@ -299,7 +299,7 @@ def main():
   import imageio.v2 as imageio
   images = [imageio.imread(png_path) for png_path in png_paths]
   gif_path = f"{gif_dir}/training_dynamics.gif"
-  imageio.mimsave(gif_path, images, duration=3)
+  imageio.mimsave(gif_path, images, duration=0.1, loop=0)
   print(f"GIF saved to {gif_path}")
   
   # # Optionally, clean up the PNG files
