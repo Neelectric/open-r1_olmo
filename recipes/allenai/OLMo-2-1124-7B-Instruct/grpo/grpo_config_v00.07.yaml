@@ -74,7 +74,7 @@ run_name: allenai/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 #  eval callbacks
 callbacks:
 - push_to_hub_revision
-benchmarks:
+# benchmarks:
 # - math_500_8k
 # - aime24_8k
 # - gsm8k_8k #uncommented for now out of worry this will crash the process at the end
