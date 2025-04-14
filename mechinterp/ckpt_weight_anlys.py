@@ -9,6 +9,12 @@ import torch
 import fire
 from collections import defaultdict
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import os
+from matplotlib.animation import PillowWriter
+
 
 
 
@@ -27,7 +33,7 @@ def list_revisions(model_id: str) -> list[str]:
   refs = api.list_repo_refs(model_id)
   branch_names = [branch.name for branch in refs.branches]
   revisions = branch_names[:0:-1] 
-  return revisions
+  return revisions + ["main"]
 
 # def compare_base_and_ckpt(base_model_id: str, ft_model_id: str, checkpoint_id: str) -> dict:
 #   """Compares the weights of a base model and a given checkpoint, using the normalized Frobenius norm of differences and standard deviations."""
@@ -187,48 +193,62 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
   ckpt_params = dict(ckpt_model.named_parameters())
   assert base_params.keys() == ckpt_params.keys()
   
-  comparison_results = {}
   total = len(base_params)
-  for name, base_param in tqdm(base_model.named_parameters(), dynamic_ncols=True, total=total):
+  torch.set_printoptions(precision=10)
+  
+  results_dict = {
+    "q_proj": [],
+    "k_proj": [],
+    "v_proj": [],
+    "o_proj": [],
+    "q_norm": [],
+    "k_norm": [],
+    "gate_proj": [],
+    "up_proj": [],
+    "down_proj": []
+  }
+  print("ignoring embed and unembed, layernorms.")
+  for name, base_param in tqdm(base_model.named_parameters(), dynamic_ncols=True, total=total, disable=False):
     ckpt_param = ckpt_params[name]
-    print(name)
-    print(base_param.shape)
-    print(base_param)
-    print(ckpt_param)
-    
-    frob_norm_base = torch.linalg.norm(base_param, ord="fro")
-    frob_norm_ckpt = torch.linalg.norm(ckpt_param, ord="fro")
-    frob_norm_diff = torch.linalg.norm(ckpt_param - base_param)
-    normed_frob_norm_diff = frob_norm_diff / frob_norm_base if frob_norm_base > 0 else float('inf')
-    
-    square_abs_diff = torch.square(torch.abs(ckpt_param - base_param))
-    sum_square_abs_diff = torch.sum(torch.square(torch.abs(ckpt_param - base_param)))
-    sqrt_sum_square_abs_diff = torch.sqrt(torch.sum(torch.square(torch.abs(ckpt_param - base_param))))
-    
-    square_abs_base =torch.square(torch.abs(base_param))
-    sum_square_abs_base = torch.sum(torch.square(torch.abs(base_param)))
-    sqrt_sum_square_abs_base = torch.sqrt(torch.sum(torch.square(torch.abs(base_param))))
-    
-    normed_frob_norm_diff_manual = sqrt_sum_square_abs_diff / sqrt_sum_square_abs_base
-    
-    torch.set_printoptions(precision=10, sci_mode=False)
-    print("manual\n", "*"*100)
-    # print("square_abs_diff", square_abs_diff)
-    # print("sum_square_abs_diff", sum_square_abs_diff)
-    print("sqrt_sum_square_abs_diff", sqrt_sum_square_abs_diff)
-    print("sqrt_sum_square_abs_base", sqrt_sum_square_abs_base)
-    print("normed_frob_norm_diff_manual", normed_frob_norm_diff_manual)
-    
-    print("pytorch\n", "*"*100)
-    # print("frob_norm_ckpt", frob_norm_ckpt)    
-    print("frob_norm_diff", frob_norm_diff)
-    print("frob_norm_base", frob_norm_base)
-    print("normed_frob_norm_diff", normed_frob_norm_diff)
-    
-    
-    
-    break
-  return
+    name_list = name.split(".")
+    if "layers" in name_list:
+      # print(name)
+      # print(base_param.shape)
+      # print(base_param)
+      # print(ckpt_param)
+      
+      frob_norm_base = torch.linalg.norm(base_param)
+      # frob_norm_ckpt = torch.linalg.norm(ckpt_param)
+      frob_norm_diff = torch.linalg.norm(ckpt_param - base_param)
+      normed_frob_norm_diff = frob_norm_diff / frob_norm_base if frob_norm_base > 0 else float('inf')
+      
+      # print("normed_frob_norm_diff", normed_frob_norm_diff)   
+      diff = torch.abs(ckpt_param - base_param)
+      mean = torch.mean(diff)
+      # print("mean", mean, "\n")
+      if "self_attn" in name_list or "mlp" in name_list:
+        results_dict[name_list[4]].append(normed_frob_norm_diff.item())
+      
+  return results_dict
+
+
+def plot_results(results_dict, ft_model_id, revision):
+  save_path = f"figures/{ft_model_id}/plot_results.pdf"
+  os.makedirs(os.path.dirname(save_path), exist_ok=True)
+  
+  data = np.array([results_dict[key] for key in results_dict.keys()]).T
+
+  x_labels = list(results_dict.keys()) 
+  y_labels = [f"Layer {i}" for i in range(data.shape[0])]
+  fig, ax = plt.subplots(figsize=(12, 8))
+  sns.heatmap(data, annot=False, cmap="viridis", xticklabels=x_labels, yticklabels=y_labels)
+
+  # Add labels and title
+  ax.set_xlabel("Parameters")
+  ax.set_ylabel("Layers")
+  ax.set_title(f"Normalized frobenius norm of the differences for each matrix:\n{ft_model_id} vs. {revision}")
+  ax.invert_yaxis()  # this should layer 0 is at the bottom?
+  return fig
 
 
 def main():
@@ -240,7 +260,10 @@ def main():
   revisions = list_revisions(ft_model_id)
   print(revisions)
   
-  for revision in revisions:
+  figs = []
+  counter = 0
+  
+  for revision in tqdm(revisions, dynamic_ncols=True):
     print("*"*100)
     print(f"NOW COMPARING TO REVISION {revision}")
     print("*"*100)
@@ -251,11 +274,38 @@ def main():
       
     # aggregated_results = aggregate_by_matrix_type(comparison_results)
     # print_matrix_type_summary(aggregated_results)
-    compare_base_and_ckpt(base_model_id, ft_model_id, revision)
-    break
-    
+    results_dict = compare_base_and_ckpt(base_model_id, ft_model_id, revision)
+    print("removing q/k norms cuz idc")
+    del results_dict["q_norm"]
+    del results_dict["k_norm"]
+    fig = plot_results(results_dict, ft_model_id, revision)
+    figs.append(fig)
+    # counter += 1
+    # if counter >= 2:
+    #   break
+  gif_dir = f"figures/{ft_model_id}"
+  os.makedirs(gif_dir, exist_ok=True)
   
-  # fire.Fire(hello)
+  # Save each figure as a separate PNG file
+  png_paths = []
+  for i, fig in enumerate(figs):
+    png_path = f"{gif_dir}/frame_{i}.png"
+    fig.savefig(png_path, dpi=100)
+    png_paths.append(png_path)
+    plt.close(fig)
+  
+  # Use PIL to create a GIF from the PNG files
+  
+  import imageio.v2 as imageio
+  images = [imageio.imread(png_path) for png_path in png_paths]
+  gif_path = f"{gif_dir}/training_dynamics.gif"
+  imageio.mimsave(gif_path, images, duration=0.1, loop=0)
+  print(f"GIF saved to {gif_path}")
+  
+  # # Optionally, clean up the PNG files
+  # for png_path in png_paths:
+  #   os.remove(png_path)
+
 
 if __name__ == '__main__':
   main()
