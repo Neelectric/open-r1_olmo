@@ -205,13 +205,24 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
     sum_square_abs_diff = torch.sum(torch.square(torch.abs(ckpt_param - base_param)))
     sqrt_sum_square_abs_diff = torch.sqrt(torch.sum(torch.square(torch.abs(ckpt_param - base_param))))
     
+    square_abs_base =torch.square(torch.abs(base_param))
+    sum_square_abs_base = torch.sum(torch.square(torch.abs(base_param)))
+    sqrt_sum_square_abs_base = torch.sqrt(torch.sum(torch.square(torch.abs(base_param))))
+    
+    normed_frob_norm_diff_manual = sqrt_sum_square_abs_diff / sqrt_sum_square_abs_base
+    
     torch.set_printoptions(precision=10, sci_mode=False)
-    print("frob_norm_base", frob_norm_base)
-    print("frob_norm_ckpt", frob_norm_ckpt)
-    print("square_abs_diff", square_abs_diff)
-    print("sum_square_abs_diff", sum_square_abs_diff)
+    print("manual\n", "*"*100)
+    # print("square_abs_diff", square_abs_diff)
+    # print("sum_square_abs_diff", sum_square_abs_diff)
     print("sqrt_sum_square_abs_diff", sqrt_sum_square_abs_diff)
+    print("sqrt_sum_square_abs_base", sqrt_sum_square_abs_base)
+    print("normed_frob_norm_diff_manual", normed_frob_norm_diff_manual)
+    
+    print("pytorch\n", "*"*100)
+    # print("frob_norm_ckpt", frob_norm_ckpt)    
     print("frob_norm_diff", frob_norm_diff)
+    print("frob_norm_base", frob_norm_base)
     print("normed_frob_norm_diff", normed_frob_norm_diff)
     
     
