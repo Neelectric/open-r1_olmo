@@ -7,7 +7,8 @@
 # MODEL=Neelectric/Qwen2.5-7B-Instruct_SFTv00.13
 MODEL=Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10
 NUM_GPUS=8
-MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,max_num_batched_tokens=4096,gpu_memory_utilization=0.8,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
+MAX_TOKENS=4096
+MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_num_batched_tokens=$MAX_TOKENS,gpu_memory_utilization=0.8,generation_parameters={max_new_tokens:$MAX_TOKENS,temperature:0.6,top_p:0.95}"
 OUTPUT_DIR=data/evals/$MODEL
 
 # AIME 2024
@@ -40,7 +41,7 @@ lighteval vllm $MODEL_ARGS "extended|ifeval|0|1" \
 
 
 # # GSM8k
-lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|1" 
+lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|1" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR
 
@@ -57,7 +58,7 @@ accelerate launch -m lm_eval --model hf \
     --model_args pretrained=$MODEL,dtype=auto, \
     --tasks leaderboard_mmlu_pro \
     --output_path $OUTPUT_DIR \
-    --batch_size 16
+    --batch_size 16 \
     --apply_chat_template \
     --num_processes $NUM_GPUS \
     --num_machines 1 \
