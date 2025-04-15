@@ -105,11 +105,7 @@ install_requires = [
     deps["langdetect"],
     deps["latex2sympy2_extended"],
     deps["math-verify"],
-<<<<<<< HEAD
- #   deps["liger_kernel"],
-=======
     deps["liger-kernel"],
->>>>>>> upstream/main
     deps["packaging"],  # utilities from PyPA to e.g., compare versions
     deps["safetensors"],
     deps["sentencepiece"],
