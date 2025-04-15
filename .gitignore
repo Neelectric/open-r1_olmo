@@ -181,3 +181,4 @@ results/
 .python-version
 
 lm-evaluation-harness/
+.DS_Store
