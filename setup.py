@@ -54,13 +54,8 @@ _deps = [
     "isort>=5.12.0",
     "langdetect",  # Needed for LightEval's extended tasks
     "latex2sympy2_extended>=1.0.6",
-<<<<<<< HEAD
-#    "liger_kernel==0.5.3",
-    "lighteval @ git+https://github.com/huggingface/lighteval.git@ed084813e0bd12d82a06d9f913291fdbee774905",
-=======
     "liger-kernel>=0.5.6",
     "lighteval @ git+https://github.com/huggingface/lighteval.git@bb14995c4eccab5cabd450b1e509c3c898a16921",  # pass@1 for AIME with n=32 samples per prompt
->>>>>>> upstream/main
     "math-verify==0.5.2",  # Used for math verification in grpo
     "packaging>=23.0",
     "parameterized>=0.9.0",
