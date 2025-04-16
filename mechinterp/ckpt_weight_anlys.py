@@ -233,7 +233,7 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
   return results_dict
 
 
-def plot_results(results_dict, ft_model_id, revision):
+def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
   save_path = f"figures/{ft_model_id}/plot_results.pdf"
   os.makedirs(os.path.dirname(save_path), exist_ok=True)
   
@@ -242,7 +242,7 @@ def plot_results(results_dict, ft_model_id, revision):
   x_labels = list(results_dict.keys()) 
   y_labels = [f"Layer {i}" for i in range(data.shape[0])]
   fig, ax = plt.subplots(figsize=(12, 8))
-  sns.heatmap(data, annot=False, cmap="viridis", xticklabels=x_labels, yticklabels=y_labels)
+  sns.heatmap(data, annot=False, cmap="viridis", xticklabels=x_labels, yticklabels=y_labels, ax=ax, vmin=vmin, vmax=vmax)
 
   # Add labels and title
   ax.set_xlabel("Parameters")
@@ -262,9 +262,10 @@ def main():
   revisions = list_revisions(ft_model_id)
   print(revisions)
   
-  figs = []
+  results_dicts = []
   counter = 0
   
+  # lets compare each revision to the base model via normalised frobenius norm and save results
   for revision in tqdm(revisions, dynamic_ncols=True):
     print("*"*100)
     print(f"NOW COMPARING TO REVISION {revision}")
@@ -280,11 +281,26 @@ def main():
     print("removing q/k norms cuz idc")
     del results_dict["q_norm"]
     del results_dict["k_norm"]
-    fig = plot_results(results_dict, ft_model_id, revision)
+    results_dicts.append(results_dict)
+    
+  # lets find the global mins and maxes to plot on the same colourplot scales
+  global_min = 99999
+  global_max = -9999
+  for result_dict in results_dicts:
+    for key, value in results_dict.items():
+      matrix_max = max(value)
+      matrix_min = min(value)
+      if matrix_max > global_max:
+        global_max = matrix_max
+      if matrix_min < global_min:
+        global_min = matrix_min
+  print(f"GLOBAL MIN IS {global_min} AND GLOBAL MAX IS {global_max}")
+      
+  figs = []
+  for i, revision in enumerate(revisions):
+    fig = plot_results(results_dicts[i], ft_model_id, revision, global_min, global_max)
     figs.append(fig)
-    # counter += 1
-    # if counter >= 2:
-    #   break
+
   gif_dir = f"figures/{ft_model_id}"
   os.makedirs(gif_dir, exist_ok=True)
   
