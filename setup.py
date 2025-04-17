@@ -68,7 +68,7 @@ _deps = [
     "torch==2.6.0",
     "transformers==4.51.2",
     "trl @ git+https://github.com/huggingface/trl.git@c04e84c4545acfaecdf7e0631ad07a86ab0fb2f6",  # Fix EOS token for SFT on base models: https://github.com/huggingface/trl/pull/3299
-    "vllm==0.8.3",
+    "vllm==0.7.2",
     "wandb>=0.19.1",
 ]
 
