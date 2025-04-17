@@ -10,6 +10,10 @@ if TYPE_CHECKING:
 import base64
 import os
 
+from transformers import TrainerCallback
+from transformers.trainer_callback import TrainerControl, TrainerState
+from transformers.training_args import TrainingArguments
+
 
 # We need a special environment setup to launch vLLM from within Slurm training jobs.
 # - Reference code: https://github.com/huggingface/brrr/blob/c55ba3505686d690de24c7ace6487a5c1426c0fd/brrr/lighteval/one_job_runner.py#L105
@@ -116,3 +120,16 @@ def run_benchmark_jobs(training_args: Union["SFTConfig", "GRPOConfig"], model_ar
             run_lighteval_job(benchmark, training_args, model_args)
         else:
             raise ValueError(f"Unknown benchmark {benchmark}")
+
+def custom_benchmark_job(self, args: TrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
+    print("self", self)
+    print("*"*100)
+    print("args", args)
+    print("*"*100)
+    print("state", state)
+    print("*"*100)
+    print("control", control)
+    print("*"*100)
+    print("kwargs", kwargs)
+    print("*"*100)
+    return

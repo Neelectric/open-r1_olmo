@@ -1,0 +1,66 @@
+# Model arguments
+# You need to download the model and manually change the rope to 300k and max_position_embeddings to 32768
+# the config file should match https://huggingface.co/open-r1/OpenR1-Qwen-7B/blob/main/config.json
+model_name_or_path: allenai/OLMo-2-1124-7B-Instruct
+model_revision: main
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+
+# Data training arguments
+dataset_name: Neelectric/OpenR1-Math-cn_k12-86k
+dataset_num_proc: 48
+system_prompt: "You are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>"
+
+
+#SFT hyperparam
+max_length: 4096 #16384 #32768
+weight_decay: 0.0001
+optim: adamw_torch
+lr_scheduler_type: linear
+warmup_ratio: 0.1
+learning_rate: 5.0e-05
+gradient_accumulation_steps: 1
+per_device_eval_batch_size: 1
+per_device_train_batch_size: 8
+max_grad_norm: 0.5
+
+# SFT trainer config
+max_steps: 100 #701/3348
+num_train_epochs: 1
+bf16: true
+do_eval: false
+eval_strategy: 'no'
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_testeval${VERSION}
+hub_model_revision: ${VERSION}
+hub_strategy: every_save
+log_level: info
+logging_steps: 2
+logging_strategy: steps
+packing: false
+output_dir: data/allenai/OLMo-2-1124-7B-Instruct_testeval${VERSION}
+overwrite_output_dir: true
+push_to_hub: true
+report_to:
+- wandb
+save_strategy: "steps"
+save_steps: 0.1
+save_total_limit: 2
+seed: 42
+torch_compile: false
+use_liger_kernel: true
+# wandb_entity: Neelectric
+# wandb_project: open-r1_SFT
+# run_name: allenai/OLMo-2-1124-7B-Instruct_SFT${VERSION}
+callbacks:
+- push_to_hub_revision
+# benchmarks:
+# # - math_500_8k
+# # - lighteval|gsm8k|5|1
+# - aime24
+# - math_500
+# - gpqa
+# - ifeval
+# - gsm8k_8k #uncommented for now out of worry this will crash the process at the end

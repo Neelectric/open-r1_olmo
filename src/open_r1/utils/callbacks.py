@@ -21,7 +21,7 @@ from transformers import TrainerCallback
 from transformers.trainer_callback import TrainerControl, TrainerState
 from transformers.training_args import TrainingArguments
 
-from .evaluation import run_benchmark_jobs
+from .evaluation import run_benchmark_jobs, custom_benchmark_job
 from .hub import push_to_hub_revision
 
 
@@ -73,7 +73,8 @@ class PushToHubRevisionCallback(TrainerCallback):
 
                     def run_benchmark_callback(_):
                         print(f"Checkpoint {global_step} pushed to hub.")
-                        run_benchmark_jobs(dummy_config, self.model_config)
+                        # run_benchmark_jobs(dummy_config, self.model_config)
+                        custom_benchmark_job(self, args, state, control, **kwargs)
 
                     future.add_done_callback(run_benchmark_callback)
 
