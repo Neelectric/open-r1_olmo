@@ -65,7 +65,3 @@ accelerate launch -m lm_eval --model hf \
     --output_path $OUTPUT_DIR \
     --batch_size 16 \
     --apply_chat_template \
-    --num_processes $NUM_GPUS \
-    --num_machines 1 \
-    --mixed_precision no \
-    --dynamo_backend no \
