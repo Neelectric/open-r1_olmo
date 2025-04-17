@@ -70,6 +70,7 @@ class PushToHubRevisionCallback(TrainerCallback):
                 # if is_slurm_available() or ("Neelectric" in args.hub_model_id):
             dummy_config.benchmarks = args.benchmarks
             print("Trying to run benchmarks...")
+            custom_benchmark_job(self, args, state, control, **kwargs)
 
             def run_benchmark_callback(_):
                 print(f"Checkpoint {global_step} pushed to hub.")
