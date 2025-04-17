@@ -21,7 +21,7 @@ from transformers import TrainerCallback
 from transformers.trainer_callback import TrainerControl, TrainerState
 from transformers.training_args import TrainingArguments
 
-from .evaluation import run_benchmark_jobs, custom_benchmark_job
+from .evaluation import run_benchmark_jobs
 from .hub import push_to_hub_revision
 
 
@@ -50,34 +50,25 @@ class PushToHubRevisionCallback(TrainerCallback):
 
             # WARNING: if you use dataclasses.replace(args, ...) the accelerator dist state will be broken, so I do this workaround
             # Also if you instantiate a new SFTConfig, the accelerator dist state will be broken
-            # print(args)
-            run_name = args.run_name
-            base_model_name_or_path = run_name.split("_")[0]
             dummy_config = DummyConfig(
                 hub_model_id=args.hub_model_id,
                 hub_model_revision=f"{args.hub_model_revision}-step-{global_step:09d}",
                 output_dir=f"{args.output_dir}/checkpoint-{global_step}",
                 system_prompt=args.system_prompt,
-                base_model_name_or_path=base_model_name_or_path,
             )
 
             future = push_to_hub_revision(
                 dummy_config, extra_ignore_patterns=["*.pt"]
             )  # don't push the optimizer states
-            print("avoiding pushing optimizer states apparently")
-            
-            # if len(args.benchmarks) > 0:
-                # if is_slurm_available() or ("Neelectric" in args.hub_model_id):
-            dummy_config.benchmarks = args.benchmarks
-            print("Trying to run benchmarks...")
-            custom_benchmark_job(self, args, state, control, **kwargs)
 
-            def run_benchmark_callback(_):
-                print(f"Checkpoint {global_step} pushed to hub.")
-                # run_benchmark_jobs(dummy_config, self.model_config)
-                custom_benchmark_job(self, args, state, control, **kwargs)
+            if is_slurm_available():
+                dummy_config.benchmarks = args.benchmarks
 
-            future.add_done_callback(run_benchmark_callback)
+                def run_benchmark_callback(_):
+                    print(f"Checkpoint {global_step} pushed to hub.")
+                    run_benchmark_jobs(dummy_config, self.model_config)
+
+                future.add_done_callback(run_benchmark_callback)
 
 
 CALLBACKS = {
