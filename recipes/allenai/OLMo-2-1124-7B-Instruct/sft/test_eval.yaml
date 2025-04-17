@@ -56,10 +56,10 @@ use_liger_kernel: true
 # run_name: allenai/OLMo-2-1124-7B-Instruct_SFT${VERSION}
 callbacks:
 - push_to_hub_revision
-# benchmarks:
+benchmarks:
 # # - math_500_8k
 # # - lighteval|gsm8k|5|1
-# - aime24
+- aime24
 # - math_500
 # - gpqa
 # - ifeval

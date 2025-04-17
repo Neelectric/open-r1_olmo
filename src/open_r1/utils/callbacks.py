@@ -61,10 +61,10 @@ class PushToHubRevisionCallback(TrainerCallback):
                 base_model_name_or_path=base_model_name_or_path,
             )
 
-            future = push_to_hub_revision(
-                dummy_config, extra_ignore_patterns=["*.pt"]
-            )  # don't push the optimizer states
-            print("avoiding pushing optimizer states apparently")
+            # future = push_to_hub_revision(
+            #     dummy_config, extra_ignore_patterns=["*.pt"]
+            # )  # don't push the optimizer states
+            # print("avoiding pushing optimizer states apparently")
             
             if len(args.benchmarks) > 0:
                 if is_slurm_available() or ("Neelectric" in args.hub_model_id):
