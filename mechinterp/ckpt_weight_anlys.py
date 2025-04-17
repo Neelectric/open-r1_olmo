@@ -219,7 +219,6 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
       # print(ckpt_param)
       
       frob_norm_base = torch.linalg.norm(base_param)
-      # frob_norm_ckpt = torch.linalg.norm(ckpt_param)
       frob_norm_diff = torch.linalg.norm(ckpt_param - base_param)
       normed_frob_norm_diff = frob_norm_diff / frob_norm_base if frob_norm_base > 0 else float('inf')
       
