@@ -61,22 +61,22 @@ class PushToHubRevisionCallback(TrainerCallback):
                 base_model_name_or_path=base_model_name_or_path,
             )
 
-            # future = push_to_hub_revision(
-            #     dummy_config, extra_ignore_patterns=["*.pt"]
-            # )  # don't push the optimizer states
-            # print("avoiding pushing optimizer states apparently")
+            future = push_to_hub_revision(
+                dummy_config, extra_ignore_patterns=["*.pt"]
+            )  # don't push the optimizer states
+            print("avoiding pushing optimizer states apparently")
             
-            if len(args.benchmarks) > 0:
-                if is_slurm_available() or ("Neelectric" in args.hub_model_id):
-                    dummy_config.benchmarks = args.benchmarks
-                    print("Trying to run benchmarks...")
+            # if len(args.benchmarks) > 0:
+                # if is_slurm_available() or ("Neelectric" in args.hub_model_id):
+        dummy_config.benchmarks = args.benchmarks
+        print("Trying to run benchmarks...")
 
-                    def run_benchmark_callback(_):
-                        print(f"Checkpoint {global_step} pushed to hub.")
-                        # run_benchmark_jobs(dummy_config, self.model_config)
-                        custom_benchmark_job(self, args, state, control, **kwargs)
+        def run_benchmark_callback(_):
+            print(f"Checkpoint {global_step} pushed to hub.")
+            # run_benchmark_jobs(dummy_config, self.model_config)
+            custom_benchmark_job(self, args, state, control, **kwargs)
 
-                    future.add_done_callback(run_benchmark_callback)
+        future.add_done_callback(run_benchmark_callback)
 
 
 CALLBACKS = {
