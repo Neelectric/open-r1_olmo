@@ -1,4 +1,4 @@
-### By Neel Rajani, 13.04.25
+### Written by Neel Rajani, 13.04.25
 ### Here we do analysis of a model's weights across training
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
