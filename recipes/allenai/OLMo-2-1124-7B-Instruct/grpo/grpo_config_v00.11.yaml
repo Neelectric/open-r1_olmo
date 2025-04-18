@@ -21,12 +21,13 @@ use_vllm: true
 vllm_device: "cuda:7"
 vllm_gpu_memory_utilization: 0.7
 do_eval: false
+eval_strategy: 'no'
 gradient_accumulation_steps: 8
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
 hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
-hub_model_revision: v${VERSION}
+hub_model_revision: ${VERSION}
 hub_strategy: every_save
 learning_rate: 1.0e-06 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
 log_completions: true
@@ -34,17 +35,18 @@ log_level: info
 logging_first_step: true
 logging_steps: 1
 logging_strategy: steps
+packing: false
 lr_scheduler_type: constant_with_warmup #inspired by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 # lr_scheduler_kwargs:
 #   min_lr_rate: 0.1
 max_completion_length: 1200
 max_grad_norm: 0.2 # https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 max_prompt_length: 512
-max_steps: 1000 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
+max_steps: -1 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
 num_generations: 56
 num_iterations: 4 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
 num_train_epochs: 1
-output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
+output_dir: data/allenai/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 overwrite_output_dir: true
 per_device_train_batch_size: 16
 push_to_hub: true
@@ -59,8 +61,8 @@ reward_weights:
 - 0.1
 # - 0.1
 save_strategy: "steps"
-save_steps: 0.1
-save_total_limit: 1
+save_steps: 0.05
+save_total_limit: 20
 scale_rewards: true #true according to https://wandb.ai/huggingface/open-r1/runs/3j51s8ub/overview #false according to https://github.com/huggingface/trl/releases/tag/v0.16.0
 seed: 42
 torch_compile: false
