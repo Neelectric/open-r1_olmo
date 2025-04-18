@@ -70,12 +70,12 @@ def run_lighteval(
 if __name__ == "__main__":
     model = "allenai/OLMo-2-1124-7B-Instruct"
     task = "lighteval|aime24|0|1"
-    revision = None
+    # revision = None
     num_gpus = 1
     
     run_lighteval(
         model=model,
         task=task,
-        revision=revision,
+        # revision=revision,
         num_gpus=num_gpus,
     )
