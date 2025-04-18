@@ -14,26 +14,9 @@ import seaborn as sns
 import numpy as np
 import os
 from matplotlib.animation import PillowWriter
+from utils import list_revisions
 
 
-
-
-### ok what is it we want in here
-# i want to give an hf model name
-# and get an analysis of the weights changing across training as a result
-# so probably a 'figures' folder right
-# into which we paste graphs which plot changes across steps
-
-
-        
-        
-def list_revisions(model_id: str) -> list[str]:
-  """Returns all revisions of a model from the hub."""
-  api = HfApi()
-  refs = api.list_repo_refs(model_id)
-  branch_names = [branch.name for branch in refs.branches]
-  revisions = branch_names[:0:-1] 
-  return revisions + ["main"]
 
 # def compare_base_and_ckpt(base_model_id: str, ft_model_id: str, checkpoint_id: str) -> dict:
 #   """Compares the weights of a base model and a given checkpoint, using the normalized Frobenius norm of differences and standard deviations."""

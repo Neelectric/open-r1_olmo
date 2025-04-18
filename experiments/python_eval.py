@@ -11,6 +11,10 @@ from lighteval.utils.utils import EnvConfig
 from lighteval.utils.imports import is_accelerate_available
 from datetime import timedelta
 
+from utils import list_revisions
+
+
+
 if is_accelerate_available():
     from accelerate import Accelerator, InitProcessGroupKwargs
     accelerator = Accelerator(kwargs_handlers=[InitProcessGroupKwargs(timeout=timedelta(seconds=3000))])
@@ -53,7 +57,6 @@ def run_lighteval(
             generation_parameters=generation_parameters,
             
     )
-    # pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.9,generation_parameters={\"max_new_tokens\":4096,\"temperature\":0.6,\"top_p\":0.95}"
 
     pipeline = Pipeline(
         tasks=task,
@@ -68,8 +71,10 @@ def run_lighteval(
     pipeline.show_results()
 
 if __name__ == "__main__":
-    model = "allenai/OLMo-2-1124-7B-Instruct"
-    task = "lighteval|aime24|0|1"
+    # model = "allenai/OLMo-2-1124-7B-Instruct"
+    model = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
+    # task = "lighteval|aime24|0|1"
+    task = "lighteval|math_500|0|1"
     # revision = None
     num_gpus = 1
     
