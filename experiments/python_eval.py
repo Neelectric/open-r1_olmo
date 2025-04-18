@@ -5,6 +5,9 @@
 import lighteval
 from lighteval.logging.evaluation_tracker import EvaluationTracker
 from lighteval.models.vllm.vllm_model import VLLMModelConfig
+
+from lighteval.models.transformers.transformers_model import TransformersModelConfig
+
 from lighteval.models.model_input import GenerationParameters
 from lighteval.pipeline import ParallelismManager, Pipeline, PipelineParameters
 from lighteval.utils.utils import EnvConfig
@@ -50,12 +53,22 @@ def run_lighteval(
             pretrained=model,
             revision=revision,
             gpu_memory_utilization=0.9,
-            dtype="bfloat16",
+            dtype="auto",
             use_chat_template=True,
             data_parallel_size=num_gpus,
             max_model_length=4096,
             generation_parameters=generation_parameters,
-            
+    )
+    
+    model_config = TransformersModelConfig(
+        pretrained=model,
+        revision=revision,
+        batch_size=16,
+        dtype="auto",
+        use_chat_template=True,
+        model_parallel=True,
+        generation_parameters=generation_parameters,
+        
     )
 
     pipeline = Pipeline(
