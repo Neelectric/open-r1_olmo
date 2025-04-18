@@ -40,7 +40,10 @@ def run_lighteval(
     pipeline_params = PipelineParameters(
         launcher_type=ParallelismManager.ACCELERATE,
         env_config=EnvConfig(cache_dir="tmp/"),
-        override_batch_size=-1,
+        override_batch_size=-1, ## lmao without this we get File "/home/open-r1_olmo/.venv/lib/python3.11/site-packages/lighteval/models/transformers/transformers_model.py", line 615, in _get_batch_size
+            #     if override_bs > 0:
+            #        ^^^^^^^^^^^^^^^
+            # TypeError: '>' not supported between instances of 'NoneType' and 'int'
     )
     
     generation_parameters = GenerationParameters(
