@@ -63,6 +63,7 @@ def run_lighteval(
     model_config = TransformersModelConfig(
         pretrained=model,
         revision=revision,
+        accelerator="gpu",
         batch_size=16,
         dtype="auto",
         use_chat_template=True,
