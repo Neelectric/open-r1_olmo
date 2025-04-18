@@ -71,7 +71,7 @@ def run_lighteval(
         batch_size="16",
         dtype="auto",
         use_chat_template=True,
-        model_parallel=True,
+        # model_parallel=True,
         generation_parameters=generation_parameters,
         max_length=4096,
     )
@@ -89,9 +89,9 @@ def run_lighteval(
     pipeline.show_results()
 
 if __name__ == "__main__":
-    # model = "allenai/OLMo-2-1124-7B-Instruct"
+    model = "allenai/OLMo-2-1124-7B-Instruct"
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
-    model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
+    # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
     # task = "lighteval|aime24|0|1"
     task = "lighteval|math_500|0|0"
     # revision = None
