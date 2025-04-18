@@ -16,13 +16,14 @@ if is_accelerate_available():
     accelerator = Accelerator(kwargs_handlers=[InitProcessGroupKwargs(timeout=timedelta(seconds=3000))])
 else:
     accelerator = None
-    
-    
-model = "allenai/OLMo-2-1124-7B-Instruct"
-revision = None
-num_gpus = 2
 
-def main():
+def run_lighteval(
+    model: str,
+    task: str,
+    revision: str = "main",
+    num_gpus: int = 1,
+):
+    """Evaluates a model (optionally specific revision) on a benchmark with lighteval."""
     evaluation_tracker = EvaluationTracker(
         output_dir="./results",
         save_details=True,
@@ -33,9 +34,6 @@ def main():
     pipeline_params = PipelineParameters(
         launcher_type=ParallelismManager.ACCELERATE,
         env_config=EnvConfig(cache_dir="tmp/"),
-        # Remove the 2 parameters below once your configuration is tested
-        # override_batch_size=1,
-        # max_samples=10
     )
     
     generation_parameters = GenerationParameters(
@@ -46,7 +44,7 @@ def main():
 
     model_config = VLLMModelConfig(
             pretrained=model,
-            # revision=revision,
+            revision=revision,
             gpu_memory_utilization=0.9,
             dtype="bfloat16",
             use_chat_template=True,
@@ -56,8 +54,6 @@ def main():
             
     )
     # pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.9,generation_parameters={\"max_new_tokens\":4096,\"temperature\":0.6,\"top_p\":0.95}"
-
-    task = "lighteval|aime24|0|1"
 
     pipeline = Pipeline(
         tasks=task,
@@ -72,4 +68,14 @@ def main():
     pipeline.show_results()
 
 if __name__ == "__main__":
-    main()
+    model = "allenai/OLMo-2-1124-7B-Instruct"
+    task = "lighteval|aime24|0|1"
+    revision = None
+    num_gpus = 1
+    
+    run_lighteval(
+        model=model,
+        task=task,
+        revision=revision,
+        num_gpus=num_gpus,
+    )
