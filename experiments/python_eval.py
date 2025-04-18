@@ -64,7 +64,7 @@ def run_lighteval(
         revision=revision,
         accelerator=accelerator,
         device="cuda",
-        # batch_size=16,
+        batch_size=4,
         dtype="auto",
         use_chat_template=True,
         model_parallel=True,
