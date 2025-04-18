@@ -68,7 +68,7 @@ def run_lighteval(
         revision=revision,
         accelerator=accelerator,
         # device="cuda",
-        # batch_size="4",
+        batch_size="16",
         dtype="auto",
         use_chat_template=True,
         model_parallel=True,
@@ -90,9 +90,10 @@ def run_lighteval(
 
 if __name__ == "__main__":
     # model = "allenai/OLMo-2-1124-7B-Instruct"
-    model = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
+    # model = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
+    model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
     # task = "lighteval|aime24|0|1"
-    task = "lighteval|math_500|0|1"
+    task = "lighteval|math_500|0|0"
     # revision = None
     num_gpus = 1
     
