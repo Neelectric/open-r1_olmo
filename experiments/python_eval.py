@@ -68,6 +68,7 @@ def run_lighteval(
         use_chat_template=True,
         model_parallel=True,
         generation_parameters=generation_parameters,
+        max_length=4096,
         
     )
 
