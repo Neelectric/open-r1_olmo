@@ -17,7 +17,6 @@ from datetime import timedelta
 from utils import list_revisions
 
 
-
 if is_accelerate_available():
     from accelerate import Accelerator, InitProcessGroupKwargs
     accelerator = Accelerator(kwargs_handlers=[InitProcessGroupKwargs(timeout=timedelta(seconds=3000))])
@@ -63,7 +62,7 @@ def run_lighteval(
     model_config = TransformersModelConfig(
         pretrained=model,
         revision=revision,
-        accelerator="gpu",
+        accelerator=accelerator,
         device="cuda",
         batch_size=16,
         dtype="auto",
