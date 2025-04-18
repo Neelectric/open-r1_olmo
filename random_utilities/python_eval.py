@@ -57,7 +57,7 @@ def main():
     )
     # pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.9,generation_parameters={\"max_new_tokens\":4096,\"temperature\":0.6,\"top_p\":0.95}"
 
-    task = "extended|ifeval|0|1"
+    task = "lighteval|aime24|0|1"
 
     pipeline = Pipeline(
         tasks=task,
