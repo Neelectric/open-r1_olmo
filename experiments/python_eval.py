@@ -74,6 +74,7 @@ def run_lighteval(
         # model_parallel=True,
         generation_parameters=generation_parameters,
         max_length=4096,
+        max_gen_toks=4096,
     )
 
     pipeline = Pipeline(
