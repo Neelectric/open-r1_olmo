@@ -64,6 +64,7 @@ def run_lighteval(
         pretrained=model,
         revision=revision,
         accelerator="gpu",
+        device="cuda",
         batch_size=16,
         dtype="auto",
         use_chat_template=True,
