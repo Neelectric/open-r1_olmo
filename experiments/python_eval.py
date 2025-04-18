@@ -40,6 +40,7 @@ def run_lighteval(
     pipeline_params = PipelineParameters(
         launcher_type=ParallelismManager.ACCELERATE,
         env_config=EnvConfig(cache_dir="tmp/"),
+        override_batch_size=-1,
     )
     
     generation_parameters = GenerationParameters(
@@ -70,7 +71,6 @@ def run_lighteval(
         model_parallel=True,
         generation_parameters=generation_parameters,
         max_length=4096,
-        
     )
 
     pipeline = Pipeline(
