@@ -14,7 +14,7 @@ uv pip install fire
 uv pip install matplotlib
 uv pip install seaborn
 uv pip install imageio
-pip install flashinfer-python
+uv pip install flashinfer-python
 
 huggingface-cli download open-r1/OpenR1-Math-220k --repo-type dataset
 apt install gettext -y

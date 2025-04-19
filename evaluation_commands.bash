@@ -5,7 +5,7 @@
 # MODEL=nvidia/AceInstruct-7B
 # MODEL=allenai/OLMo-2-1124-7B-Instruct
 # MODEL=Neelectric/Qwen2.5-7B-Instruct_SFTv00.13
-MODEL=Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10
+MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.12
 
 NUM_GPUS=8
 MAX_TOKENS=4096
@@ -64,4 +64,4 @@ accelerate launch -m lm_eval --model hf \
     --tasks leaderboard_mmlu_pro \
     --output_path $OUTPUT_DIR \
     --batch_size 16 \
-    --apply_chat_template \
+    --apply_chat_template 
