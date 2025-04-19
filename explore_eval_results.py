@@ -7,7 +7,7 @@ timestamp = "latest"
 task = "lighteval|gsm8k|0"
 
 if timestamp == "latest":
-    path = f"{output_dir}/results/{model_name}/"
+    path = f"{output_dir}/results/{model_name}/*"
     timestamps = glob.glob(path)
     print(timestamps)
     timestamp = sorted(timestamps)[-1].split("/")[-2]
