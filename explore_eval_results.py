@@ -16,7 +16,7 @@ if timestamp == "latest":
 details_path = f"{output_dir}/results/{model_name}/{timestamp}"
 
 # Load the details
-details = load_dataset("parquet", data_files=details_path, split="train")
+details = load_dataset("json", data_files=details_path, split="train")
 
 for detail in details:
     print(detail)
