@@ -83,6 +83,7 @@ def run_lighteval(
         evaluation_tracker=evaluation_tracker,
         model_config=model_config,
         # custom_task_directory=None, # if using a custom task
+        metric_options="extractive_match",
     )
 
     pipeline.evaluate()
@@ -94,7 +95,7 @@ if __name__ == "__main__":
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
     # task = "lighteval|aime24|0|1"
-    task = "lighteval|math_500|0|0"
+    task = "lighteval|aime24|0|0"
     # revision = None
     num_gpus = 1
     
