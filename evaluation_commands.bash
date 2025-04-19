@@ -16,19 +16,19 @@ OUTPUT_DIR=data/evals/$MODEL
 # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,gpu_memory_utilization=$MAX_GPU_MEM_USAGE,generation_parameters={max_new_tokens:$MAX_TOKENS,temperature:0.6,top_p:0.95}"
 # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,tensor_parallel_size=$NUM_GPUS,max_model_length=$MAX_TOKENS,max_num_batched_tokens=$MAX_TOKENS,gpu_memory_utilization=$MAX_GPU_MEM_USAGE,generation_parameters={max_new_tokens:$MAX_TOKENS,temperature:0.6,top_p:0.95}"
 
-AIME 2024
-TASK=aime24
-lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
+# AIME 2024
+# TASK=aime24
+lighteval vllm $MODEL_ARGS  "lighteval|aime24|0|0" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR
 
-MATH-500
+# MATH-500
 TASK=math_500
 lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR
 
-GPQA Diamond
+# GPQA Diamond
 TASK=gpqa:diamond
 lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
     --use-chat-template \
@@ -39,7 +39,7 @@ lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
 #     --use-chat-template \
 #     --output-dir $OUTPUT_DIR 
 
-ifeval
+# ifeval
 lighteval vllm $MODEL_ARGS "extended|ifeval|0|0" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR
