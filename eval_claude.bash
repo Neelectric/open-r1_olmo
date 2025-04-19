@@ -7,8 +7,6 @@
 #SBATCH --requeue
 
 # Specific configuration optimized for the Hugging Face Compute Cluster
-module load cuda/12.4
-
 set -x -e
 
 source ~/.bashrc
@@ -84,22 +82,22 @@ run_evaluation() {
 echo "Starting evaluations for $MODEL"
 
 # AIME 2024
-run_evaluation "aime24" "lighteval|aime24|0|1"
+run_evaluation "aime24" "lighteval|aime24|0|0"
 
 # MATH-500
-run_evaluation "math_500" "lighteval|math_500|0|1"
+run_evaluation "math_500" "lighteval|math_500|0|0"
 
 # GPQA Diamond
-run_evaluation "gpqa_diamond" "lighteval|gpqa:diamond|0|1"
+run_evaluation "gpqa_diamond" "lighteval|gpqa:diamond|0|0"
 
 # ifeval
-run_evaluation "ifeval" "extended|ifeval|0|1"
+run_evaluation "ifeval" "extended|ifeval|0|0"
 
 # GSM8k
-run_evaluation "gsm8k" "lighteval|gsm8k|5|1"
+run_evaluation "gsm8k" "lighteval|gsm8k|5|0"
 
 # MMLU using lighteval
-run_evaluation "mmlu" "leaderboard|mmlu|0|1"
+run_evaluation "mmlu" "leaderboard|mmlu|0|0"
 
 # MMLU-Pro using lm-eval harness (special handling)
 echo "Running MMLU-Pro evaluation..."
