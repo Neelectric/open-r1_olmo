@@ -10,10 +10,10 @@ if timestamp == "latest":
     path = f"{output_dir}/results/{model_name}/*"
     timestamps = glob.glob(path)
     print(timestamps)
-    timestamp = sorted(timestamps)[-1].split("/")[-2]
+    timestamp = sorted(timestamps)[-1].split("/")[-1]
     print(f"Latest timestamp: {timestamp}")
 
-details_path = f"{output_dir}/details/{model_name}/{timestamp}/details_{task}_{timestamp}.parquet"
+details_path = f"{output_dir}/results/{model_name}/{timestamp}"
 
 # Load the details
 details = load_dataset("parquet", data_files=details_path, split="train")
