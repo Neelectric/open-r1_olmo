@@ -12,6 +12,7 @@ from lighteval.models.model_input import GenerationParameters
 from lighteval.pipeline import ParallelismManager, Pipeline, PipelineParameters
 from lighteval.utils.utils import EnvConfig
 from lighteval.utils.imports import is_accelerate_available
+from lighteval.metrics.metrics import ExactMatches
 from datetime import timedelta
 
 from utils import list_revisions
@@ -83,7 +84,7 @@ def run_lighteval(
         evaluation_tracker=evaluation_tracker,
         model_config=model_config,
         # custom_task_directory=None, # if using a custom task
-        metric_options="extractive_match",
+        metric_options=ExactMatches,
     )
 
     pipeline.evaluate()
