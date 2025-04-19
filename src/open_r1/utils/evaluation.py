@@ -1,7 +1,7 @@
 import subprocess
 from typing import TYPE_CHECKING, Dict, Union
 
-from .hub import get_gpu_count_for_vllm, get_param_count_from_repo_id
+from .hub import get_gpu_count_for_vllm
 
 
 if TYPE_CHECKING:
@@ -9,10 +9,6 @@ if TYPE_CHECKING:
 
 import base64
 import os
-
-from transformers import TrainerCallback
-from transformers.trainer_callback import TrainerControl, TrainerState
-from transformers.training_args import TrainingArguments
 
 
 # We need a special environment setup to launch vLLM from within Slurm training jobs.
@@ -70,21 +66,17 @@ def run_lighteval_job(
     benchmark: str, training_args: Union["SFTConfig", "GRPOConfig"], model_args: "ModelConfig"
 ) -> None:
     task_list = LIGHTEVAL_TASKS[benchmark]
-    # model_name = training_args.model_name_or_path
-    model_revision = "main"
-    print(model_args)
-    base_model_name = model_args.model_name_or_path
     model_name = training_args.hub_model_id
-    # model_name = training_args.base_model_name_or_path
-    # model_revision = training_args.hub_model_revision
+    model_revision = training_args.hub_model_revision
     # For large models >= 30b params or those running the MATH benchmark, we need to shard them across the GPUs to avoid OOM
-    num_gpus = get_gpu_count_for_vllm(base_model_name, model_revision)
-    if get_param_count_from_repo_id(base_model_name) >= 30_000_000_000:
-        tensor_parallel = True
+    num_gpus = get_gpu_count_for_vllm(model_name, model_revision)
     # FIXME: vLLM 0.8.3 hangs with lighteval and DP > 1, so we disable it for now and use TP for all evals. See https://github.com/huggingface/lighteval/issues/670
+    # if get_param_count_from_repo_id(model_name) >= 30_000_000_000:
+    #     tensor_parallel = True
     # else:
     #     num_gpus = 8
     #     tensor_parallel = False
+    tensor_parallel = True
 
     cmd = VLLM_SLURM_PREFIX.copy()
     cmd_args = [
@@ -120,16 +112,3 @@ def run_benchmark_jobs(training_args: Union["SFTConfig", "GRPOConfig"], model_ar
             run_lighteval_job(benchmark, training_args, model_args)
         else:
             raise ValueError(f"Unknown benchmark {benchmark}")
-
-def custom_benchmark_job(self, args: TrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
-    print("self", self)
-    print("*"*100)
-    print("args", args)
-    print("*"*100)
-    print("state", state)
-    print("*"*100)
-    print("control", control)
-    print("*"*100)
-    print("kwargs", kwargs)
-    print("*"*100)
-    return

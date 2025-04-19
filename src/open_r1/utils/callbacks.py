@@ -61,7 +61,9 @@ class PushToHubRevisionCallback(TrainerCallback):
                 dummy_config, extra_ignore_patterns=["*.pt"]
             )  # don't push the optimizer states
 
-            if is_slurm_available():
+            # if is_slurm_available():
+            if True:
+                print("normally checking is_slurm_available(), but this has led to crashes in the past - skipping")
                 dummy_config.benchmarks = args.benchmarks
 
                 def run_benchmark_callback(_):
