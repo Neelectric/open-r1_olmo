@@ -5,7 +5,7 @@
 # MODEL=nvidia/AceInstruct-7B
 # MODEL=allenai/OLMo-2-1124-7B-Instruct
 # MODEL=Neelectric/Qwen2.5-7B-Instruct_SFTv00.13
-MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.12
+MODEL=Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.14
 
 NUM_GPUS=8
 MAX_TOKENS=4096
