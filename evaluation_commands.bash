@@ -66,7 +66,4 @@ accelerate launch -m lm_eval --model hf \
     --tasks leaderboard_mmlu_pro \
     --output_path $OUTPUT_DIR \
     --batch_size 16 \
-    --apply_chat_template \
-    --num_processes $NUM_GPUS \
-    --num_machines 1
-    
+    --apply_chat_template 
