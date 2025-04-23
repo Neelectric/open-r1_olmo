@@ -53,30 +53,30 @@ def run_lighteval(
         top_p=0.95,
         )
 
-    # # model_config = VLLMModelConfig(
-    #         pretrained=model,
-    #         revision=revision,
-    #         gpu_memory_utilization=0.9,
-    #         dtype="auto",
-    #         use_chat_template=True,
-    #         data_parallel_size=num_gpus,
-    #         max_model_length=4096,
-    #         generation_parameters=generation_parameters,
-    # )
-    
-    model_config = TransformersModelConfig(
-        pretrained=model,
-        revision=revision,
-        accelerator=accelerator,
-        # device="cuda",
-        batch_size="16",
-        dtype="auto",
-        use_chat_template=True,
-        # model_parallel=True,
-        generation_parameters=generation_parameters,
-        max_length=4096,
-        max_gen_toks=4096,
+    model_config = VLLMModelConfig(
+            pretrained=model,
+            revision=revision,
+            gpu_memory_utilization=0.9,
+            dtype="auto",
+            use_chat_template=True,
+            data_parallel_size=num_gpus,
+            max_model_length=4096,
+            generation_parameters=generation_parameters,
     )
+    
+    # model_config = TransformersModelConfig(
+    #     pretrained=model,
+    #     revision=revision,
+    #     accelerator=accelerator,
+    #     # device="cuda",
+    #     batch_size="16",
+    #     dtype="auto",
+    #     use_chat_template=True,
+    #     # model_parallel=True,
+    #     generation_parameters=generation_parameters,
+    #     max_length=4096,
+    #     max_gen_toks=4096,
+    # )
 
     pipeline = Pipeline(
         tasks=task,
