@@ -20,9 +20,9 @@ lr_scheduler_type: constant_with_warmup #also see by https://kalomaze.bearblog.d
 #   min_lr_rate: 0.1
 warmup_ratio: 0.1
 learning_rate: 1.0e-06 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
-gradient_accumulation_steps: 1
+gradient_accumulation_steps: 8
 per_device_eval_batch_size: 1
-per_device_train_batch_size: 8
+per_device_train_batch_size: 16
 max_grad_norm: 0.2  # see also https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 bf16: true
 beta: 0.0 # following DeepSeekMath paper # hyperparameter to scale the negative D_{KL} term in GRPO objective. So the higher the beta, the more we penalize moving away from our reference policy.
@@ -32,7 +32,7 @@ epsilon: 0.2 # by default, 0.2. This dictates the clipping like in PPO, so where
 
 
 # GRPO trainer config
-max_steps: 1634 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
+max_steps: -1 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
 num_train_epochs: 1
 use_vllm: true
 vllm_device: "cuda:7"
@@ -54,7 +54,7 @@ packing: false
 max_completion_length: 4096
 max_prompt_length: 512
 num_generations: 56
-num_iterations: 1 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
+num_iterations: 4 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
 output_dir: data/allenai/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 overwrite_output_dir: true
 push_to_hub: true

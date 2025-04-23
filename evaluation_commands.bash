@@ -5,7 +5,7 @@
 # MODEL=nvidia/AceInstruct-7B
 # MODEL=allenai/OLMo-2-1124-7B-Instruct
 # MODEL=Neelectric/Qwen2.5-7B-Instruct_SFTv00.13
-MODEL=Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.14
+MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.12
 
 NUM_GPUS=8
 MAX_TOKENS=4096
@@ -16,11 +16,11 @@ OUTPUT_DIR=data/evals/$MODEL
 # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,gpu_memory_utilization=$MAX_GPU_MEM_USAGE,generation_parameters={max_new_tokens:$MAX_TOKENS,temperature:0.6,top_p:0.95}"
 # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,tensor_parallel_size=$NUM_GPUS,max_model_length=$MAX_TOKENS,max_num_batched_tokens=$MAX_TOKENS,gpu_memory_utilization=$MAX_GPU_MEM_USAGE,generation_parameters={max_new_tokens:$MAX_TOKENS,temperature:0.6,top_p:0.95}"
 
-# # AIME 2024
-# # TASK=aime24
-# lighteval vllm $MODEL_ARGS  "lighteval|aime24|0|0" \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+# AIME 2024
+# TASK=aime24
+lighteval vllm $MODEL_ARGS  "lighteval|aime24|0|0" \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
 # # MATH-500
 # TASK=math_500
@@ -45,16 +45,16 @@ lighteval vllm $MODEL_ARGS "extended|ifeval|0|0" \
     --output-dir $OUTPUT_DIR
 
 
-# # # GSM8k
-# lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+# # GSM8k
+lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
-# # # # MMLU
-# # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.7,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
-# lighteval vllm $MODEL_ARGS "leaderboard|mmlu|0|0" \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+# # # MMLU
+# MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.7,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
+lighteval vllm $MODEL_ARGS "leaderboard|mmlu|0|0" \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
 
 # MMMLU-Pro 
