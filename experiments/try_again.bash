@@ -1,7 +1,7 @@
 NUM_GPUS=8
 NUM_TOKS=4096
 MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.12
-MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=$NUM_TOKS,max_num_batched_tokens=$NUM_TOKS,gpu_memory_utilization=0.8,generation_parameters={max_new_tokens:$NUM_TOKS,temperature:0.6,top_p:0.95}"
+MODEL_ARGS="model_name=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=$NUM_TOKS,max_num_batched_tokens=$NUM_TOKS,gpu_memory_utilization=0.8,generation_parameters={max_new_tokens:$NUM_TOKS,temperature:0.6,top_p:0.95}"
 TASK=gpqa:diamond
 OUTPUT_DIR=data/evals/$MODEL
 
