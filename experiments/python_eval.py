@@ -10,7 +10,7 @@ from lighteval.models.transformers.transformers_model import TransformersModelCo
 
 from lighteval.models.model_input import GenerationParameters
 from lighteval.pipeline import ParallelismManager, Pipeline, PipelineParameters
-from lighteval.utils.utils import EnvConfig
+# from lighteval.utils.utils import EnvConfig
 from lighteval.utils.imports import is_accelerate_available
 from lighteval.metrics.metrics import Metrics
 from datetime import timedelta
@@ -40,7 +40,7 @@ def run_lighteval(
 
     pipeline_params = PipelineParameters(
         launcher_type=ParallelismManager.ACCELERATE,
-        env_config=EnvConfig(cache_dir="tmp/"),
+        # env_config=EnvConfig(cache_dir="tmp/"),
         override_batch_size=-1, ## lmao without this we get File "/home/open-r1_olmo/.venv/lib/python3.11/site-packages/lighteval/models/transformers/transformers_model.py", line 615, in _get_batch_size
             #     if override_bs > 0:
             #        ^^^^^^^^^^^^^^^
