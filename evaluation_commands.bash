@@ -20,7 +20,7 @@ MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_mo
 
 # AIME 2024
 # TASK=aime24
-lighteval vllm pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=32768,max_num_batched_tokens=32768,gpu_memory_utilization=0.8,generation_parameters={max_new_tokens:32768,temperature:0.6,top_p:0.95}  "lighteval|aime24|0|0" \
+lighteval vllm "pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=32768,max_num_batched_tokens=32768,gpu_memory_utilization=0.8,generation_parameters={max_new_tokens:32768,temperature:0.6,top_p:0.95}"  "lighteval|aime24|0|0" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR
 
