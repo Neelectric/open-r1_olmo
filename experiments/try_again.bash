@@ -47,20 +47,12 @@ OUTPUT_DIR=data/evals/$MODEL
 #     --output-dir $OUTPUT_DIR
 
 
-# # MMMLU-Pro 
-# # leaderboard_mmlu_pro
-# accelerate launch -m lm_eval --model hf \
-#     --model_args pretrained=$MODEL,dtype=auto, \
-#     # --num_few_shot 5
-#     --tasks leaderboard_mmlu_pro \
-#     --output_path $OUTPUT_DIR \
-#     --batch_size 16 \
-#     --apply_chat_template 
-
-# # MMMLU-Pro 
+# MMMLU-Pro 
 # leaderboard_mmlu_pro
-accelerate launch --multi_gpu --num_processes $NUM_GPUS \
-    -m lm_eval --model hf \
+accelerate launch -m lm_eval --model hf \
+    --model_args pretrained=$MODEL,dtype=auto, \
+    # --num_few_shot 5
     --tasks leaderboard_mmlu_pro \
-    --model_args pretrained=$MODEL,dtype=auto,parallelize=True \
-    --batch_size 16
+    --output_path $OUTPUT_DIR \
+    --batch_size 16 \
+    --apply_chat_template 
