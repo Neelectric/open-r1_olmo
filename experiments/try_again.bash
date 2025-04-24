@@ -51,8 +51,8 @@ OUTPUT_DIR=data/evals/$MODEL
 # leaderboard_mmlu_pro
 accelerate launch -m lm_eval --model hf \
     --model_args pretrained=$MODEL,dtype=auto, \
-    # --num_few_shot 5
     --tasks leaderboard_mmlu_pro \
     --output_path $OUTPUT_DIR \
     --batch_size 16 \
     --apply_chat_template 
+        # --num_few_shot 5
