@@ -22,13 +22,13 @@ warmup_ratio: 0.1
 learning_rate: 1.0e-06 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
 gradient_accumulation_steps: 8
 per_device_eval_batch_size: 1
-per_device_train_batch_size: 20
+per_device_train_batch_size: 16
 num_generations: 14
 max_grad_norm: 0.2  # see also https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 bf16: true
 beta: 0.0 # following DeepSeekMath paper # hyperparameter to scale the negative D_{KL} term in GRPO objective. So the higher the beta, the more we penalize moving away from our reference policy.
 epsilon: 0.2 # by default, 0.2. This dictates the clipping like in PPO, so where r = ratio(current policy/old policy), we use e for clip(r, 1 - e, 1 + e) * Advantage. So for 0.2 we clip the ratio to be within [0.98, 1.02]. Smaller e = tighter clip!
-
+scale_rewards: false #true according to https://wandb.ai/huggingface/open-r1/runs/3j51s8ub/overview #false according to https://github.com/huggingface/trl/releases/tag/v0.16.0
 
 
 
@@ -71,7 +71,6 @@ reward_weights:
 save_strategy: "steps"
 save_steps: 0.05
 save_total_limit: 2
-scale_rewards: true #true according to https://wandb.ai/huggingface/open-r1/runs/3j51s8ub/overview #false according to https://github.com/huggingface/trl/releases/tag/v0.16.0
 seed: 42
 torch_compile: false
 use_liger_kernel: true
