@@ -13,10 +13,10 @@ OUTPUT_DIR=data/evals/$MODEL
 #     --output-dir $OUTPUT_DIR
 
 # # # MATH-500
-# TASK=math_500
-# lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+TASK=math_500
+lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
 # # GPQA Diamond
 # TASK=gpqa:diamond
