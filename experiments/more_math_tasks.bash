@@ -24,6 +24,14 @@ OUTPUT_DIR=data/evals/$MODEL
 #     --output-dir $OUTPUT_DIR
 
 #### lighteval|math
-CUDA_VISIBLE_DEVICES=1 lighteval vllm $MODEL_ARGS "lighteval|math|0|0" \
+CUDA_VISIBLE_DEVICES=1 lighteval vllm $MODEL_ARGS "lighteval|mathqa|0|0" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR
+
+## hendrycks_math
+CUDA_VISIBLE_DEVICES=1,2,3,4,5,6,7 accelerate launch -m lm_eval --model hf \
+    --model_args pretrained=$MODEL,dtype=auto, \
+    --tasks hendrycks_math \
+    --output_path $OUTPUT_DIR \
+    --batch_size 16 \
+    --apply_chat_template 
