@@ -40,7 +40,7 @@ use_liger_loss: true
 
 # GRPO trainer config
 bf16: true
-max_steps: 817 # open-r1/OpenR1-Math-220k has 93,733 samples, bsz=4 would mean 23,433 total steps 
+max_steps: 3268 # we have num_iterations at 4, so the otherwise 817 steps would be consumed 4 times too quickly!
 num_train_epochs: 1
 use_vllm: true
 vllm_device: "cuda:7"
