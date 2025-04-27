@@ -7,22 +7,22 @@ OUTPUT_DIR=data/evals/$MODEL
 
 
 # AIME 2024
-TASK=aime24
-lighteval vllm $MODEL_ARGS "lighteval|aime24|0|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# TASK=aime24
+# lighteval vllm $MODEL_ARGS "lighteval|aime24|0|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
-# # MATH-500
-TASK=math_500
-lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # # MATH-500
+# TASK=math_500
+# lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
-# GPQA Diamond
-TASK=gpqa:diamond
-lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # GPQA Diamond
+# TASK=gpqa:diamond
+# lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
 ##### LiveCodeBench
 #####lighteval vllm $MODEL_ARGS "extended|lcb:codegeneration|0|0" \
@@ -35,15 +35,15 @@ lighteval vllm $MODEL_ARGS "extended|ifeval|0|0" \
     --output-dir $OUTPUT_DIR
 
 
-# # GSM8k
-lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # # GSM8k
+# lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
-# # # # MMLU
-lighteval vllm $MODEL_ARGS "leaderboard|mmlu|5|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # # # # MMLU
+# lighteval vllm $MODEL_ARGS "leaderboard|mmlu|5|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
 
 # MMMLU-Pro 
