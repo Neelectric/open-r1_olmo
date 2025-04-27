@@ -7,6 +7,12 @@ OUTPUT_DIR=data/evals/$MODEL
 
 
 # ### gaokao
-CUDA_VISIBLE_DEVICES=1 lighteval vllm $MODEL_ARGS "lighteval|agieval:gaokao-mathqa|0|0" \
+# CUDA_VISIBLE_DEVICES=1 lighteval vllm $MODEL_ARGS "lighteval|agieval:gaokao-mathqa|0|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
+
+
+### bigbench|mathematical_induction
+CUDA_VISIBLE_DEVICES=1 lighteval vllm $MODEL_ARGS "bigbench|mathematical_induction|0|0" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR
