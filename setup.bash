@@ -19,6 +19,8 @@ uv pip install flashinfer-python
 uv pip install -U vllm
 uv pip install -U trl
 
+uv pip install bigbench
+
 huggingface-cli download open-r1/OpenR1-Math-220k --repo-type dataset
 apt install gettext -y
 sudo apt-get install slurm-wlm
