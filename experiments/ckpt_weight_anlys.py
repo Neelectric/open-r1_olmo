@@ -197,11 +197,7 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
     ckpt_param = ckpt_params[name]
     name_list = name.split(".")
     if "layers" in name_list:
-      # print(name)
-      # print(base_param.shape)
-      # print(base_param)
-      # print(ckpt_param)
-      
+            
       frob_norm_base = torch.linalg.norm(base_param)
       frob_norm_diff = torch.linalg.norm(ckpt_param - base_param)
       normed_frob_norm_diff = frob_norm_diff / frob_norm_base if frob_norm_base > 0 else float('inf')
@@ -262,17 +258,17 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
   
   # Get colorbar and modify its appearance
   cbar = ax.collections[0].colorbar
-  cbar.ax.set_ylabel('Norm difference\n(min: {:.6f}, max: {:.6f})'.format(vmin, vmax), 
+  cbar.ax.set_ylabel('Norm difference',
                     fontsize=colorbar_size)
   cbar.ax.tick_params(labelsize=colorbar_size)
   
-  # Add explicit min/max ticks to colorbar
-  ticks = list(cbar.get_ticks())
-  if vmin not in ticks:
-      ticks = [vmin] + ticks
-  if vmax not in ticks:
-      ticks = ticks + [vmax]
-  cbar.set_ticks(ticks)
+  # # Add explicit min/max ticks to colorbar
+  # ticks = list(cbar.get_ticks())
+  # if vmin not in ticks:
+  #     ticks = [vmin] + ticks
+  # if vmax not in ticks:
+  #     ticks = ticks + [vmax]
+  # cbar.set_ticks(ticks)
   
   ax.invert_yaxis()  # this should layer 0 is at the bottom?
   return fig
@@ -321,7 +317,7 @@ def main():
     
   # lets find the global mins and maxes to plot on the same colourplot scales
   global_min = 99999
-  global_max = -9999
+  global_max = -99999
   for revision in revisions:
     for key, value in results_dicts[revision].items():
       matrix_max = max(value)
@@ -350,7 +346,7 @@ def main():
   import imageio.v2 as imageio
   images = [imageio.imread(png_path) for png_path in png_paths]
   gif_path = f"{gif_dir}/training_dynamics.gif"
-  imageio.mimsave(gif_path, images, duration=0.1, loop=0)
+  imageio.mimsave(gif_path, images, fps=5, loop=0)
   print(f"GIF saved to {gif_path}")
   
   # # Optionally, clean up the PNG files
