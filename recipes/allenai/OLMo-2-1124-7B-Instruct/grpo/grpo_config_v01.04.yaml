@@ -15,11 +15,11 @@ dataset_prompt_column: problem
 
 # GRPO hyperparam
 optim: adamw_torch
-lr_scheduler_type: constant_with_warmup #also see by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
+lr_scheduler_type: linear #also see by https://kalomaze.bearblog.dev/grpo-judge-experiments-findings-and-empirical-observations/
 # lr_scheduler_kwargs:
 #   min_lr_rate: 0.1
 warmup_ratio: 0.1
-learning_rate: 1.0e-06 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
+learning_rate: 5.0e-05 # https://wandb.ai/huggingface/open-r1/runs/2d9grsso?nw=nwuseredbeeching here even more aggressive 1e-4
 gradient_accumulation_steps: 1
 per_device_eval_batch_size: 1
 per_device_train_batch_size: 16
@@ -40,7 +40,7 @@ use_liger_loss: true
 
 # GRPO trainer config
 bf16: true
-max_steps: 3268 # we have num_iterations at 4, so the otherwise 817 steps would be consumed 4 times too quickly!
+max_steps: -1 # we have num_iterations at 4, so the otherwise 817 steps would be consumed 4 times too quickly!
 num_train_epochs: 1
 use_vllm: true
 vllm_device: "cuda:7"

@@ -16,146 +16,9 @@ import numpy as np
 import os
 from matplotlib.animation import PillowWriter
 from utils import list_revisions
+import re
+import pandas as pd
 
-
-
-# def compare_base_and_ckpt(base_model_id: str, ft_model_id: str, checkpoint_id: str) -> dict:
-#   """Compares the weights of a base model and a given checkpoint, using the normalized Frobenius norm of differences and standard deviations."""
-#   base_model = AutoModelForCausalLM.from_pretrained(
-#     pretrained_model_name_or_path=base_model_id,
-#     attn_implementation="flash_attention_2",
-#     device_map="cpu",
-#     torch_dtype=torch.bfloat16,
-#   )
-#   ckpt_model = AutoModelForCausalLM.from_pretrained(
-#     pretrained_model_name_or_path=ft_model_id,
-#     revision=checkpoint_id,
-#     attn_implementation="flash_attention_2",
-#     device_map="cpu",
-#     torch_dtype=torch.bfloat16,
-#   )
-#   # sanity check 
-#   base_params = dict(base_model.named_parameters())
-#   ckpt_params = dict(ckpt_model.named_parameters())
-#   assert base_params.keys() == ckpt_params.keys()
-  
-#   comparison_results = {}
-#   total = len(base_params)
-#   for name, base_param in tqdm(base_model.named_parameters(), dynamic_ncols=True, total=total):
-#     ckpt_param = ckpt_params[name]
-#     norm_of_diff = torch.linalg.norm(ckpt_param - base_param).item()
-#     norm_of_base = torch.linalg.norm(base_param).item()
-#     rel_diff = norm_of_diff / norm_of_base if norm_of_base > 0 else float('inf')
-#     comparison_results[name] = {
-#       "frob_norm_of_diff": norm_of_diff,
-#       "frob_norm_of_rel_diff": rel_diff,
-#       'param_size': base_param.numel()
-#     }
-#     # assert norm_of_diff == 0.0
-#   return comparison_results
-
-# def sort_by_diff_norm(comparison_results, metric='frob_norm_of_rel_diff'):
-#     """
-#     Sort the comparison results by the specified metric in descending order.
-    
-#     Args:
-#         comparison_results: Dictionary output from compare_checkpoints function
-#         metric: Which metric to sort by ('absolute_diff_norm', 'relative_diff_norm', etc.)
-        
-#     Returns:
-#         List of tuples (parameter_name, values) sorted by the specified metric
-#     """
-#     sorted_results = sorted(
-#         comparison_results.items(), 
-#         key=lambda item: item[1][metric], 
-#         reverse=True
-#     )
-#     return sorted_results
-  
-# def aggregate_by_matrix_type(comparison_results):
-#     """
-#     Aggregate comparison results by matrix type (queries, keys, values, etc.)
-    
-#     Args:
-#         comparison_results: Dictionary output from compare_checkpoints function
-        
-#     Returns:
-#         Dictionary with aggregated statistics by matrix type
-#     """
-#     # Initialize data structure to hold aggregated results
-#     aggregated = defaultdict(lambda: {
-#         'total_absolute_diff': 0.0,
-#         'total_parameters': 0,
-#         'max_absolute_diff': 0.0,
-#         'max_relative_diff': 0.0,
-#         'param_names': []
-#     })
-    
-#     # Define patterns to identify matrix types
-#     matrix_patterns = {
-#         'query_proj': ['q_proj', 'self_attn.q_proj', 'query_proj'],
-#         'key_proj': ['k_proj', 'self_attn.k_proj', 'key_proj'],
-#         'value_proj': ['v_proj', 'self_attn.v_proj', 'value_proj'],
-#         'output_proj': ['o_proj', 'self_attn.o_proj', 'output_proj'],
-#         'mlp_gate': ['gate_proj', 'mlp.gate_proj'],
-#         'mlp_up': ['up_proj', 'mlp.up_proj'],
-#         'mlp_down': ['down_proj', 'mlp.down_proj'],
-#         'layer_norm': ['norm', 'ln_', 'layer_norm'],
-#         'embedding': ['embed', 'embedding'],
-#         'lm_head': ['lm_head']
-#     }
-    
-#     # Process each parameter
-#     for name, values in comparison_results.items():
-#         # Find the matrix type
-#         matrix_type = 'other'
-#         for type_name, patterns in matrix_patterns.items():
-#             if any(pattern in name for pattern in patterns):
-#                 matrix_type = type_name
-#                 break
-        
-#         # Update aggregated statistics
-#         aggregated[matrix_type]['total_absolute_diff'] += values['frob_norm_of_diff']
-#         aggregated[matrix_type]['total_parameters'] += values['param_size']
-#         aggregated[matrix_type]['max_absolute_diff'] = max(
-#             aggregated[matrix_type]['max_absolute_diff'], 
-#             values['frob_norm_of_diff']
-#         )
-#         aggregated[matrix_type]['max_relative_diff'] = max(
-#             aggregated[matrix_type]['max_relative_diff'], 
-#             values['frob_norm_of_rel_diff']
-#         )
-#         aggregated[matrix_type]['param_names'].append(name)
-    
-#     # Calculate average change per parameter for each type
-#     for matrix_type in aggregated:
-#         if aggregated[matrix_type]['total_parameters'] > 0:
-#             aggregated[matrix_type]['avg_change_per_param'] = (
-#                 aggregated[matrix_type]['total_absolute_diff'] / 
-#                 aggregated[matrix_type]['total_parameters']
-#             )
-    
-#     return aggregated
-
-# def print_matrix_type_summary(aggregated_results):
-#     """
-#     Print a summary of matrix type changes sorted by total change
-#     """
-#     # Sort by total absolute difference
-#     sorted_types = sorted(
-#         aggregated_results.items(),
-#         key=lambda x: x[1]['total_absolute_diff'],
-#         reverse=True
-#     )
-    
-#     print("\nMatrix Type Change Summary (sorted by total absolute difference):")
-#     print("=" * 80)
-#     print(f"{'Matrix Type':<15} {'Total Abs Diff':<15} {'Total Params':<15} {'Avg Change/Param':<15}")
-#     print("-" * 80)
-    
-#     for matrix_type, stats in sorted_types:
-#         print(f"{matrix_type:<15} {stats['total_absolute_diff']:<15.6f} "
-#               f"{stats['total_parameters']:<15} {stats.get('avg_change_per_param', 0):<15.8f}")
 
 def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
   """Compares the weights of a base model and a given checkpoint, using the normalized Frobenius norm of differences and standard deviations."""
@@ -274,12 +137,123 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
   return fig
 
 
+def plot_trajectories(results_dicts: dict, gif_dir:str) -> None:
+  """Written by Claude 3.7 Sonnet, plots the trajectories of norms throughout training"""
+  # Extract step numbers from checkpoint names
+  def extract_step(checkpoint):
+      match = re.search(r'step-(\d+)', checkpoint)
+      return int(match.group(1)) if match else 0
+
+  # Sort checkpoints by step number and exclude 'main' checkpoint
+  sorted_checkpoints = sorted([cp for cp in results_dicts.keys() if cp != 'main'], key=extract_step)
+  sorted_steps = [extract_step(cp) for cp in sorted_checkpoints]
+  
+  # Calculate the max step to determine 100% completion
+  max_step = max(sorted_steps) if sorted_steps else 1  # Avoid division by zero
+  
+  # Create a list of percentages
+  sorted_percentages = [(step / max_step) * 100 for step in sorted_steps]
+
+  # Define the matrices to analyze
+  matrices = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+  # Set up the plotting environment
+  sns.set(style="whitegrid")
+  sns.set_palette("viridis", 32)  # Palette with 32 colors for layers
+  
+  # Increase all font sizes
+  plt.rcParams.update({
+      'font.size': 16,
+      'axes.titlesize': 24,
+      'axes.labelsize': 20,
+      'xtick.labelsize': 16,
+      'ytick.labelsize': 16,
+      'legend.fontsize': 16,
+      'legend.title_fontsize': 18
+  })
+
+  # Create individual plots for each matrix
+  for matrix in matrices:
+      plt.figure(figsize=(15, 8))
+      
+      # Prepare data
+      data = []
+      for checkpoint in sorted_checkpoints:
+          step = extract_step(checkpoint)
+          percentage = (step / max_step) * 100  # Convert to percentage
+          
+          if matrix in results_dicts[checkpoint]:
+              layer_norms = results_dicts[checkpoint][matrix]
+              
+              for layer, norm in enumerate(layer_norms):
+                  data.append({
+                      'Step': percentage,  # Use percentage instead of raw step
+                      'Layer': f'Layer {layer}',
+                      'Norm': norm
+                  })
+      
+      df = pd.DataFrame(data)
+      if not df.empty:
+          # Create the plot
+          sns.lineplot(
+              x='Step', 
+              y='Norm', 
+              hue='Layer', 
+              data=df
+          )
+          
+          plt.title(f'Norm Trajectory for {matrix}', fontsize=24, pad=20)
+          plt.xlabel('Training Progress (%)', fontsize=20, labelpad=15)  # Updated label
+          plt.ylabel('Frobenius Norm', fontsize=20, labelpad=15)
+          
+          # Move legend outside the plot with larger font size
+          plt.legend(title='Layer', bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=16, title_fontsize=18)
+          plt.tight_layout()
+          plt.savefig(f'{gif_dir}/norm_trajectory_{matrix}.png', dpi=300, bbox_inches='tight')
+          plt.close()
+
+  # Also create a summary plot showing average norm across layers for each matrix
+  plt.figure(figsize=(15, 8))
+
+  # Define a distinct color palette for different matrix types
+  distinct_colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628']
+
+  for i, matrix in enumerate(matrices):
+      # Calculate mean norm across layers for each checkpoint
+      mean_norms = []
+      
+      for checkpoint in sorted_checkpoints:
+          if matrix in results_dicts[checkpoint]:
+              layer_norms = results_dicts[checkpoint][matrix]
+              if layer_norms:
+                  mean_norms.append(np.mean(layer_norms))
+              else:
+                  mean_norms.append(np.nan)
+          else:
+              mean_norms.append(np.nan)
+      
+      # Plot the mean norms with distinct colors, using percentages on x-axis
+      plt.plot(sorted_percentages, mean_norms, marker='o', linewidth=2, label=matrix, color=distinct_colors[i])
+
+  plt.title('Mean Norm Trajectory Across Layers', fontsize=24, pad=20)
+  plt.xlabel('Training Progress (%)', fontsize=20, labelpad=15)  # Updated label
+  plt.ylabel('Mean Frobenius Norm', fontsize=20, labelpad=15)
+  plt.legend(title='Matrix Type', fontsize=16, title_fontsize=18)
+  plt.grid(True)
+  plt.tight_layout()
+  plt.savefig(f'{gif_dir}/mean_norm_trajectories.png', dpi=300)
+
+  print("Visualization complete! Individual plots for each matrix saved as 'norm_trajectory_*.png'")
+  print("Summary plot saved as 'mean_norm_trajectories.png'")
+  return
+
+
 def main():
   # base_model_id = "Qwen/Qwen2.5-7B-Instruct"
   # ft_model_id = "Neelectric/Qwen2.5-7B-Instruct_SFTv00.13"
   
   base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.00"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
   # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
   revisions = list_revisions(ft_model_id)
   print(revisions)
@@ -338,10 +312,6 @@ def main():
         if matrix_min < global_min:
           global_min = matrix_min
     print(f"FINAL MIN IS {global_min} AND FINAL MAX IS {global_max}")
-    
-  # print("overwriting min to 0.0")
-  # global_min = 0.00
-  # global_max = 0.05
       
   figs = []
   for i, revision in enumerate(revisions):
@@ -364,9 +334,8 @@ def main():
   imageio.mimsave(gif_path, images, fps=5, loop=0)
   print(f"GIF saved to {gif_path}")
   
-  # # Optionally, clean up the PNG files
-  # for png_path in png_paths:
-  #   os.remove(png_path)
+  ## quick and dirty script to plot trajectories too
+  plot_trajectories(results_dicts, gif_dir)
 
 
 if __name__ == '__main__':
