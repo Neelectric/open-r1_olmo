@@ -34,5 +34,5 @@ CUDA_VISIBLE_DEVICES=1,2,3,4,5,6,7 accelerate launch -m lm_eval --model hf \
     --tasks hendrycks_math \
     --num_fewshot 4 \
     --output_path $OUTPUT_DIR \
-    --batch_size 32 \
+    --batch_size 16 \
     --apply_chat_template 
