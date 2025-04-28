@@ -279,8 +279,8 @@ def main():
   # ft_model_id = "Neelectric/Qwen2.5-7B-Instruct_SFTv00.13"
   
   base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
+  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
   revisions = list_revisions(ft_model_id)
   print(revisions)
   
@@ -316,17 +316,32 @@ def main():
         print(f"cached results for revision {revision}!")
     
   # lets find the global mins and maxes to plot on the same colourplot scales
+  min_max_source = "final"
   global_min = 99999
   global_max = -99999
-  for revision in revisions:
-    for key, value in results_dicts[revision].items():
-      matrix_max = max(value)
-      matrix_min = min(value)
-      if matrix_max > global_max:
-        global_max = matrix_max
-      if matrix_min < global_min:
-        global_min = matrix_min
-  print(f"GLOBAL MIN IS {global_min} AND GLOBAL MAX IS {global_max}")
+  if min_max_source == "global":
+    for revision in revisions:
+      for key, value in results_dicts[revision].items():
+        matrix_max = max(value)
+        matrix_min = min(value)
+        if matrix_max > global_max:
+          global_max = matrix_max
+        if matrix_min < global_min:
+          global_min = matrix_min
+    print(f"GLOBAL MIN IS {global_min} AND GLOBAL MAX IS {global_max}")
+  elif min_max_source == "final":
+    for key, value in results_dicts["main"].items():
+        matrix_max = max(value)
+        matrix_min = min(value)
+        if matrix_max > global_max:
+          global_max = matrix_max
+        if matrix_min < global_min:
+          global_min = matrix_min
+    print(f"FINAL MIN IS {global_min} AND GLOBAL MAX IS {global_max}")
+    
+  # print("overwriting min to 0.0")
+  # global_min = 0.00
+  # global_max = 0.05
       
   figs = []
   for i, revision in enumerate(revisions):
