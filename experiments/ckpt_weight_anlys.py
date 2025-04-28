@@ -316,7 +316,7 @@ def main():
       del results_dict["k_norm"]
       results_dicts[revision] = results_dict
       with open(json_path, 'w') as f:
-        json.dump(results_dicts)
+        json.dump(results_dicts, f)
         print(f"cached results for revision {revision}!")
     
   # lets find the global mins and maxes to plot on the same colourplot scales
