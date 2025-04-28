@@ -315,7 +315,7 @@ def main():
       del results_dict["q_norm"]
       del results_dict["k_norm"]
       results_dicts[revision] = results_dict
-      with open(json_path) as f:
+      with open(json_path, 'w') as f:
         json.dump(results_dicts)
         print(f"cached results for revision {revision}!")
     
