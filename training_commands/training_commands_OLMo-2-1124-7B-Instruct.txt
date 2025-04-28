@@ -3,10 +3,10 @@ VERSION=v997 ACCELERATE_LOG_LEVEL=info envsubst < recipes/allenai/OLMo-2-1124-7B
 
 
 ### SFT with envsubst
-VERSION=v01.00 ACCELERATE_LOG_LEVEL=info envsubst < recipes/allenai/OLMo-2-1124-7B-Instruct/sft/sft_config_v01.00.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=7 src/open_r1/sft.py --config temp_config.yaml
+VERSION=v01.05 ACCELERATE_LOG_LEVEL=info envsubst < recipes/allenai/OLMo-2-1124-7B-Instruct/sft/sft_config_v01.05.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=7 src/open_r1/sft.py --config temp_config.yaml
 
 
 ### GRPO with envsubst
 CUDA_VISIBLE_DEVICES=7 trl vllm-serve --model allenai/OLMo-2-1124-7B-Instruct --host 0.0.0.0 --port 8000
 
-VERSION=v01.01 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 ACCELERATE_LOG_LEVEL=info envsubst < recipes/allenai/OLMo-2-1124-7B-Instruct/grpo/grpo_config_v01.01.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=7 src/open_r1/grpo.py --config temp_config.yaml
+VERSION=v01.04 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 ACCELERATE_LOG_LEVEL=info envsubst < recipes/allenai/OLMo-2-1124-7B-Instruct/grpo/grpo_config_v01.04.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=7 src/open_r1/grpo.py --config temp_config.yaml

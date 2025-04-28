@@ -28,21 +28,21 @@ padding_free: true # following https://github.com/huggingface/trl/pull/3076
 
 # SFT trainer config
 max_steps: -1 #701/3348
-num_train_epochs: 2
+num_train_epochs: 1
 bf16: true
 do_eval: false
 eval_strategy: 'no'
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.04
-hub_model_revision: v01.04
+hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_SFT${VERSION}
+hub_model_revision: ${VERSION}
 hub_strategy: every_save
 log_level: info
 logging_steps: 2
 logging_strategy: steps
 packing: false
-output_dir: data/allenai/OLMo-2-1124-7B-Instruct_SFTv01.04
+output_dir: data/allenai/OLMo-2-1124-7B-Instruct_SFT${VERSION}
 overwrite_output_dir: true
 push_to_hub: true
 report_to:
@@ -55,7 +55,7 @@ torch_compile: false
 use_liger_kernel: true
 wandb_entity: Neelectric
 wandb_project: open-r1_SFT
-run_name: allenai/OLMo-2-1124-7B-Instruct_SFTv01.04
+run_name: allenai/OLMo-2-1124-7B-Instruct_SFT${VERSION}
 callbacks:
 - push_to_hub_revision
 # benchmarks:
