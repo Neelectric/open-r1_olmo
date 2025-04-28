@@ -161,14 +161,14 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
   """Compares the weights of a base model and a given checkpoint, using the normalized Frobenius norm of differences and standard deviations."""
   base_model = AutoModelForCausalLM.from_pretrained(
     pretrained_model_name_or_path=base_model_id,
-    attn_implementation="flash_attention_2",
+    # attn_implementation="flash_attention_2",
     device_map="cpu",
     torch_dtype=torch.bfloat16,
   )
   ckpt_model = AutoModelForCausalLM.from_pretrained(
     pretrained_model_name_or_path=ft_model_id,
     revision=revision,
-    attn_implementation="flash_attention_2",
+    # attn_implementation="flash_attention_2",
     device_map="cpu",
     torch_dtype=torch.bfloat16,
     cache_dir="data/"+ft_model_id,
