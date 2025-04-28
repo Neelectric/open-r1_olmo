@@ -293,7 +293,7 @@ def main():
   
   gif_dir = f"figures/{ft_model_id}"
   os.makedirs(gif_dir, exist_ok=True)
-  json_path = gif_dir + "results_dict.json"
+  json_path = gif_dir + "/results_dict.json"
   try:
     with open(json_path) as f:
       results_dicts = json.load(f)
