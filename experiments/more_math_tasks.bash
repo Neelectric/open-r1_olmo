@@ -23,10 +23,10 @@ OUTPUT_DIR=data/evals/$MODEL
 #     --use-chat-template \
 #     --output-dir $OUTPUT_DIR
 
-### lighteval|math
-CUDA_VISIBLE_DEVICES=1 lighteval vllm $MODEL_ARGS "lighteval|mathqa|0|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# ### lighteval|math
+# CUDA_VISIBLE_DEVICES=1 lighteval vllm $MODEL_ARGS "lighteval|mathqa|0|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
 # ## hendrycks_math
 # CUDA_VISIBLE_DEVICES=1,2,3,4,5,6,7 accelerate launch -m lm_eval --model hf \
@@ -36,3 +36,10 @@ CUDA_VISIBLE_DEVICES=1 lighteval vllm $MODEL_ARGS "lighteval|mathqa|0|0" \
 #     --output_path $OUTPUT_DIR \
 #     --batch_size 16 \
 #     --apply_chat_template 
+
+CUDA_VISIBLE_DEVICES=1,2,3,4,5,6,7 accelerate launch -m lm_eval --model hf \
+    --model_args pretrained=$MODEL,dtype=auto, \
+    --tasks leaderboard_mmlu_pro \
+    --output_path $OUTPUT_DIR \
+    --batch_size 16 \
+    --apply_chat_template 
