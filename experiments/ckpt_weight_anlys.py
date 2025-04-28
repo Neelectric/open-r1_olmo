@@ -224,13 +224,56 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
 
   x_labels = list(results_dict.keys()) 
   y_labels = [f"Layer {i}" for i in range(data.shape[0])]
+  
+  # Set font sizes
+  title_size = 18
+  label_size = 16
+  tick_size = 14
+  colorbar_size = 14
+  
   fig, ax = plt.subplots(figsize=(12, 8))
-  sns.heatmap(data, annot=False, cmap="viridis", xticklabels=x_labels, yticklabels=y_labels, ax=ax, vmin=vmin, vmax=vmax)
-
-  # Add labels and title
-  ax.set_xlabel("Parameters")
-  ax.set_ylabel("Layers")
-  ax.set_title(f"Normalized frobenius norm of the differences for each matrix:\n{ft_model_id} vs. {revision}")
+  
+  # Create the heatmap with increased font sizes
+  heatmap = sns.heatmap(
+      data, 
+      annot=False, 
+      cmap="viridis", 
+      xticklabels=x_labels, 
+      yticklabels=y_labels, 
+      ax=ax, 
+      vmin=vmin, 
+      vmax=vmax,
+      cbar_kws={
+          'label': f'Norm difference',
+          'format': '%.5f'
+      }
+  )
+  
+  # Increase font size for labels and title
+  ax.set_xlabel("Parameters", fontsize=label_size)
+  ax.set_ylabel("Layers", fontsize=label_size)
+  ax.set_title(
+      f"Normalized frobenius norm of the differences for each matrix:\n{ft_model_id} vs. {revision}", 
+      fontsize=title_size
+  )
+  
+  # Increase font size for tick labels
+  ax.tick_params(axis='both', which='major', labelsize=tick_size)
+  
+  # Get colorbar and modify its appearance
+  cbar = ax.collections[0].colorbar
+  cbar.ax.set_ylabel('Norm difference\n(min: {:.6f}, max: {:.6f})'.format(vmin, vmax), 
+                    fontsize=colorbar_size)
+  cbar.ax.tick_params(labelsize=colorbar_size)
+  
+  # Add explicit min/max ticks to colorbar
+  ticks = list(cbar.get_ticks())
+  if vmin not in ticks:
+      ticks = [vmin] + ticks
+  if vmax not in ticks:
+      ticks = ticks + [vmax]
+  cbar.set_ticks(ticks)
+  
   ax.invert_yaxis()  # this should layer 0 is at the bottom?
   return fig
 
@@ -252,9 +295,8 @@ def main():
   os.makedirs(gif_dir, exist_ok=True)
   json_path = gif_dir + "results_dict.json"
   try:
-    f = open(json_path)
-    results_dicts = json.load(f)
-    f.close()
+    with open(json_path) as f:
+      results_dicts = json.load(f)
     print("successfully loaded results dicts, will resume here")
   except:
     print("results_dicts not found for this fine-tune, starting to populate it")
@@ -273,6 +315,9 @@ def main():
       del results_dict["q_norm"]
       del results_dict["k_norm"]
       results_dicts[revision] = results_dict
+      with open(json_path) as f:
+        json.dump(results_dicts)
+        print(f"cached results for revision {revision}!")
     
   # lets find the global mins and maxes to plot on the same colourplot scales
   global_min = 99999
