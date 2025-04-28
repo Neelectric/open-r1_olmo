@@ -337,7 +337,7 @@ def main():
           global_max = matrix_max
         if matrix_min < global_min:
           global_min = matrix_min
-    print(f"FINAL MIN IS {global_min} AND GLOBAL MAX IS {global_max}")
+    print(f"FINAL MIN IS {global_min} AND FINAL MAX IS {global_max}")
     
   # print("overwriting min to 0.0")
   # global_min = 0.00
