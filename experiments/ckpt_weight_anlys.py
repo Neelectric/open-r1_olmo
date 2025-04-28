@@ -76,6 +76,9 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
 
 
 def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
+  full_model_name = ft_model_id.split("/")[1]
+  model_name = full_model_name.split("_")[0]
+  method = full_model_name.split("_")[1]
   save_path = f"figures/{ft_model_id}/plot_results.pdf"
   os.makedirs(os.path.dirname(save_path), exist_ok=True)
   
@@ -85,12 +88,12 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
   y_labels = [f"Layer {i}" for i in range(data.shape[0])]
   
   # Set font sizes
-  title_size = 18
-  label_size = 16
-  tick_size = 14
-  colorbar_size = 14
+  title_size = 24
+  label_size = 18
+  tick_size = 20
+  colorbar_size = 20
   
-  fig, ax = plt.subplots(figsize=(12, 8))
+  fig, ax = plt.subplots(figsize=(14, 12))
   
   # Create the heatmap with increased font sizes
   heatmap = sns.heatmap(
@@ -107,12 +110,14 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
           'format': '%.5f'
       }
   )
+  plt.tight_layout()
+  fig.subplots_adjust(left=0.12, right=0.92, top=0.92, bottom=0.07)
   
   # Increase font size for labels and title
   ax.set_xlabel("Parameters", fontsize=label_size)
   ax.set_ylabel("Layers", fontsize=label_size)
   ax.set_title(
-      f"Normalized frobenius norm of the differences for each matrix:\n{ft_model_id} vs. {revision}", 
+      f"Normalized frobenius norm of the differences for each matrix:\n{model_name} vs. after {method}", 
       fontsize=title_size
   )
   
@@ -253,8 +258,8 @@ def main():
   # ft_model_id = "Neelectric/Qwen2.5-7B-Instruct_SFTv00.13"
   
   base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
+  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
   revisions = list_revisions(ft_model_id)
   print(revisions)
   
