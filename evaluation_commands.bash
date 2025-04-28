@@ -13,9 +13,9 @@ MAX_GPU_MEM_USAGE=0.8
 OUTPUT_DIR=data/evals/$MODEL
 
 # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,max_model_length=$MAX_TOKENS,max_num_batched_tokens=$MAX_TOKENS,gpu_memory_utilization=$MAX_GPU_MEM_USAGE,generation_parameters={max_new_tokens:$MAX_TOKENS,temperature:0.6,top_p:0.95}"
-# MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,,max_model_length=$MAX_TOKENS,max_num_batched_tokens=$MAX_TOKENS,pipeline_parallel_size=$NUM_GPUS,gpu_memory_utilization=$MAX_GPU_MEM_USAGE,generation_parameters={max_new_tokens:$MAX_TOKENS,temperature:0.6,top_p:0.95}"
+MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=$MAX_TOKENS,max_num_batched_tokens=$MAX_TOKENS,gpu_memory_utilization=$MAX_GPU_MEM_USAGE,generation_parameters={max_new_tokens:$MAX_TOKENS,temperature:0.6,top_p:0.95}"
 
-MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=32768,max_num_batched_tokens=32768,gpu_memory_utilization=0.8,generation_parameters={max_new_tokens:32768,temperature:0.6,top_p:0.95}"
+# MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=32768,max_num_batched_tokens=32768,gpu_memory_utilization=0.8,generation_parameters={max_new_tokens:32768,temperature:0.6,top_p:0.95}"
 
 
 # AIME 2024
