@@ -56,5 +56,5 @@ accelerate launch -m lm_eval --model hf \
     --apply_chat_template 
 
 
-lighteval vllm "pretrained=Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05,dtype=bfloat16,max_model_length=4096,gpu_memory_utilization=0.92,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}" "lighteval|math_500|0|0" \
+lighteval vllm "pretrained=Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05,dtype=bfloat16,max_model_length=4096,gpu_memory_utilization=0.92,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}" "lighteval|gsm8k|5|0" \
     --use-chat-template 
