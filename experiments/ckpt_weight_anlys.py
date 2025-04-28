@@ -6,6 +6,7 @@ from huggingface_hub import HfApi
 
 from tqdm import tqdm
 import torch
+import json
 import fire
 from collections import defaultdict
 
@@ -239,37 +240,45 @@ def main():
   # ft_model_id = "Neelectric/Qwen2.5-7B-Instruct_SFTv00.13"
   
   base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
+  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
   revisions = list_revisions(ft_model_id)
   print(revisions)
   
-  results_dicts = []
+  results_dicts = {}
   counter = 0
+  
+  gif_dir = f"figures/{ft_model_id}"
+  os.makedirs(gif_dir, exist_ok=True)
+  json_path = gif_dir + "results_dict.json"
+  try:
+    f = open(json_path)
+    results_dicts = json.load(f)
+    f.close()
+    print("successfully loaded results dicts, will resume here")
+  except:
+    print("results_dicts not found for this fine-tune, starting to populate it")
   
   # lets compare each revision to the base model via normalised frobenius norm and save results
   for revision in tqdm(revisions, dynamic_ncols=True):
     print("*"*100)
     print(f"NOW COMPARING TO REVISION {revision}")
     print("*"*100)
-    # comparison_results = compare_base_and_ckpt(base_model_id, ft_model_id, revision)
-    # sorted_results = sort_by_diff_norm(comparison_results)
-    # # for name,val in sorted_results:
-    # #   print(name, val["frob_norm_of_rel_diff"])
-      
-    # aggregated_results = aggregate_by_matrix_type(comparison_results)
-    # print_matrix_type_summary(aggregated_results)
-    results_dict = compare_base_and_ckpt(base_model_id, ft_model_id, revision)
-    print("removing q/k norms cuz idc")
-    del results_dict["q_norm"]
-    del results_dict["k_norm"]
-    results_dicts.append(results_dict)
+    if results_dicts.get(revision):
+      print("we have an entry for this revision already! skipping recomputation...")
+    else:
+      print("we don't have an entry yet, starting comparison")
+      results_dict = compare_base_and_ckpt(base_model_id, ft_model_id, revision)
+      print("removing q/k norms cuz idc")
+      del results_dict["q_norm"]
+      del results_dict["k_norm"]
+      results_dicts[revision] = results_dict
     
   # lets find the global mins and maxes to plot on the same colourplot scales
   global_min = 99999
   global_max = -9999
-  for result_dict in results_dicts:
-    for key, value in results_dict.items():
+  for revision in revisions:
+    for key, value in results_dicts[revision].items():
       matrix_max = max(value)
       matrix_min = min(value)
       if matrix_max > global_max:
@@ -280,11 +289,8 @@ def main():
       
   figs = []
   for i, revision in enumerate(revisions):
-    fig = plot_results(results_dicts[i], ft_model_id, revision, global_min, global_max)
+    fig = plot_results(results_dicts[revision], ft_model_id, revision, global_min, global_max)
     figs.append(fig)
-
-  gif_dir = f"figures/{ft_model_id}"
-  os.makedirs(gif_dir, exist_ok=True)
   
   # Save each figure as a separate PNG file
   png_paths = []

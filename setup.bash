@@ -16,10 +16,13 @@ uv pip install seaborn
 uv pip install imageio
 uv pip install flashinfer-python
 
-uv pip install -U vllm
 uv pip install -U trl
+uv pip uninstall flash-attn
+uv pip install -U flash-attn
+uv pip install -U transformers
+uv pip install -U vllm
 
-uv pip install bigbench
+# uv pip install bigbench
 
 huggingface-cli download open-r1/OpenR1-Math-220k --repo-type dataset
 apt install gettext -y
