@@ -30,11 +30,11 @@ lighteval vllm $MODEL_ARGS "lighteval|aime24|0|0" \
 #     --use-chat-template \
 #     --output-dir $OUTPUT_DIR
 
-# # GPQA Diamond
-# TASK=gpqa:diamond
-# lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+# GPQA Diamond
+TASK=gpqa:diamond
+lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
 # # LiveCodeBench
 # # lighteval vllm $MODEL_ARGS "extended|lcb:codegeneration|0|0" \
@@ -48,9 +48,9 @@ lighteval vllm $MODEL_ARGS "extended|ifeval|0|0" \
 
 
 # # GSM8k
-lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
 # # # MMLU
 # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=4096,gpu_memory_utilization=0.7,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}"
