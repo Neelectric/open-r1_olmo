@@ -1,7 +1,13 @@
+uv pip uninstall transformers
+uv pip uninstall vllm
+uv pip install vllm==0.7.2
+# transformers==4.51.3
+#  + vllm==0.7.2
+
 NUM_GPUS=8
 NUM_TOKS=4096
 MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05
-MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,max_model_length=$NUM_TOKS,gpu_memory_utilization=0.92,generation_parameters={max_new_tokens:$NUM_TOKS,temperature:0.6,top_p:0.95}"
+MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=$NUM_TOKS,gpu_memory_utilization=0.92,generation_parameters={max_new_tokens:$NUM_TOKS,temperature:0.6,top_p:0.95}"
 
 OUTPUT_DIR=data/evals/$MODEL
 
@@ -56,5 +62,14 @@ accelerate launch -m lm_eval --model hf \
     --apply_chat_template 
 
 
-lighteval vllm "pretrained=Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05,dtype=bfloat16,max_model_length=4096,gpu_memory_utilization=0.92,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}" "lighteval|gsm8k|5|0" \
-    --use-chat-template 
+# lighteval vllm "pretrained=Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05,dtype=bfloat16,max_model_length=4096,gpu_memory_utilization=0.92,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}" "lighteval|gsm8k|5|0" \
+#     --use-chat-template 
+
+accelerate launch -m lm_eval --model hf \
+    --model_args pretrained=Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05,dtype=auto, \
+    --tasks leaderboard_mmlu_pro \
+    --batch_size 16 \
+    --apply_chat_template 
+
+
+uv pip install -U vllm
