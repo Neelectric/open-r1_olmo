@@ -34,7 +34,7 @@ disable_dropout: true #following this https://github.com/huggingface/trl/release
 loss_type: "dr_grpo"
 shuffle_dataset: true
 mask_truncated_completions: true
-use_liger_loss: true
+use_liger_loss: false #unfortunately only compatible with bnpo
 
 
 
