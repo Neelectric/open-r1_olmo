@@ -88,8 +88,8 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
   y_labels = [f"Layer {i}" for i in range(data.shape[0])]
   
   # Set font sizes
-  title_size = 24
-  label_size = 18
+  title_size = 28
+  label_size = 24
   tick_size = 20
   colorbar_size = 20
   

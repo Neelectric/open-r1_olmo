@@ -61,7 +61,8 @@ def compare_norm_trajectories(sft_model_id, grpo_model_id, output_dir="figures/c
     })
     
     # Create the summary plot
-    plt.figure(figsize=(15, 10))
+    plt.figure(figsize=(10, 10))
+    
     
     # Plot data for both models
     for i, matrix in enumerate(matrices):
@@ -100,6 +101,10 @@ def compare_norm_trajectories(sft_model_id, grpo_model_id, output_dir="figures/c
                  linestyle='-', marker='s', linewidth=2.5, 
                  color=distinct_colors[i], 
                  label=f"{matrix} (GRPO)")
+
+    plt.yscale('log')
+    from matplotlib.ticker import ScalarFormatter
+    plt.gca().yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
     
     # Customize the plot
     plt.title('Mean Norm Trajectory Comparison: SFT vs GRPO', fontsize=24, pad=20)
@@ -107,11 +112,29 @@ def compare_norm_trajectories(sft_model_id, grpo_model_id, output_dir="figures/c
     plt.ylabel('Mean Frobenius Norm', fontsize=20, labelpad=15)
     plt.grid(True)
     
-    # Add a legend with custom styling
-    legend = plt.legend(title="Matrix Type & Model", 
-                      fontsize=16, title_fontsize=18,
-                      bbox_to_anchor=(1.05, 1), 
-                      loc='upper left')
+    from matplotlib.lines import Line2D
+
+    # Create custom legend elements
+    matrix_legends = []
+    for i, matrix in enumerate(matrices):
+        matrix_legends.append(Line2D([0], [0], color=distinct_colors[i], lw=2, label=matrix))
+
+    model_legends = [
+        Line2D([0], [0], color='black', lw=2, linestyle='--', label='SFT'),
+        Line2D([0], [0], color='black', lw=2, linestyle='-', label='GRPO')
+    ]
+
+    # Create a legend for matrix types (colors)
+    first_legend = plt.legend(handles=matrix_legends, title="Matrix Type", 
+                            fontsize=16, title_fontsize=18,
+                            bbox_to_anchor=(1, 0.1), loc='lower right')
+    plt.gca().add_artist(first_legend)
+
+    # Create a second legend for model types (line styles)
+    plt.legend(handles=model_legends, title="Model", 
+            fontsize=16, title_fontsize=18,
+            bbox_to_anchor=(0.98, 0.55), loc='center right')
+
     
     plt.tight_layout()
     plt.savefig(f"{output_dir}/sft_vs_grpo_norm_comparison.png", dpi=300, bbox_inches="tight")
