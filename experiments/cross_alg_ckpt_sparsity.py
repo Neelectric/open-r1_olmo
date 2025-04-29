@@ -43,7 +43,7 @@ def compare_sparsity(base_model_id, ft_model_id, revision):
         # attn_implementation="flash_attention_2",
         device_map="cpu",
         torch_dtype=torch.bfloat16,
-        cache_dir="data/"+ft_model_id,
+        cache_dir="data/",
     )
     # sanity check 
     base_params = dict(base_model.named_parameters())
