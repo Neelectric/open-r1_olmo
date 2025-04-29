@@ -21,8 +21,7 @@ def normalized_update(before, after, epsilon=1e-10):
     # Stay in PyTorch for as long as possible
     diff = after - before
     norm_factor = torch.maximum(before.abs(), torch.tensor(epsilon, device=before.device, dtype=before.dtype))
-    norm_diff = diff / norm_factor
-    
+    norm_diff = (diff / norm_factor).to(torch.float16)
     # Only convert to numpy at the end
     return norm_diff.detach().numpy()
 
