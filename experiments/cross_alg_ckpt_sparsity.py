@@ -93,7 +93,7 @@ if __name__ == "__main__":
     revisions = list_revisions(sft_model_id)
     print(revisions)
     for revision in tqdm(revisions, dynamic_ncols=True):
-        hist_counts = compare_sparsity(sft_model_id, grpo_model_id)
+        hist_counts = compare_sparsity(base_model_id, sft_model_id, revision)
         np.save("data/" + sft_model_id + revision, hist_counts)
     
     # plot_histogram(sft_model_id, grpo_model_id)
