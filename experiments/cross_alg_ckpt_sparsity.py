@@ -90,8 +90,10 @@ if __name__ == "__main__":
     
     num_bins = 100  # Adjust as needed
     bin_edges = np.logspace(-8, 0, num_bins+1)  # Log bins from 10^-8 to 1
-    
-    hist_counts = compare_sparsity(sft_model_id, grpo_model_id)
-    np.save("data/" + sft_model_id, hist_counts)
+    revisions = list_revisions(sft_model_id)
+    print(revisions)
+    for revision in tqdm(revisions, dynamic_ncols=True):
+        hist_counts = compare_sparsity(sft_model_id, grpo_model_id)
+        np.save("data/" + sft_model_id + revision, hist_counts)
     
     # plot_histogram(sft_model_id, grpo_model_id)
