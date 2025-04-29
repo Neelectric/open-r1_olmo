@@ -49,8 +49,6 @@ def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
     "k_proj": [],
     "v_proj": [],
     "o_proj": [],
-    "q_norm": [],
-    "k_norm": [],
     "gate_proj": [],
     "up_proj": [],
     "down_proj": []
