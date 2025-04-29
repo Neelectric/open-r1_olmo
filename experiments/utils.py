@@ -17,7 +17,8 @@ def list_revisions(model_id: str) -> list[str]:
 def download_all_revisions_fast():
   # ft_model_id = "Neelectric/Qwen2.5-7B-Instruct_SFTv00.13"
   # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
+  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
   revisions = list_revisions(ft_model_id)
   print(revisions)
   command = [
@@ -25,6 +26,7 @@ def download_all_revisions_fast():
       "huggingface-cli",
       "download",
       ft_model_id,
+      "--cache-dir data/"
       "--revision",
       "placeholder_rev"
   ]
