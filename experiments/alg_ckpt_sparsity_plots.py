@@ -103,7 +103,7 @@ def plot_single_histogram(hist_counts, bin_edges, revision, model_id, output_dir
     
     # Make the revision more readable for the title
     revision_title = revision.replace("v01.05-step-", "step ")
-    plt.title(f"Distribution of Parameter Changes for {model_id}\n{revision_title}", fontsize=16)
+    plt.title(f"Distribution of Parameter Changes for {model_id.split('/')[-1]}\n{revision_title}", fontsize=16)
     
     # Add statistics annotation
     non_zero_changes = hist_counts[1:]  # Skip the first bin (which contains zero changes)
@@ -114,10 +114,21 @@ def plot_single_histogram(hist_counts, bin_edges, revision, model_id, output_dir
         plt.annotate(text, xy=(0.7, 0.9), xycoords='axes fraction', 
                     bbox=dict(boxstyle="round,pad=0.3", fc="white", alpha=0.8))
     
-    # Save the figure
+    # Ensure directory exists (create all needed directories)
     os.makedirs(output_dir, exist_ok=True)
-    safe_revision = revision.replace("/", "_")
-    plt.savefig(f"{output_dir}/{model_id}_{safe_revision}_histogram.png", dpi=300, bbox_inches="tight")
+    
+    # Create a simpler filename
+    model_short = model_id.split('/')[-1].split('_')[0]  # Just use OLMo part
+    step_match = re.search(r'step-(\d+)', revision)
+    if step_match:
+        step_num = step_match.group(1)
+        filename = f"{model_short}_step{step_num}_histogram.png"
+    else:
+        safe_revision = revision.replace("/", "_")
+        filename = f"{model_short}_{safe_revision}_histogram.png"
+    
+    # Save the figure
+    plt.savefig(f"{output_dir}/{filename}", dpi=300, bbox_inches="tight")
     plt.close()
 
 def plot_all_histograms(histogram_data, bin_edges, model_id, output_dir="plots"):
@@ -158,7 +169,7 @@ def plot_all_histograms(histogram_data, bin_edges, model_id, output_dir="plots")
     plt.grid(True, which="both", linestyle="--", alpha=0.5)
     plt.xlabel("Normalized Parameter Change (absolute)", fontsize=14)
     plt.ylabel("Density", fontsize=14)
-    plt.title(f"Distribution of Parameter Changes Across Training\n{model_id}", fontsize=16)
+    plt.title(f"Distribution of Parameter Changes Across Training\n{model_id.split('/')[-1]}", fontsize=16)
     
     # Add legend
     plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
@@ -168,7 +179,8 @@ def plot_all_histograms(histogram_data, bin_edges, model_id, output_dir="plots")
     
     # Save the figure
     os.makedirs(output_dir, exist_ok=True)
-    plt.savefig(f"{output_dir}/{model_id}_all_histograms.png", dpi=300, bbox_inches="tight")
+    model_short = model_id.split('/')[-1].split('_')[0]  # Just use OLMo part
+    plt.savefig(f"{output_dir}/{model_short}_all_histograms.png", dpi=300, bbox_inches="tight")
     plt.close()
     
     # Create a heatmap version showing evolution over training
@@ -218,14 +230,15 @@ def create_histogram_evolution_heatmap(histogram_data, bin_edges, model_id, outp
     
     plt.xlabel("Normalized Parameter Change (absolute)", fontsize=14)
     plt.ylabel("Training Step", fontsize=14)
-    plt.title(f"Evolution of Parameter Changes During Training\n{model_id}", fontsize=16)
+    plt.title(f"Evolution of Parameter Changes During Training\n{model_id.split('/')[-1]}", fontsize=16)
     
     # Adjust x-axis ticks for readability
     plt.xticks(np.arange(0, len(bin_centers), 10), rotation=45)
     
     # Save the figure
     os.makedirs(output_dir, exist_ok=True)
-    plt.savefig(f"{output_dir}/{model_id}_histogram_evolution.png", dpi=300, bbox_inches="tight")
+    model_short = model_id.split('/')[-1].split('_')[0]  # Just use OLMo part
+    plt.savefig(f"{output_dir}/{model_short}_histogram_evolution.png", dpi=300, bbox_inches="tight")
     plt.close()
 
 def create_animation(histogram_data, bin_edges, model_id, output_dir="plots"):
@@ -246,7 +259,8 @@ def create_animation(histogram_data, bin_edges, model_id, output_dir="plots"):
     
     # Prepare output path
     os.makedirs(output_dir, exist_ok=True)
-    animation_path = f"{output_dir}/{model_id}_histogram_animation.gif"
+    model_short = model_id.split('/')[-1].split('_')[0]  # Just use OLMo part
+    animation_path = f"{output_dir}/{model_short}_histogram_animation.gif"
     
     # Set up x and y limits (using max across all histograms)
     max_density = 0
@@ -296,9 +310,9 @@ def create_animation(histogram_data, bin_edges, model_id, output_dir="plots"):
             step_match = re.search(r'step-(\d+)', revision)
             if step_match:
                 step_num = int(step_match.group(1))
-                ax.set_title(f"Distribution of Parameter Changes at Step {step_num:,}\n{model_id}", fontsize=16)
+                ax.set_title(f"Distribution of Parameter Changes at Step {step_num:,}\n{model_id.split('/')[-1]}", fontsize=16)
             else:
-                ax.set_title(f"Distribution of Parameter Changes for {revision}\n{model_id}", fontsize=16)
+                ax.set_title(f"Distribution of Parameter Changes for {revision}\n{model_id.split('/')[-1]}", fontsize=16)
             
             # Save frame
             writer.grab_frame()
