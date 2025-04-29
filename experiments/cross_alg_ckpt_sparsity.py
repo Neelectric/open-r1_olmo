@@ -20,8 +20,8 @@ import re
 import pandas as pd
 
 def normalized_update(before: torch.tensor, after: torch.tensor, epsilon=1e-10) -> np.array:
-    before = before.detach().numpy()
-    after = after.detach().numpy()
+    before = before.detach().to(torch.float16).numpy()
+    after = after.detach().to(torch.float16).numpy()
     diff = after - before
     
     # claude suggested a small epsilon to avoid division by zero
