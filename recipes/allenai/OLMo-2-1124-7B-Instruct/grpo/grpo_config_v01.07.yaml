@@ -32,7 +32,7 @@ scale_rewards: false #true according to https://wandb.ai/huggingface/open-r1/run
 num_iterations: 1 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
 disable_dropout: true #following this https://github.com/huggingface/trl/releases/tag/v0.17.0#:~:text=3276,to%20disable%20dropout
 loss_type: "dr_grpo"
-shuffle_dataset: false
+shuffle_dataset: true
 mask_truncated_completions: true
 use_liger_loss: false #unfortunately only compatible with bnpo
 
