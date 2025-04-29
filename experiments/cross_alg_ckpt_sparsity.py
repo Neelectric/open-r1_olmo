@@ -80,7 +80,7 @@ def compare_sparsity(base_model_id, ft_model_id, revision):
                 total_elements += diff_matrix.size
                 
                 # Free memory
-                del diff_matrix, abs_diff, diff_matrix
+                del diff_matrix, abs_diff
                         
     return hist_counts
 
