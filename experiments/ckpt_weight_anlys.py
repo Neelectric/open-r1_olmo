@@ -256,8 +256,8 @@ def main():
   # ft_model_id = "Neelectric/Qwen2.5-7B-Instruct_SFTv00.13"
   
   base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
+  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
   revisions = list_revisions(ft_model_id)
   print(revisions)
   
