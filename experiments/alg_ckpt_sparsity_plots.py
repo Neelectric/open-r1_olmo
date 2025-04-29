@@ -109,7 +109,7 @@ def plot_single_histogram(hist_counts, bin_edges, revision, model_id, output_dir
     non_zero_changes = hist_counts[1:]  # Skip the first bin (which contains zero changes)
     non_zero_sum = np.sum(non_zero_changes)
     if non_zero_sum > 0:
-        mean_bin = np.sum(bin_centers[1:] * non_zero_changes[1:]) / non_zero_sum
+        mean_bin = np.sum(bin_centers[1:] * non_zero_changes) / non_zero_sum
         text = f"Mean change: {mean_bin:.2e}"
         plt.annotate(text, xy=(0.7, 0.9), xycoords='axes fraction', 
                     bbox=dict(boxstyle="round,pad=0.3", fc="white", alpha=0.8))
