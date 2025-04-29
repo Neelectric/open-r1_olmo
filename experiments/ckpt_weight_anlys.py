@@ -77,7 +77,7 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
   full_model_name = ft_model_id.split("/")[1]
   model_name = full_model_name.split("_")[0]
   method = full_model_name.split("_")[1]
-  save_path = f"figures/{ft_model_id}/plot_results.pdf"
+  save_path = f"results/{ft_model_id}/plot_results.pdf"
   os.makedirs(os.path.dirname(save_path), exist_ok=True)
   
   data = np.array([results_dict[key] for key in results_dict.keys()]).T
@@ -264,7 +264,7 @@ def main():
   results_dicts = {}
   counter = 0
   
-  gif_dir = f"figures/{ft_model_id}"
+  gif_dir = f"results/{ft_model_id}"
   os.makedirs(gif_dir, exist_ok=True)
   json_path = gif_dir + "/results_dict.json"
   try:

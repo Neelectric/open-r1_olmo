@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def compare_norm_trajectories(sft_model_id, grpo_model_id, output_dir="figures/comparison_figures"):
+def compare_norm_trajectories(sft_model_id, grpo_model_id, output_dir="results/comparison_figures"):
     """
     Compares norm trajectories between SFT and GRPO models, plotting both on the same graph
     with different line styles but the same colors for the same matrix types.
@@ -14,8 +14,8 @@ def compare_norm_trajectories(sft_model_id, grpo_model_id, output_dir="figures/c
     os.makedirs(output_dir, exist_ok=True)
     
     # Define paths to results dictionaries
-    sft_results_path = f"figures/{sft_model_id}/results_dict.json"
-    grpo_results_path = f"figures/{grpo_model_id}/results_dict.json"
+    sft_results_path = f"results/{sft_model_id}/results_dict.json"
+    grpo_results_path = f"results/{grpo_model_id}/results_dict.json"
     
     # Load results dictionaries
     with open(sft_results_path, 'r') as f:
