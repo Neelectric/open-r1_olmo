@@ -19,7 +19,9 @@ from utils import list_revisions
 import re
 import pandas as pd
 
-def normalized_update(before, after, epsilon=1e-10):
+def normalized_update(before: torch.tensor, after: torch.tensor, epsilon=1e-10) -> np.array:
+    before = before.detach().numpy()
+    after = after.detach().numpy()
     diff = after - before
     
     # claude suggested a small epsilon to avoid division by zero
@@ -72,14 +74,13 @@ def compare_sparsity(base_model_id, ft_model_id, revision):
         if "layers" in name_list:
             if "self_attn" in name_list or "mlp" in name_list:
                 diff_matrix = normalized_update(base_param, ckpt_param)
-                diff_matrix_np = diff_matrix.detach().numpy()
-                abs_diff = np.abs(diff_matrix_np)
+                abs_diff = np.abs(diff_matrix)
                 curr_hist, _ = np.histogram(abs_diff, bins=bin_edges)
                 hist_counts += curr_hist
-                total_elements += diff_matrix_np.size
+                total_elements += diff_matrix.size
                 
                 # Free memory
-                del diff_matrix_np, abs_diff, diff_matrix
+                del diff_matrix, abs_diff, diff_matrix
                         
     return hist_counts
 
