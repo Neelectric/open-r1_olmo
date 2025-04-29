@@ -32,7 +32,9 @@ def normalized_update_batch(before_tensors, after_tensors, epsilon=1e-10):
     # Concatenate all flattened differences
     if all_diffs:
         return np.concatenate(all_diffs)
-    return np.array([])
+    else:
+        print("returning empty array??")
+        return np.array([])
 
 def compare_sparsity(base_model_id, ft_model_id, revision, batch_size=10):
     """Optimized version that processes parameters in batches"""
@@ -110,7 +112,7 @@ if __name__ == "__main__":
     print(f"Found {len(revisions)} revisions: {revisions}")
     
     for revision in tqdm(revisions, desc="Processing revisions"):
-        output_file = f"data/{sft_model_id}{revision}.npy"
+        output_file = f"results/{sft_model_id}/{revision}.npy"
         
         # Skip if already processed
         if os.path.exists(output_file):
