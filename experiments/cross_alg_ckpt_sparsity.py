@@ -52,7 +52,7 @@ def compare_sparsity(base_model_id, ft_model_id, revision):
     hist_counts = np.zeros(num_bins)
     total_elements = 0
     
-    for name, base_param in tqdm(base_model.named_parameters(), desc="Processing parameters"):
+    for name, base_param in tqdm(base_model.named_parameters(), desc="Processing parameters", dynamic_ncols=True, total=len(base_model.named_parameters())):
         # Skip parameters that don't match our criteria
         if "layers" not in name or ("self_attn" not in name and "mlp" not in name):
             continue
