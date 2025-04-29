@@ -24,7 +24,7 @@ def normalized_update(before, after, epsilon=1e-10):
     norm_diff = diff / norm_factor
     
     # Only convert to numpy at the end
-    return norm_diff.cpu().numpy()
+    return norm_diff.detach().numpy()
 
 def compare_sparsity(base_model_id, ft_model_id, revision):
     """Compare sparsity between base model and fine-tuned checkpoint"""
