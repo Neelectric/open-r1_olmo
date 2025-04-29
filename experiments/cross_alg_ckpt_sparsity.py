@@ -16,28 +16,18 @@ from utils import list_revisions
 import re
 import pandas as pd
 
-def normalized_update_batch(before_tensors, after_tensors, epsilon=1e-10):
-    """Process multiple tensors at once to avoid repeated conversions"""
-    all_diffs = []
+def normalized_update(before, after, epsilon=1e-10):
+    """Calculate normalized difference between tensors"""
+    # Stay in PyTorch for as long as possible
+    diff = after - before
+    norm_factor = torch.maximum(before.abs(), torch.tensor(epsilon, device=before.device, dtype=before.dtype))
+    norm_diff = diff / norm_factor
     
-    for before, after in zip(before_tensors, after_tensors):
-        # Stay in PyTorch for as long as possible
-        diff = after - before
-        norm_factor = torch.maximum(before.abs(), torch.tensor(epsilon, device=before.device, dtype=before.dtype))
-        norm_diff = diff / norm_factor if norm_factor > 0 else torch.inf
-        
-        # Only convert to numpy at the end
-        all_diffs.append(norm_diff.cpu().numpy().flatten())
-    
-    # Concatenate all flattened differences
-    if all_diffs:
-        return np.concatenate(all_diffs)
-    else:
-        print("returning empty array??")
-        return np.array([])
+    # Only convert to numpy at the end
+    return norm_diff.cpu().numpy()
 
-def compare_sparsity(base_model_id, ft_model_id, revision, batch_size=10):
-    """Optimized version that processes parameters in batches"""
+def compare_sparsity(base_model_id, ft_model_id, revision):
+    """Compare sparsity between base model and fine-tuned checkpoint"""
     print(f"Loading base model: {base_model_id}")
     base_model = AutoModelForCausalLM.from_pretrained(
         pretrained_model_name_or_path=base_model_id,
@@ -59,40 +49,31 @@ def compare_sparsity(base_model_id, ft_model_id, revision, batch_size=10):
     ckpt_params = dict(ckpt_model.named_parameters())
     assert base_params.keys() == ckpt_params.keys()
     
-    # Filter parameter names based on criteria
-    param_names = [
-        name for name in base_params.keys() 
-        if "layers" in name and ("self_attn" in name or "mlp" in name)
-    ]
-    print(f"Processing {len(param_names)} parameter tensors")
-    
     # Process parameters in batches
     hist_counts = np.zeros(num_bins)
     total_elements = 0
     
-    for i in tqdm(range(0, len(param_names), batch_size), desc="Processing parameter batches"):
-        batch_names = param_names[i:i+batch_size]
+    for name, base_param in tqdm(base_model.named_parameters(), desc="Processing parameters"):
+        # Skip parameters that don't match our criteria
+        if "layers" not in name or ("self_attn" not in name and "mlp" not in name):
+            continue
+            
+        ckpt_param = ckpt_params[name]
         
-        # Collect tensors
-        base_tensors = [base_params[name] for name in batch_names]
-        ckpt_tensors = [ckpt_params[name] for name in batch_names]
+        # Calculate normalized difference
+        diff_matrix = normalized_update(base_param, ckpt_param)
+        abs_diff = np.abs(diff_matrix)
         
-        # Process batch
-        diff_batch = normalized_update_batch(base_tensors, ckpt_tensors)
+        # Update histogram
+        curr_hist, _ = np.histogram(abs_diff, bins=bin_edges)
+        hist_counts += curr_hist
+        total_elements += diff_matrix.size
         
-        if diff_batch.size > 0:
-            abs_diff = np.abs(diff_batch)
-            curr_hist, _ = np.histogram(abs_diff, bins=bin_edges)
-            hist_counts += curr_hist
-            total_elements += diff_batch.size
+        # Free memory
+        del diff_matrix, abs_diff
         
-        # Explicitly clear tensors to free memory
-        del base_tensors, ckpt_tensors, diff_batch
-        if 'abs_diff' in locals():
-            del abs_diff
-        
-        # Force garbage collection occasionally
-        if i % (batch_size * 5) == 0:
+        # Occasionally run garbage collection
+        if total_elements % 10000000 == 0:  # Every ~10M elements
             import gc
             gc.collect()
     
