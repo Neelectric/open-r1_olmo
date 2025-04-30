@@ -212,7 +212,7 @@ def calculate_sparsity_metrics(combined_hist, bin_edges):
 def process_all_models():
     """Process and compare all training regimes"""
     base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
+    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.00"
     grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
     
     global num_bins, bin_edges
