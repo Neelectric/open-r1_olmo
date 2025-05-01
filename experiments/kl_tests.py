@@ -65,30 +65,28 @@ def prepare_benchmark_prompts(tokenizer, benchmark_id):
     conv_ds = Dataset.from_dict({"chat": conversations})
     templated_ds = conv_ds.map(lambda x: {"formatted_chat": tokenizer.apply_chat_template(x["chat"], tokenize=False, add_generation_prompt=False)}, remove_columns=["chat"])
     templated_list = [elt["formatted_chat"] for elt in templated_ds]
-    inputs = tokenizer(templated_list, return_tensors="pt", padding=True)
-    return inputs
+    return templated_list
 
-def process_base_model(base_model_id, base_inputs, tokenizer, bsz=10):
-    """Returns the predictions of the base model on the provided input_ids."""
-    base_model = AutoModelForCausalLM.from_pretrained(
-        pretrained_model_name_or_path=base_model_id,
-        device_map="auto",
-        torch_dtype=torch.bfloat16,
-    )
-    print(base_inputs)
-    print(base_inputs.input_ids.shape)
-    first_elt = base_inputs.input_ids[0]
-    print(first_elt)
-    decoded = tokenizer.decode(first_elt)
-    print(decoded)
+def inference(model, prompts, tokenizer, bsz=10):
+    """Returns the predictions of a model on a set of prompts."""
     
-    base_inputs.to(base_model.device)
-    num_prompts = base_inputs.input_ids.shape[0]
+    # print(prompts)
+    # print(prompts.input_ids.shape)
+    # first_elt = prompts.input_ids[0]
+    # print(first_elt)
+    # decoded = tokenizer.decode(first_elt)
+    # print(decoded)
+    
+    # inputs = tokenizer(templated_list, return_tensors="pt", padding=True)
+    
+    num_prompts = len(prompts)
     num_batches = math.ceil(num_prompts/bsz)
     output_list = []
     for i in range(num_batches):
-        batch_inputs = base_inputs[i*bsz : (i+1)*bsz]
-        output_list.append(base_model(**batch_inputs))
+        batch_prompts = prompts[i*bsz : (i+1)*bsz]
+        inputs = tokenizer(batch_prompts, return_tensors="pt", padding=True).to(model.device)
+        
+        output_list.append(model(**inputs))
     
     
     print(output_list)
@@ -103,18 +101,24 @@ def process_all_models():
     
     tokenizer = AutoTokenizer.from_pretrained(grpo_model_id, padding_side="left")
     
-    inputs = prepare_benchmark_prompts(tokenizer, benchmark_id)
-    base_inputs = copy.deepcopy(inputs)
-    grpo_inputs = copy.deepcopy(inputs)
-    sft_inputs = copy.deepcopy(inputs)
+    prompts = prepare_benchmark_prompts(tokenizer, benchmark_id)
+    # base_inputs = copy.deepcopy(prompts)
+    # grpo_inputs = copy.deepcopy(prompts)
+    # sft_inputs = copy.deepcopy(prompts)
     
-    base_model_preds = process_base_model(base_model_id, base_inputs, tokenizer)
+    base_model = AutoModelForCausalLM.from_pretrained(
+        pretrained_model_name_or_path=base_model_id,
+        device_map="auto",
+        torch_dtype=torch.bfloat16,
+    )
+    
+    base_model_preds = inference(model=base_model, prompts=prompts, tokenizer=tokenizer)
     
     # KL (base, GRPO_ckpt) for all ckpts
-    grpo_kls = process_ft_model(base_model_preds, grpo_model_id, grpo_inputs)
+    grpo_kls = process_ft_model(base_model_preds, grpo_model_id, prompts)
     
     # KL (base, sft_ckpt) for all ckpts
-    # sft_kls = process_model(base_model_preds, sft_model_id, sft_input_ids)
+    # sft_kls = process_model(base_model_preds, sft_model_id, prompts)
     
     # # Compare training regimes
     # training_regimes = {

@@ -59,7 +59,7 @@ logging_strategy: steps
 packing: false
 max_completion_length: 2048
 max_prompt_length: 512
-output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_SFT${VERSION}
+output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
 overwrite_output_dir: true
 push_to_hub: true
 report_to:
