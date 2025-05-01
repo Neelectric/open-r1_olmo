@@ -1,14 +1,16 @@
 uv pip uninstall transformers
 uv pip uninstall vllm
+uv pip uninstall flash-attn
 uv pip install vllm==0.7.2
 # transformers==4.51.3
 #  + vllm==0.7.2
+# python3;
 
 NUM_GPUS=8
 NUM_TOKS=4096
 # MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05
 MODEL=Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.11
-MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=$NUM_TOKS,gpu_memory_utilization=0.92,generation_parameters={max_new_tokens:$NUM_TOKS,temperature:0.6,top_p:0.95}"
+MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=$NUM_TOKS,gpu_memory_utilization=0.92,max_num_batched_tokens=4096,generation_parameters={max_new_tokens:$NUM_TOKS,temperature:0.6,top_p:0.95}"
 
 OUTPUT_DIR=data/evals/$MODEL
 
@@ -67,3 +69,4 @@ accelerate launch -m lm_eval --model hf \
 #     --use-chat-template 
 
 uv pip install vllm==0.8.5
+uv pip install flash-attn
