@@ -1,0 +1,45 @@
+model_name_or_path: allenai/OLMo-2-1124-7B-Instruct
+model_revision: main
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+system_prompt: "You are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>"
+dataset_name: REDACTED/OpenR1-Math-cn_k12-91k
+dataset_num_proc: 48
+max_length: 4096 
+optim: adamw_torch
+lr_scheduler_type: constant_with_warmup
+warmup_ratio: 0.1
+learning_rate: 1.0e-06
+gradient_accumulation_steps: 8
+per_device_eval_batch_size: 1
+per_device_train_batch_size: 16
+max_grad_norm: 0.2
+padding_free: true 
+max_steps: 1000 
+num_train_epochs: 1
+bf16: true
+do_eval: false
+eval_strategy: 'no'
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: REDACTED/OLMo-2-1124-7B-Instruct_SFT${VERSION}
+hub_model_revision: ${VERSION}
+hub_strategy: every_save
+log_level: info
+logging_steps: 1
+logging_strategy: steps
+packing: false
+output_dir: data/REDACTED/OLMo-2-1124-7B-Instruct_SFT${VERSION}
+overwrite_output_dir: true
+push_to_hub: true
+report_to:
+- wandb
+save_strategy: "steps"
+save_steps: 0.1
+save_total_limit: 2
+seed: 42
+torch_compile: false
+use_liger_kernel: true
+callbacks:
+- push_to_hub_revision
