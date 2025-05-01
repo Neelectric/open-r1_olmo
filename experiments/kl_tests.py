@@ -20,7 +20,7 @@ import copy
 import math
 
 
-def process_ft_model(base_model, ft_model_id, input_ids):
+def calc_kl(preds_base, preds_ft, input_ids):
     """Process all revisions for a given model"""
     
     revisions = list_revisions(ft_model_id)
@@ -68,27 +68,16 @@ def prepare_benchmark_prompts(tokenizer, benchmark_id):
     return templated_list
 
 def inference(model, prompts, tokenizer, bsz=10):
-    """Returns the predictions of a model on a set of prompts."""
-    
-    # print(prompts)
-    # print(prompts.input_ids.shape)
-    # first_elt = prompts.input_ids[0]
-    # print(first_elt)
-    # decoded = tokenizer.decode(first_elt)
-    # print(decoded)
-    
-    # inputs = tokenizer(templated_list, return_tensors="pt", padding=True)
-    
+    """Returns the predictions of a model on a set of prompts."""    
     num_prompts = len(prompts)
     num_batches = math.ceil(num_prompts/bsz)
     output_list = []
-    for i in range(num_batches):
+    num_batches = 2
+    print("HARDCODING NUM BATCHES TO 2")
+    for i in tqdm(range(num_batches), dynamic_ncols=True):
         batch_prompts = prompts[i*bsz : (i+1)*bsz]
         inputs = tokenizer(batch_prompts, return_tensors="pt", padding=True).to(model.device)
-        
         output_list.append(model(**inputs))
-    
-    
     print(output_list)
     return output_list
 
@@ -100,25 +89,26 @@ def process_all_models():
     benchmark_id = "HuggingFaceH4/MATH-500"
     
     tokenizer = AutoTokenizer.from_pretrained(grpo_model_id, padding_side="left")
-    
     prompts = prepare_benchmark_prompts(tokenizer, benchmark_id)
-    # base_inputs = copy.deepcopy(prompts)
-    # grpo_inputs = copy.deepcopy(prompts)
-    # sft_inputs = copy.deepcopy(prompts)
-    
-    base_model = AutoModelForCausalLM.from_pretrained(
-        pretrained_model_name_or_path=base_model_id,
-        device_map="auto",
-        torch_dtype=torch.bfloat16,
-    )
-    
-    base_model_preds = inference(model=base_model, prompts=prompts, tokenizer=tokenizer)
+
+    all_preds = []
+    for model_id in [base_model_id, grpo_model_id, sft_model_id]:
+        model = AutoModelForCausalLM.from_pretrained(
+            pretrained_model_name_or_path=model_id,
+            device_map="auto",
+            torch_dtype=torch.bfloat16,
+        )
+        
+        preds = inference(model=model, prompts=prompts, tokenizer=tokenizer)
+        all_preds.append(preds)
+        del model
+        torch.cuda.empty_cache()
     
     # KL (base, GRPO_ckpt) for all ckpts
-    grpo_kls = process_ft_model(base_model_preds, grpo_model_id, prompts)
+    grpo_kls = calc_kl(all_preds[0], all_preds[1])
     
     # KL (base, sft_ckpt) for all ckpts
-    # sft_kls = process_model(base_model_preds, sft_model_id, prompts)
+    sft_kls = calc_kl(all_preds[0], all_preds[2])
     
     # # Compare training regimes
     # training_regimes = {

@@ -4,7 +4,7 @@ uv pip uninstall flash-attn
 uv pip install vllm==0.7.2
 # transformers==4.51.3
 #  + vllm==0.7.2
-# python3;
+# python3; import nltk; nltk.download('punkt_tab')
 
 NUM_GPUS=8
 NUM_TOKS=4096
