@@ -20,25 +20,21 @@ import copy
 import math
 
 
-def calc_kl(preds_base, preds_ft, input_ids):
+def calc_kl(base_logits, ft_model_id, prompts, tokenizer, benchmark_id):
     """Process all revisions for a given model"""
     
     revisions = list_revisions(ft_model_id)
     print(f"Found {len(revisions)} revisions for {ft_model_id}: {revisions}")
     assert len(revisions) == 20   
     
-    
     kl_divergences = []
     for revision in tqdm(revisions, desc=f"Processing {ft_model_id}"):
         pass
         print(f"Loading checkpoint model: {ft_model_id}, revision: {revision}")
-        ckpt_model = AutoModelForCausalLM.from_pretrained(
-            pretrained_model_name_or_path=ft_model_id,
-            revision=revision,
-            device_map="auto",
-            torch_dtype=torch.bfloat16,
-            cache_dir="data/"+ft_model_id,
-        )
+        logits = collect_logits(ft_model_id, prompts, tokenizer, benchmark_id, revision=revision, cache_dir=None, bsz=10)
+        
+        
+        
          # Compute the KL divergence between the model and the reference model
         ref_per_token_logps = inputs["ref_per_token_logps"]
         per_token_kl = (
@@ -67,48 +63,57 @@ def prepare_benchmark_prompts(tokenizer, benchmark_id):
     templated_list = [elt["formatted_chat"] for elt in templated_ds]
     return templated_list
 
-def inference(model, prompts, tokenizer, bsz=10):
+def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", cache_dir=None, bsz=10):
     """Returns the predictions of a model on a set of prompts."""    
-    num_prompts = len(prompts)
-    num_batches = math.ceil(num_prompts/bsz)
-    output_list = []
-    num_batches = 2
-    print("HARDCODING NUM BATCHES TO 2")
-    for i in tqdm(range(num_batches), dynamic_ncols=True):
-        batch_prompts = prompts[i*bsz : (i+1)*bsz]
-        inputs = tokenizer(batch_prompts, return_tensors="pt", padding=True).to(model.device)
-        output_list.append(model(**inputs))
-    print(output_list)
-    return output_list
+    save_path = "results/" + benchmark_id + "/" + model_id
+    try:
+        logits = torch.load(save_path +"/logits.pt", weights_only=True)
+    except:
+        print(f"Could not load logits for {model_id} on {benchmark_id}, computing them now")
+        model = AutoModelForCausalLM.from_pretrained(
+                pretrained_model_name_or_path=model_id,
+                revision=revision,
+                device_map="auto",
+                torch_dtype=torch.bfloat16,
+                cache_dir=cache_dir,
+            )
+        num_prompts = len(prompts)
+        num_batches = math.ceil(num_prompts/bsz)
+        output_list = []
+        logits = []
+        for i in tqdm(range(num_batches), dynamic_ncols=True):
+            batch_prompts = prompts[i*bsz : (i+1)*bsz]
+            inputs = tokenizer(batch_prompts, return_tensors="pt", padding=True).to(model.device)
+            outputs = model(**inputs)
+            output_list.append(outputs)
+            logits.append(outputs.logits)
+        torch.save(logits, save_path + "/logits.pt")
+        print(output_list)
+        if "cuda" in model.device:
+            del model
+            torch.cuda.empty_cache()
+        elif "mps" in model.device:
+            del model
+            torch.mps.empty_cache()
+    return logits
 
 def process_all_models():
     """Process and compare all training regimes"""
     base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-    grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
-    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.00"
+    grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
+    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.06"
     benchmark_id = "HuggingFaceH4/MATH-500"
     
     tokenizer = AutoTokenizer.from_pretrained(grpo_model_id, padding_side="left")
     prompts = prepare_benchmark_prompts(tokenizer, benchmark_id)
 
-    all_preds = []
-    for model_id in [base_model_id, grpo_model_id, sft_model_id]:
-        model = AutoModelForCausalLM.from_pretrained(
-            pretrained_model_name_or_path=model_id,
-            device_map="auto",
-            torch_dtype=torch.bfloat16,
-        )
-        
-        preds = inference(model=model, prompts=prompts, tokenizer=tokenizer)
-        all_preds.append(preds)
-        del model
-        torch.cuda.empty_cache()
+    base_logits = collect_logits(model_id=base_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
     
     # KL (base, GRPO_ckpt) for all ckpts
-    grpo_kls = calc_kl(all_preds[0], all_preds[1])
+    # grpo_kls = calc_kl(base_logits=base_logits, ft_model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
     
     # KL (base, sft_ckpt) for all ckpts
-    sft_kls = calc_kl(all_preds[0], all_preds[2])
+    # sft_kls = calc_kl(base_logits=base_logits, ft_model_id=sft_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
     
     # # Compare training regimes
     # training_regimes = {
