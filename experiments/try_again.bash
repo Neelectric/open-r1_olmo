@@ -8,7 +8,7 @@ uv pip install vllm==0.7.2
 
 NUM_GPUS=8
 NUM_TOKS=4096
-MAX_GPU_USAGE=0.8
+MAX_GPU_USAGE=0.7
 # MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.06
 MODEL=Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14
 REVISION=main
