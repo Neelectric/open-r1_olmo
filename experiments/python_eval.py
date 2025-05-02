@@ -29,6 +29,7 @@ def run_lighteval(
     task: str,
     revision: str = "main",
     num_gpus: int = 1,
+    max_model_len: int = 4096,
 ):
     """Evaluates a model (optionally specific revision) on a benchmark with lighteval."""
     evaluation_tracker = EvaluationTracker(
@@ -48,19 +49,19 @@ def run_lighteval(
     )
     
     generation_parameters = GenerationParameters(
-        max_new_tokens=4096,
+        max_new_tokens=max_model_len,
         temperature=0.6,
         top_p=0.95,
         )
 
     model_config = VLLMModelConfig(
-            model_name=model,
+            pretrained=model,
             revision=revision,
             gpu_memory_utilization=0.9,
             dtype="auto",
             use_chat_template=True,
             data_parallel_size=num_gpus,
-            max_model_length=4096,
+            max_model_length=max_model_len,
             generation_parameters=generation_parameters,
     )
     
@@ -84,25 +85,38 @@ def run_lighteval(
         evaluation_tracker=evaluation_tracker,
         model_config=model_config,
         # custom_task_directory=None, # if using a custom task
-        metric_options=Metrics.expr_gold_metric,
+        # metric_options=Metrics.expr_gold_metric,
     )
+    eval_result = pipeline.evaluate()
+    print(eval_result)
+    result = pipeline.get_results()
+    print(result)
+    save_result = pipeline.save_and_push_results()
+    show_result = pipeline.show_results()
+    import wandb
 
-    pipeline.evaluate()
-    pipeline.save_and_push_results()
-    pipeline.show_results()
+    # api = wandb.Api()
+
+    # run = api.run("<entity>/<project>/<run_id>")
+    # run.config["key"] = updated_value
+    # run.update()
+
 
 if __name__ == "__main__":
-    model = "allenai/OLMo-2-1124-7B-Instruct"
+    model = "EleutherAI/pythia-14m"
+    max_model_len = 2048
+    # model = "allenai/OLMo-2-1124-7B-Instruct"
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
     # task = "lighteval|aime24|0|1"
     task = "lighteval|aime24|0|0"
     # revision = None
-    num_gpus = 1
+    num_gpus = 2
     
     run_lighteval(
         model=model,
         task=task,
         # revision=revision,
         num_gpus=num_gpus,
+        max_model_len=max_model_len,
     )
