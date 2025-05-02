@@ -13,7 +13,7 @@ MAX_GPU_USAGE=0.8
 MODEL=Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14
 REVISION=main
 # REVISION=v01.14-step-000000319
-MODEL_ARGS="pretrained=$MODEL,revision=$REVISION,dtype=auto,data_parallel_size=$NUM_GPUS,max_model_length=$NUM_TOKS,gpu_memory_utilization=$MAX_GPU_USAGE,max_num_batched_tokens=NUM_TOKS,generation_parameters={max_new_tokens:$NUM_TOKS,temperature:0.6,top_p:0.95}"
+MODEL_ARGS="pretrained=$MODEL,revision=$REVISION,dtype=auto,data_parallel_size=$NUM_GPUS,max_model_length=$NUM_TOKS,gpu_memory_utilization=$MAX_GPU_USAGE,max_num_batched_tokens=$NUM_TOKS,generation_parameters={max_new_tokens:$NUM_TOKS,temperature:0.6,top_p:0.95}"
 
 OUTPUT_DIR=data/evals/$MODEL
 
