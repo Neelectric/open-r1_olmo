@@ -287,9 +287,9 @@ def main():
     else:
       print("we don't have an entry yet, starting comparison")
       results_dict = compare_base_and_ckpt(base_model, ft_model_id, revision)
-      print("removing q/k norms cuz idc")
-      del results_dict["q_norm"]
-      del results_dict["k_norm"]
+      print("not including q/k norms cuz idc about them")
+      # del results_dict["q_norm"]
+      # del results_dict["k_norm"]
       results_dicts[revision] = results_dict
       with open(json_path, 'w') as f:
         json.dump(results_dicts, f)
