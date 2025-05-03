@@ -142,16 +142,18 @@ def compare_norm_trajectories(sft_model_id, grpo_model_id, output_dir="results/c
             fontsize=16, title_fontsize=18,
             bbox_to_anchor=(0.98, 0.55), loc='center right')
 
-    
     plt.tight_layout()
-    plt.savefig(f"{output_dir}/sft_vs_grpo_norm_comparison.png", dpi=300, bbox_inches="tight")
-    print(f"Comparison plot saved to {output_dir}/sft_vs_grpo_norm_comparison.png")
+    grpo_version = grpo_model_id.split("_")[1]
+    sft_version = sft_model_id.split("_")[1]
+    final_plot_path = f"{output_dir}/{grpo_version}_vs_{sft_version}_norm_comparison.png"
+    plt.savefig(final_plot_path, dpi=300, bbox_inches="tight")
+    print(f"Comparison plot saved to {final_plot_path}")
     
     # Return the plot figure for further customization if needed
     return plt.gcf()
 
 if __name__ == "__main__":
-    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
-    grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
+    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+    grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
     
     compare_norm_trajectories(sft_model_id, grpo_model_id)
