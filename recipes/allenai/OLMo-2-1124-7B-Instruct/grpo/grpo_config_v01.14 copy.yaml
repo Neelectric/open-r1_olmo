@@ -64,7 +64,7 @@ epsilon: 0.2
 log_completions: true
 loss_type: "dr_grpo"
 mask_truncated_completions: true
-max_completion_length: 1500
+max_completion_length: 4096 # without this we might have a pretty major bias vs SFT?
 max_prompt_length: 512
 num_iterations: 1 # according to this! https://github.com/huggingface/trl/releases/tag/v0.16.0
 num_generations: 28

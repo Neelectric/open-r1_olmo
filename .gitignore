@@ -183,3 +183,4 @@ lm-evaluation-harness/
 .DS_Store
 lighteval/
 Big-Bench/
+results/HuggingFaceH4/

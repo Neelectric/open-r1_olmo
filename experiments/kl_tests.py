@@ -17,6 +17,8 @@ import re
 import pandas as pd
 from datasets import Dataset, load_dataset
 import copy
+from pathlib import Path
+
 import math
 
 if torch.backends.mps.is_available():
@@ -81,6 +83,7 @@ def del_and_flush_cache(delete_me):
 def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", cache_dir=None, bsz=10):
     """Returns the predictions of a model on a set of prompts."""    
     save_path = "results/" + benchmark_id + "/" + model_id
+    Path(save_path).mkdir(parents=True, exist_ok=True)
     try:
         logits = torch.load(save_path +"/logits.pt", weights_only=True)
     except:
