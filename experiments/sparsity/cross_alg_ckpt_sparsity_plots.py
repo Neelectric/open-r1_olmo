@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from huggingface_hub import HfApi
 
@@ -10,9 +14,8 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-import os
 from matplotlib.animation import PillowWriter
-from utils import list_revisions
+from experiments.utils import list_revisions
 import re
 import pandas as pd
 
