@@ -56,7 +56,7 @@ def compare_base_and_ckpt(base_model, ft_model_id, revision):
   for name, base_param in tqdm(base_model.named_parameters(), dynamic_ncols=True, total=total, disable=False):
     ckpt_param = ckpt_params[name]
     name_list = name.split(".")
-    if "layers" in name_list:
+    if ("layers" in name_list) and ("q_norm" not in name_list) and ("k_norm" not in name_list):
             
       frob_norm_base = torch.linalg.norm(base_param)
       frob_norm_diff = torch.linalg.norm(ckpt_param - base_param)
@@ -66,7 +66,7 @@ def compare_base_and_ckpt(base_model, ft_model_id, revision):
       diff = torch.abs(ckpt_param - base_param)
       mean = torch.mean(diff)
       # print("mean", mean, "\n")
-      if ("self_attn" in name_list or "mlp" in name_list) and "norm" not in name_list:
+      if ("self_attn" in name_list or "mlp" in name_list):
         results_dict[name_list[4]].append(normed_frob_norm_diff.item())
       
   return results_dict
