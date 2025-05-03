@@ -333,7 +333,8 @@ def main():
   # sorted_percentages = checkpoints_to_percentages(results_dicts)
   num_revisions = len(revisions)
   print(num_revisions)
-  sorted_percentages = [i for i in range(0, num_revisions, int(100//num_revisions))]
+  sorted_percentages = [i for i in range(0, 100, int(100//num_revisions))]
+  print(sorted_percentages)
       
   figs = []
   for i, revision in enumerate(revisions):
