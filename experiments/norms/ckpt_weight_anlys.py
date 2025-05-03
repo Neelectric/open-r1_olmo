@@ -250,9 +250,9 @@ def plot_trajectories(results_dicts: dict, gif_dir:str) -> None:
   print("Summary plot saved as 'mean_norm_trajectories.png'")
   return
 
-def revision_processed(results_dict: dict, revision: str) -> bool:
+def revision_processed(results_dicts: dict, revision: str) -> bool:
   """Checks if the results dict contains computations for every matrix."""
-  results_dict_revision = results_dict[revision]
+  results_dict_revision = results_dicts[revision]
   for key,value in results_dict_revision.items():
     if len(value) != 20:
       return False
@@ -290,7 +290,7 @@ def main():
     print("*"*100)
     print(f"NOW COMPARING TO REVISION {revision}")
     print("*"*100)
-    if results_dicts.get(revision) and revision_processed(results_dict=results_dict, revision=revision):
+    if results_dicts.get(revision) and revision_processed(results_dicts=results_dicts, revision=revision):
         print("we have fully processed this revision! skipping recomputation...")
     else:
       print("we don't have an entry yet, starting comparison")
