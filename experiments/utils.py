@@ -26,7 +26,7 @@ def download_all_revisions_fast():
       "huggingface-cli",
       "download",
       ft_model_id,
-      "--cache-dir data/ "
+      f"--cache-dir data/{ft_model_id}"
       "--max-workers 32 "
       "--revision",
       "placeholder_rev"

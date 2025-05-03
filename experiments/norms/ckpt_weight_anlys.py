@@ -33,7 +33,7 @@ def compare_base_and_ckpt(base_model, ft_model_id, revision):
     # attn_implementation="flash_attention_2",
     device_map="cpu",
     torch_dtype=torch.bfloat16,
-    cache_dir="data/",
+    cache_dir="data/"+ft_model_id,
   )
   # sanity check 
   base_params = dict(base_model.named_parameters())
