@@ -15,7 +15,7 @@ import seaborn as sns
 import numpy as np
 import os
 from matplotlib.animation import PillowWriter
-from ..utils import list_revisions
+from experiments.utils import list_revisions
 import re
 import pandas as pd
 
