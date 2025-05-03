@@ -66,7 +66,7 @@ def compare_base_and_ckpt(base_model, ft_model_id, revision):
       diff = torch.abs(ckpt_param - base_param)
       mean = torch.mean(diff)
       # print("mean", mean, "\n")
-      if "self_attn" in name_list or "mlp" in name_list:
+      if ("self_attn" in name_list or "mlp" in name_list) and "norm" not in name_list:
         results_dict[name_list[4]].append(normed_frob_norm_diff.item())
       
   return results_dict
