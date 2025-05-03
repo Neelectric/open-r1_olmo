@@ -6,20 +6,17 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from huggingface_hub import HfApi
+from transformers import AutoModelForCausalLM
 
 from tqdm import tqdm
 import torch
 import json
-import fire
-from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import os
-from matplotlib.animation import PillowWriter
+import imageio.v2 as imageio
 from experiments.utils import list_revisions
 import re
 import pandas as pd
@@ -260,16 +257,13 @@ def revision_processed(results_dicts: dict, revision: str) -> bool:
       return False
   return True
 
-def main():
-  base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+def norm_comparison(base_model_id:str, ft_model_id:str) -> None:
+  """Compares each revision (ie. checkpoint) of the fine-tuned model to the base model. Produces heatmap plots of this, collates them into a gif, and plots projectories per matrix type."""
   revisions = list_revisions(ft_model_id)
   print(revisions)
   
   results_dicts = {}
   counter = 0
-  
   gif_dir = f"results/{ft_model_id}"
   os.makedirs(gif_dir, exist_ok=True)
   json_path = gif_dir + "/results_dict.json"
@@ -287,17 +281,16 @@ def main():
     torch_dtype=torch.bfloat16,
   )
   
-  # lets compare each revision to the base model via normalised frobenius norm and save results
+  # compares each revision to the base model via normalised frobenius norm and save results
   for revision in tqdm(revisions, dynamic_ncols=True):
     print("*"*100)
     print(f"NOW COMPARING TO REVISION {revision}")
-    print("*"*100)
     if results_dicts.get(revision):
         print("we have an entry for this revision, checking if it was completed...")
         if revision_processed(results_dicts=results_dicts, revision=revision):
           print("it was fully processed! skipping...")
           continue
-    print("we don't have a complete) entry yet, starting comparison")
+    print("we don't have a (complete) entry yet, starting comparison")
     results_dict = compare_base_and_ckpt(base_model, ft_model_id, revision)
     print("not including q/k norms cuz idc about them")
     results_dicts[revision] = results_dict
@@ -305,7 +298,7 @@ def main():
       json.dump(results_dicts, f)
       print(f"cached results for revision {revision}!")
     
-  # lets find the global mins and maxes to plot on the same colourplot scales
+  # finds the global mins and maxes to plot on the same colourplot scales
   min_max_source = "final"
   global_min = 99999
   global_max = -99999
@@ -320,7 +313,8 @@ def main():
           global_min = matrix_min
     print(f"GLOBAL MIN IS {global_min} AND GLOBAL MAX IS {global_max}")
   elif min_max_source == "final":
-    for key, value in results_dicts["main"].items():
+    last_rev = revisions[-1]
+    for key, value in results_dicts[last_rev].items():
         matrix_max = max(value)
         matrix_min = min(value)
         if matrix_max > global_max:
@@ -329,20 +323,18 @@ def main():
           global_min = matrix_min
     print(f"FINAL MIN IS {global_min} AND FINAL MAX IS {global_max}")
       
-      
-  # sorted_percentages = checkpoints_to_percentages(results_dicts)
+  # plots the results for each checkpoint
   num_revisions = len(revisions)
   interval_size = int(100//num_revisions)
-  sorted_percentages = [i for i in range(interval_size, 100+interval_size, interval_size)]
-  print(f"we have {num_revisions} revisions, so percentages are {sorted_percentages}")
-      
+  percentages = [i for i in range(interval_size, 100+interval_size, interval_size)]
+  print(f"we have {num_revisions} revisions, so our percentage intervals are {percentages}")
   figs = []
   for i, revision in enumerate(revisions):
-    percentage_through_training = sorted_percentages[i]
+    percentage_through_training = percentages[i]
     fig = plot_results(results_dicts[revision], ft_model_id, revision, global_min, global_max, percentage=percentage_through_training)
     figs.append(fig)
   
-  # Save each figure as a separate PNG file
+  # saves each figure as separate PNG file
   png_paths = []
   for i, fig in enumerate(figs):
     png_path = f"{gif_dir}/frame_{i}.png"
@@ -351,8 +343,6 @@ def main():
     plt.close(fig)
   
   # Use PIL to create a GIF from the PNG files
-  
-  import imageio.v2 as imageio
   images = [imageio.imread(png_path) for png_path in png_paths]
   gif_path = f"{gif_dir}/training_dynamics.gif"
   imageio.mimsave(gif_path, images, fps=4, loop=0)
@@ -363,4 +353,7 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
+  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+  norm_comparison(base_model_id=base_model_id, ft_model_id=ft_model_id)

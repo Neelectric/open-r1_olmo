@@ -19,6 +19,13 @@ from datasets import Dataset, load_dataset
 import copy
 import math
 
+if torch.backends.mps.is_available():
+    backend = "mps"
+elif torch.cuda.is_available():
+    backend = "cuda" 
+else:
+    backend = "cpu"
+
 
 def calc_kl(base_logits, ft_model_id, prompts, tokenizer, benchmark_id):
     """Process all revisions for a given model"""
@@ -63,6 +70,14 @@ def prepare_benchmark_prompts(tokenizer, benchmark_id):
     templated_list = [elt["formatted_chat"] for elt in templated_ds]
     return templated_list
 
+def del_and_flush_cache(delete_me):
+    del delete_me
+    if backend == "cuda":
+        torch.cuda.empty_cache()
+    elif backend == "mps":
+        torch.mps.empty_cache()
+    return
+
 def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", cache_dir=None, bsz=10):
     """Returns the predictions of a model on a set of prompts."""    
     save_path = "results/" + benchmark_id + "/" + model_id
@@ -79,35 +94,36 @@ def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", 
             )
         num_prompts = len(prompts)
         num_batches = math.ceil(num_prompts/bsz)
-        output_list = []
+        # output_list = []
         logits = []
+        print("HARDCODING NUMBATCHES TO 2")
+        num_batches = 2
         for i in tqdm(range(num_batches), dynamic_ncols=True):
             batch_prompts = prompts[i*bsz : (i+1)*bsz]
             inputs = tokenizer(batch_prompts, return_tensors="pt", padding=True).to(model.device)
             outputs = model(**inputs)
-            output_list.append(outputs)
+            # output_list.append(outputs)
             logits.append(outputs.logits)
+            del_and_flush_cache(outputs)
         torch.save(logits, save_path + "/logits.pt")
-        print(output_list)
-        if "cuda" in model.device:
-            del model
-            torch.cuda.empty_cache()
-        elif "mps" in model.device:
-            del model
-            torch.mps.empty_cache()
+        # print(output_list)
+        del_and_flush_cache(model)
     return logits
 
 def process_all_models():
     """Process and compare all training regimes"""
-    base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-    grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
-    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.06"
+    # base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
+    base_model_id = "google/gemma-2-2b-it"
+    grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
+    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
     benchmark_id = "HuggingFaceH4/MATH-500"
     
-    tokenizer = AutoTokenizer.from_pretrained(grpo_model_id, padding_side="left")
-    prompts = prepare_benchmark_prompts(tokenizer, benchmark_id)
+    # tokenizer = AutoTokenizer.from_pretrained(grpo_model_id, padding_side="left")
+    ptyhia_tokenizer = AutoTokenizer.from_pretrained(base_model_id, padding_side="left")
+    print(f"tokenizer comes from {base_model_id}")
+    prompts = prepare_benchmark_prompts(ptyhia_tokenizer, benchmark_id)
 
-    base_logits = collect_logits(model_id=base_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
+    base_logits = collect_logits(model_id=base_model_id, prompts=prompts, tokenizer=ptyhia_tokenizer, benchmark_id=benchmark_id)
     
     # KL (base, GRPO_ckpt) for all ckpts
     # grpo_kls = calc_kl(base_logits=base_logits, ft_model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
