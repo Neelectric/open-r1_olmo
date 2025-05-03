@@ -72,7 +72,7 @@ def compare_base_and_ckpt(base_model, ft_model_id, revision):
   return results_dict
 
 
-def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
+def plot_results(results_dict, ft_model_id, revision, vmin, vmax, percentage):
   full_model_name = ft_model_id.split("/")[1]
   model_name = full_model_name.split("_")[0]
   method = full_model_name.split("_")[1]
@@ -114,7 +114,7 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
   ax.set_xlabel("Parameters", fontsize=label_size)
   ax.set_ylabel("Layers", fontsize=label_size)
   ax.set_title(
-      f"Normalized frobenius norm of the differences for each matrix:\n{model_name} vs. after {method}", 
+      f"Normalized frobenius norm of the differences for each matrix:\n{model_name} with {percentage} of {method}", 
       fontsize=title_size
   )
   
@@ -126,22 +126,11 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax):
   cbar.ax.set_ylabel('Norm difference',
                     fontsize=colorbar_size)
   cbar.ax.tick_params(labelsize=colorbar_size)
-  
-  # # Add explicit min/max ticks to colorbar
-  # ticks = list(cbar.get_ticks())
-  # if vmin not in ticks:
-  #     ticks = [vmin] + ticks
-  # if vmax not in ticks:
-  #     ticks = ticks + [vmax]
-  # cbar.set_ticks(ticks)
-  
   ax.invert_yaxis()  # this should layer 0 is at the bottom?
   return fig
 
-
-def plot_trajectories(results_dicts: dict, gif_dir:str) -> None:
-  """Written by Claude 3.7 Sonnet, plots the trajectories of norms throughout training"""
-  # Extract step numbers from checkpoint names
+def checkpoints_to_percentages(results_dicts:dict) -> list:
+  """Extracts step numbers from checkpoint names and returns sorted percentages."""
   def extract_step(checkpoint):
       match = re.search(r'step-(\d+)', checkpoint)
       return int(match.group(1)) if match else 0
@@ -154,6 +143,18 @@ def plot_trajectories(results_dicts: dict, gif_dir:str) -> None:
   max_step = max(sorted_steps) if sorted_steps else 1  # Avoid division by zero
   
   # Create a list of percentages
+  sorted_percentages = [(step / max_step) * 100 for step in sorted_steps]
+  return sorted_percentages
+
+def plot_trajectories(results_dicts: dict, gif_dir:str) -> None:
+  """Written by Claude 3.7 Sonnet, plots the trajectories of norms throughout training"""
+  
+  def extract_step(checkpoint):
+      match = re.search(r'step-(\d+)', checkpoint)
+      return int(match.group(1)) if match else 0
+  sorted_checkpoints = sorted([cp for cp in results_dicts.keys() if cp != 'main'], key=extract_step)
+  sorted_steps = [extract_step(cp) for cp in sorted_checkpoints]
+  max_step = max(sorted_steps) if sorted_steps else 1  # Avoid division by zero
   sorted_percentages = [(step / max_step) * 100 for step in sorted_steps]
 
   # Define the matrices to analyze
@@ -324,9 +325,13 @@ def main():
           global_min = matrix_min
     print(f"FINAL MIN IS {global_min} AND FINAL MAX IS {global_max}")
       
+      
+  sorted_percentages = checkpoints_to_percentages(results_dicts)
+      
   figs = []
   for i, revision in enumerate(revisions):
-    fig = plot_results(results_dicts[revision], ft_model_id, revision, global_min, global_max)
+    percentage_through_training = sorted_percentages[i]
+    fig = plot_results(results_dicts[revision], ft_model_id, revision, global_min, global_max, percentage=percentage_through_training)
     figs.append(fig)
   
   # Save each figure as a separate PNG file
