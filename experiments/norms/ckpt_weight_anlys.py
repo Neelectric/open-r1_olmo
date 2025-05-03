@@ -293,17 +293,17 @@ def main():
     print(f"NOW COMPARING TO REVISION {revision}")
     print("*"*100)
     if results_dicts.get(revision):
-        print("we have fully processed this revision! skipping recomputation...")
-    elif not revision_processed(results_dicts=results_dicts, revision=revision):
-      print("we don't have a complete) entry yet, starting comparison")
-      results_dict = compare_base_and_ckpt(base_model, ft_model_id, revision)
-      print("not including q/k norms cuz idc about them")
-      results_dicts[revision] = results_dict
-      with open(json_path, 'w') as f:
-        json.dump(results_dicts, f)
-        print(f"cached results for revision {revision}!")
-    else:
-      raise ValueError("not sure whats going on")
+        print("we have an entry for this revision, checking if it was completed...")
+        if revision_processed(results_dicts=results_dicts, revision=revision):
+          print("it was fully processed! skipping...")
+          continue
+    print("we don't have a complete) entry yet, starting comparison")
+    results_dict = compare_base_and_ckpt(base_model, ft_model_id, revision)
+    print("not including q/k norms cuz idc about them")
+    results_dicts[revision] = results_dict
+    with open(json_path, 'w') as f:
+      json.dump(results_dicts, f)
+      print(f"cached results for revision {revision}!")
     
   # lets find the global mins and maxes to plot on the same colourplot scales
   min_max_source = "final"
