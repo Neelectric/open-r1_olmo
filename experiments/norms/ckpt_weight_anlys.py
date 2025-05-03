@@ -249,6 +249,13 @@ def plot_trajectories(results_dicts: dict, gif_dir:str) -> None:
   print("Summary plot saved as 'mean_norm_trajectories.png'")
   return
 
+def revision_processed(results_dict: dict, revision: str) -> bool:
+  """Checks if the results dict contains computations for every matrix."""
+  results_dict_revision = results_dict[revision]
+  for key,value in results_dict_revision.items():
+    if len(value) != 20:
+      return False
+  return True
 
 def main():
   base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
@@ -282,14 +289,12 @@ def main():
     print("*"*100)
     print(f"NOW COMPARING TO REVISION {revision}")
     print("*"*100)
-    if results_dicts.get(revision):
-      print("we have an entry for this revision already! skipping recomputation...")
+    if results_dicts.get(revision) and revision_processed(results_dict=results_dict, revision=revision):
+        print("we have fully processed this revision! skipping recomputation...")
     else:
       print("we don't have an entry yet, starting comparison")
       results_dict = compare_base_and_ckpt(base_model, ft_model_id, revision)
       print("not including q/k norms cuz idc about them")
-      # del results_dict["q_norm"]
-      # del results_dict["k_norm"]
       results_dicts[revision] = results_dict
       with open(json_path, 'w') as f:
         json.dump(results_dicts, f)
