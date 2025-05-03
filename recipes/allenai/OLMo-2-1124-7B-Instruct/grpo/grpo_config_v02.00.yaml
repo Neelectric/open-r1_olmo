@@ -34,8 +34,8 @@ max_grad_norm: 0.2
 max_steps: -1 # check with num_iterations!
 num_train_epochs: 1
 optim: adamw_torch
-# output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
-# overwrite_output_dir: true
+output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_GRPO${VERSION}
+overwrite_output_dir: true
 packing: false
 padding_free: true
 per_device_eval_batch_size: 1
