@@ -330,7 +330,9 @@ def main():
     print(f"FINAL MIN IS {global_min} AND FINAL MAX IS {global_max}")
       
       
-  sorted_percentages = checkpoints_to_percentages(results_dicts)
+  # sorted_percentages = checkpoints_to_percentages(results_dicts)
+  num_revisions = len(revisions)
+  sorted_percentages = [i for i in range(0, num_revisions, 100/num_revisions)]
       
   figs = []
   for i, revision in enumerate(revisions):
