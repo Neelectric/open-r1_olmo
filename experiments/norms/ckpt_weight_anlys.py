@@ -143,7 +143,9 @@ def checkpoints_to_percentages(results_dicts:dict) -> list:
   max_step = max(sorted_steps) if sorted_steps else 1  # Avoid division by zero
   
   # Create a list of percentages
-  sorted_percentages = [(step / max_step) * 100 for step in sorted_steps]
+  sorted_percentages = [int((step / max_step) * 100) for step in sorted_steps]
+  print(f"Max step found to be {max_step}")
+  print(f"hence, percentages are {sorted_percentages}")
   return sorted_percentages
 
 def plot_trajectories(results_dicts: dict, gif_dir:str) -> None:
