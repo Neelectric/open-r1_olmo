@@ -33,7 +33,7 @@ def compare_base_and_ckpt(base_model, ft_model_id, revision):
     # attn_implementation="flash_attention_2",
     device_map="cpu",
     torch_dtype=torch.bfloat16,
-    cache_dir="data/"+ft_model_id,
+    cache_dir="data/",
   )
   # sanity check 
   base_params = dict(base_model.named_parameters())
@@ -355,7 +355,7 @@ def main():
   import imageio.v2 as imageio
   images = [imageio.imread(png_path) for png_path in png_paths]
   gif_path = f"{gif_dir}/training_dynamics.gif"
-  imageio.mimsave(gif_path, images, fps=5, loop=0)
+  imageio.mimsave(gif_path, images, fps=4, loop=0)
   print(f"GIF saved to {gif_path}")
   
   ## quick and dirty script to plot trajectories too
