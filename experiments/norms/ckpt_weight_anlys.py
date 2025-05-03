@@ -1,6 +1,11 @@
 ### Written by Neel Rajani, 13.04.25
 ### Here we do analysis of a model's weights across training
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from huggingface_hub import HfApi
 
