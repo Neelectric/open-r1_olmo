@@ -252,12 +252,9 @@ def plot_trajectories(results_dicts: dict, gif_dir:str) -> None:
 
 
 def main():
-  # base_model_id = "Qwen/Qwen2.5-7B-Instruct"
-  # ft_model_id = "Neelectric/Qwen2.5-7B-Instruct_SFTv00.13"
-  
   base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
+  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
   revisions = list_revisions(ft_model_id)
   print(revisions)
   
