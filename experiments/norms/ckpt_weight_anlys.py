@@ -20,14 +20,8 @@ import re
 import pandas as pd
 
 
-def compare_base_and_ckpt(base_model_id, ft_model_id, revision):
+def compare_base_and_ckpt(base_model, ft_model_id, revision):
   """Compares the weights of a base model and a given checkpoint, using the normalized Frobenius norm of differences and standard deviations."""
-  base_model = AutoModelForCausalLM.from_pretrained(
-    pretrained_model_name_or_path=base_model_id,
-    # attn_implementation="flash_attention_2",
-    device_map="cpu",
-    torch_dtype=torch.bfloat16,
-  )
   ckpt_model = AutoModelForCausalLM.from_pretrained(
     pretrained_model_name_or_path=ft_model_id,
     revision=revision,
@@ -270,6 +264,13 @@ def main():
     print("successfully loaded results dicts, will resume here")
   except:
     print("results_dicts not found for this fine-tune, starting to populate it")
+    
+  base_model = AutoModelForCausalLM.from_pretrained(
+    pretrained_model_name_or_path=base_model_id,
+    # attn_implementation="flash_attention_2",
+    device_map="cpu",
+    torch_dtype=torch.bfloat16,
+  )
   
   # lets compare each revision to the base model via normalised frobenius norm and save results
   for revision in tqdm(revisions, dynamic_ncols=True):
@@ -280,7 +281,7 @@ def main():
       print("we have an entry for this revision already! skipping recomputation...")
     else:
       print("we don't have an entry yet, starting comparison")
-      results_dict = compare_base_and_ckpt(base_model_id, ft_model_id, revision)
+      results_dict = compare_base_and_ckpt(base_model, ft_model_id, revision)
       print("removing q/k norms cuz idc")
       del results_dict["q_norm"]
       del results_dict["k_norm"]
