@@ -285,7 +285,7 @@ def norm_comparison(base_model_id:str, ft_model_id:str) -> None:
   for revision in tqdm(revisions, dynamic_ncols=True):
     print("*"*100)
     print(f"NOW COMPARING TO REVISION {revision}")
-    if results_dicts.get(revision):
+    if results_dicts.get(revision) == None:
         print("we have an entry for this revision, checking if it was completed...")
         if revision_processed(results_dicts=results_dicts, revision=revision):
           print("it was fully processed! skipping...")
