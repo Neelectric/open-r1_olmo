@@ -114,7 +114,7 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax, percentage):
   ax.set_xlabel("Parameters", fontsize=label_size)
   ax.set_ylabel("Layers", fontsize=label_size)
   ax.set_title(
-      f"Normalized frobenius norm of the differences for each matrix:\n{model_name} with {percentage} of {method}", 
+      f"Normalized frobenius norm of the differences for each matrix:\n{model_name} with {percentage}% of {method}", 
       fontsize=title_size
   )
   
@@ -332,7 +332,8 @@ def main():
       
   # sorted_percentages = checkpoints_to_percentages(results_dicts)
   num_revisions = len(revisions)
-  sorted_percentages = [i for i in range(0, 100, int(100//num_revisions))]
+  interval_size = int(100//num_revisions)
+  sorted_percentages = [i for i in range(interval_size, 100+interval_size, interval_size)]
   print(f"we have {num_revisions} revisions, so percentages are {sorted_percentages}")
       
   figs = []
