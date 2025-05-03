@@ -253,7 +253,7 @@ def revision_processed(results_dicts: dict, revision: str) -> bool:
   """Checks if the results dict contains computations for every matrix."""
   results_dict_revision = results_dicts[revision]
   for key,value in results_dict_revision.items():
-    if len(value) != 20:
+    if len(value) != 32:
       return False
   return True
 
