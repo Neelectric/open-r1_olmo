@@ -86,8 +86,9 @@ def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", 
     Path(save_path).mkdir(parents=True, exist_ok=True)
     try:
         logits = torch.load(save_path +"/logits.pt", weights_only=True)
+        print(f"Found and loaded logits for {model_id} on {benchmark_id}!")
     except:
-        print(f"Could not load logits for {model_id} on {benchmark_id}, computing them now")
+        print(f"Could not load logits for {model_id} on {benchmark_id}, computing them now...")
         model = AutoModelForCausalLM.from_pretrained(
                 pretrained_model_name_or_path=model_id,
                 revision=revision,
@@ -96,17 +97,19 @@ def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", 
                 cache_dir=cache_dir,
             )
         num_prompts = len(prompts)
+        num_prompts = 50
         num_batches = math.ceil(num_prompts/bsz)
         # output_list = []
         logits = []
-        print("HARDCODING NUMBATCHES TO 2")
-        num_batches = 2
+        # print("HARDCODING NUMBATCHES TO 2")
+        # num_batches = 2
         for i in tqdm(range(num_batches), dynamic_ncols=True):
             batch_prompts = prompts[i*bsz : (i+1)*bsz]
             inputs = tokenizer(batch_prompts, return_tensors="pt", padding=True).to(model.device)
             outputs = model(**inputs)
             # output_list.append(outputs)
             logits.append(outputs.logits)
+            del_and_flush_cache(inputs)
             del_and_flush_cache(outputs)
         torch.save(logits, save_path + "/logits.pt")
         # print(output_list)
@@ -116,18 +119,24 @@ def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", 
 def process_all_models():
     """Process and compare all training regimes"""
     # base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-    base_model_id = "google/gemma-2-2b-it"
     grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
     sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+    
+    # base_model_id = "google/gemma-2-2b-it"
+    
+    base_model_id = "HuggingFaceTB/SmolLM2-135M-Instruct"
+    grpo_model_id = "toastloaf/smollm2-135m-it-orca-agentinstruct-creative"
+    
+    
     benchmark_id = "HuggingFaceH4/MATH-500"
     
     # tokenizer = AutoTokenizer.from_pretrained(grpo_model_id, padding_side="left")
-    ptyhia_tokenizer = AutoTokenizer.from_pretrained(base_model_id, padding_side="left")
+    tokenizer = AutoTokenizer.from_pretrained(base_model_id, padding_side="left")
     print(f"tokenizer comes from {base_model_id}")
-    prompts = prepare_benchmark_prompts(ptyhia_tokenizer, benchmark_id)
+    prompts = prepare_benchmark_prompts(tokenizer, benchmark_id)
 
-    base_logits = collect_logits(model_id=base_model_id, prompts=prompts, tokenizer=ptyhia_tokenizer, benchmark_id=benchmark_id)
-    
+    base_logits = collect_logits(model_id=base_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
+    grpo_logits = collect_logits(model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
     # KL (base, GRPO_ckpt) for all ckpts
     # grpo_kls = calc_kl(base_logits=base_logits, ft_model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
     
