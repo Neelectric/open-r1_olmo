@@ -3,6 +3,7 @@ from huggingface_hub import HfApi
 
 from tqdm import tqdm
 import torch
+import torch.nn.functional as F
 import json
 import fire
 from collections import defaultdict
@@ -36,24 +37,21 @@ def calc_kl(base_logits, ft_model_id, prompts, tokenizer, benchmark_id):
     print(f"Found {len(revisions)} revisions for {ft_model_id}: {revisions}")
     assert len(revisions) == 20   
     
-    kl_divergences = []
+    base_probs = F.softmax(base_logits, dim=-1)
+    
+    kls = []
     for revision in tqdm(revisions, desc=f"Processing {ft_model_id}"):
         pass
         print(f"Loading checkpoint model: {ft_model_id}, revision: {revision}")
-        logits = collect_logits(ft_model_id, prompts, tokenizer, benchmark_id, revision=revision, cache_dir=None, bsz=10)
-        
-        
-        
-         # Compute the KL divergence between the model and the reference model
-        ref_per_token_logps = inputs["ref_per_token_logps"]
-        per_token_kl = (
-            torch.exp(ref_per_token_logps - per_token_logps) - (ref_per_token_logps - per_token_logps) - 1
-        )
-        
-        # del ckpt_model
-        # torch.cuda.empty_cache()
-        
-    return kl_divergences
+        ft_logits = collect_logits(ft_model_id, prompts, tokenizer, benchmark_id, revision=revision, cache_dir=None, bsz=10)
+        kl = F.kl_div(
+            F.log_softmax(ft_logits, dim=-1),
+            base_probs,
+            reduction='batchmean',
+            log_target=False
+            )
+        kls.append(kl)
+    return kls
 
 # torch.distributions.kl.kl_divergence
 
@@ -107,7 +105,6 @@ def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", 
             batch_prompts = prompts[i*bsz : (i+1)*bsz]
             inputs = tokenizer(batch_prompts, return_tensors="pt", padding=True).to(model.device)
             outputs = model(**inputs)
-            # output_list.append(outputs)
             logits.append(outputs.logits)
             del_and_flush_cache(inputs)
             del_and_flush_cache(outputs)
@@ -136,9 +133,9 @@ def process_all_models():
     prompts = prepare_benchmark_prompts(tokenizer, benchmark_id)
 
     base_logits = collect_logits(model_id=base_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
-    grpo_logits = collect_logits(model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
+    # grpo_logits = collect_logits(model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
     # KL (base, GRPO_ckpt) for all ckpts
-    # grpo_kls = calc_kl(base_logits=base_logits, ft_model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
+    grpo_kls = calc_kl(base_logits=base_logits, ft_model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
     
     # KL (base, sft_ckpt) for all ckpts
     # sft_kls = calc_kl(base_logits=base_logits, ft_model_id=sft_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
