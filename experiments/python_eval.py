@@ -87,10 +87,11 @@ def run_lighteval(
         # custom_task_directory=None, # if using a custom task
         # metric_options=Metrics.expr_gold_metric,
     )
-    eval_result = pipeline.evaluate()
-    print(eval_result)
+    pipeline.evaluate()
     result = pipeline.get_results()
     print(result)
+    print(f"NOW PRINTING result[results]")
+    print({result["results"]})
     save_result = pipeline.save_and_push_results()
     show_result = pipeline.show_results()
     import wandb
