@@ -170,6 +170,13 @@ def main(script_args, training_args, model_args):
         checkpoint = training_args.resume_from_checkpoint
     elif last_checkpoint is not None:
         checkpoint = last_checkpoint
+    def param_count(m):
+        params = sum([p.numel() for p in m.parameters()])/1_000_000
+        trainable_params = sum([p.numel() for p in m.parameters() if p.requires_grad])/1_000_000
+        print(f"Total params: {params:.2f}M, Trainable: {trainable_params:.2f}M")
+        return params, trainable_params
+
+    params, trainable_params = param_count(model)
     train_result = trainer.train(resume_from_checkpoint=checkpoint)
     metrics = train_result.metrics
     metrics["train_samples"] = len(dataset[script_args.dataset_train_split])
