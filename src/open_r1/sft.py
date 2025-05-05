@@ -121,7 +121,7 @@ def main(script_args, training_args, model_args):
             print("frozen parameter not found in any configuration object")
             frozen = [19, 20, 21, 22, 23, 24, 25]  # Use the value from YAML
             print(f"using default frozen {frozen}")
-            print(model)
+            # print(model)
             for layer_idx in frozen:
                 # for name, param in model.model.layers[layer_idx].named_parameters():
                 #     print(f"{name}, requires_grad = {param.requires_grad}") 
@@ -138,8 +138,6 @@ def main(script_args, training_args, model_args):
                 # print(f"\nprinting layer {4} params")
                 # for name, param in model.model.layers[layer_idx].named_parameters():
                 #     print(f"{name}, requires_grad = {param.requires_grad}")   
-            quit()
-        print("FLASH ATTENTION IS TURNED OFF"*1000)
     else:
         print("\n"*15+ "FROZEN NOT IN HUB-MODEL-ID" + "\n"*15)       
         
