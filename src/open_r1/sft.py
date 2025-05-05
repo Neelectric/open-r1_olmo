@@ -103,6 +103,45 @@ def main(script_args, training_args, model_args):
     ###################
     logger.info("*** Loading model ***")
     model = get_model(model_args, training_args)
+    if "frozen" in training_args.hub_model_id:
+        print("#"*1000)
+        try:
+            frozen = training_args.frozen
+        except:
+            print("frozen not in training_args")
+        try:
+            frozen = script_args.frozen
+        except:
+            print("frozen not in script_args")
+        try:
+            frozen = model_args.frozen
+        except:
+            print("frozen not in model_args")
+        if 'frozen' not in locals():
+            print("frozen parameter not found in any configuration object")
+            frozen = [19, 20, 21, 22, 23, 24, 25]  # Use the value from YAML
+            print(f"using default frozen {frozen}")
+            print(model)
+            for layer_idx in frozen:
+                # for name, param in model.model.layers[layer_idx].named_parameters():
+                #     print(f"{name}, requires_grad = {param.requires_grad}") 
+                
+                list_of_params_to_unfreeze = [
+                    "mlp.gate_proj.weight",
+                    "mlp.up_proj.weight",
+                    "mlp.down_proj.weight",
+                ]
+
+                for name, param in model.model.layers[layer_idx].named_parameters(): 
+                    if name in list_of_params_to_unfreeze:
+                        param.requires_grad = False
+                # print(f"\nprinting layer {4} params")
+                # for name, param in model.model.layers[layer_idx].named_parameters():
+                #     print(f"{name}, requires_grad = {param.requires_grad}")   
+            quit()
+        print("FLASH ATTENTION IS TURNED OFF"*1000)
+            
+        
 
     if tokenizer.chat_template is None:
         logger.info("No chat template provided, using ChatML.")
