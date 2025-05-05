@@ -140,7 +140,8 @@ def main(script_args, training_args, model_args):
                 #     print(f"{name}, requires_grad = {param.requires_grad}")   
             quit()
         print("FLASH ATTENTION IS TURNED OFF"*1000)
-            
+    else:
+        print("\n"*15+ "FROZEN NOT IN HUB-MODEL-ID" + "\n"*15)       
         
 
     if tokenizer.chat_template is None:
