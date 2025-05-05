@@ -33,3 +33,10 @@ sudo apt-get install slurm-wlm
 git clone --depth 1 https://github.com/EleutherAI/lm-evaluation-harness
 cd lm-evaluation-harness
 uv pip install -e ".[math,ifeval,sentencepiece]"
+
+source .venv/bin/activate
+
+python3
+import nltk
+nltk.download('punkt_tab')
+quit()

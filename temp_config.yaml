@@ -1,68 +1,60 @@
 # Model arguments
-# You need to download the model and manually change the rope to 300k and max_position_embeddings to 32768
-# the config file should match https://huggingface.co/open-r1/OpenR1-Qwen-7B/blob/main/config.json
 model_name_or_path: allenai/OLMo-2-1124-7B-Instruct
 model_revision: main
-torch_dtype: bfloat16
-attn_implementation: flash_attention_2
+torch_dtype: auto
+# attn_implementation: flash_attention_2
 
 # Data training arguments
 system_prompt: "You are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>"
-
-dataset_name: Neelectric/OpenR1-Math-cn_k12-91k
+dataset_name: Neelectric/OpenR1-Math-220k_CN-K12_OLMo-2_4096toks
 dataset_num_proc: 48
 
-
-#SFT hyperparam
-max_length: 4096 #16384 #32768
-# weight_decay: 0.0001
-optim: adamw_torch
-lr_scheduler_type: linear
-warmup_ratio: 0.1
-learning_rate: 5.0e-05
-gradient_accumulation_steps: 1
-per_device_eval_batch_size: 1
-per_device_train_batch_size: 16
-max_grad_norm: 0.2
-padding_free: true # following https://github.com/huggingface/trl/pull/3076
-
-# SFT trainer config
-max_steps: -1 #701/3348
-num_train_epochs: 2
+# Shared hyperparams
 bf16: true
+callbacks:
+- push_to_hub_revision
+# benchmarks:
+# # - math_500_8k
 do_eval: false
 eval_strategy: 'no'
+gradient_accumulation_steps: 4
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.04
-hub_model_revision: v01.04
+hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.07_frozen
+hub_model_revision: v02.07_frozen
 hub_strategy: every_save
+learning_rate: 1.0e-05
 log_level: info
-logging_steps: 2
+logging_first_step: true
+logging_steps: 1
 logging_strategy: steps
-packing: false
-output_dir: data/allenai/OLMo-2-1124-7B-Instruct_SFTv01.04
+lr_scheduler_type: constant_with_warmup 
+max_grad_norm: 0.2
+max_steps: -1 
+num_train_epochs: 2
+optim: adamw_torch
+output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.07_frozen
 overwrite_output_dir: true
+packing: false
+padding_free: true
+per_device_eval_batch_size: 1
+per_device_train_batch_size: 16
 push_to_hub: true
 report_to:
 - wandb
+run_name: allenai/OLMo-2-1124-7B-Instruct_SFTv02.07_frozen
 save_strategy: "steps"
 save_steps: 0.05
-save_total_limit: 2
+save_total_limit: 1
 seed: 42
 torch_compile: false
 use_liger_kernel: true
 wandb_entity: Neelectric
 wandb_project: open-r1_SFT
-run_name: allenai/OLMo-2-1124-7B-Instruct_SFTv01.04
-callbacks:
-- push_to_hub_revision
-# benchmarks:
-# # - math_500_8k
-# # - lighteval|gsm8k|5|1
-# - aime24
-# - math_500
-# - gpqa
-# - ifeval
-# - gsm8k_8k #uncommented for now out of worry this will crash the process at the end
+warmup_ratio: 0.1
+
+#SFT hyperparams
+max_length: 4096 #16384 #32768
+# weight_decay: 0.0001
+frozen: [19, 20, 21, 22, 23, 24, 25,]

@@ -12,13 +12,12 @@ def list_revisions(model_id: str) -> list[str]:
   refs = api.list_repo_refs(model_id)
   branch_names = [branch.name for branch in refs.branches]
   revisions = branch_names[:0:-1] 
-  return revisions + ["main"]
+  return revisions
 
 def download_all_revisions_fast():
   # ft_model_id = "Neelectric/Qwen2.5-7B-Instruct_SFTv00.13"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.03"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05"
+  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
   revisions = list_revisions(ft_model_id)
   print(revisions)
   command = [
@@ -26,7 +25,7 @@ def download_all_revisions_fast():
       "huggingface-cli",
       "download",
       ft_model_id,
-      "--cache-dir data/ "
+      f"--cache-dir data/ "
       "--max-workers 32 "
       "--revision",
       "placeholder_rev"
