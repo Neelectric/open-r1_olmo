@@ -19,7 +19,6 @@ from utils import list_revisions
 import wandb
 import tqdm
 
-
 if is_accelerate_available():
     from accelerate import Accelerator, InitProcessGroupKwargs
     accelerator = Accelerator(kwargs_handlers=[InitProcessGroupKwargs(timeout=timedelta(seconds=3000))])
@@ -43,11 +42,6 @@ def run_lighteval(
 
     pipeline_params = PipelineParameters(
         launcher_type=ParallelismManager.ACCELERATE,
-        # env_config=EnvConfig(cache_dir="tmp/"),
-        # override_batch_size=-1, ## lmao without this we get File "/home/open-r1_olmo/.venv/lib/python3.11/site-packages/lighteval/models/transformers/transformers_model.py", line 615, in _get_batch_size
-            #     if override_bs > 0:
-            #        ^^^^^^^^^^^^^^^
-            # TypeError: '>' not supported between instances of 'NoneType' and 'int'
     )
     
     generation_parameters = GenerationParameters(
@@ -87,15 +81,22 @@ def run_lighteval(
         evaluation_tracker=evaluation_tracker,
         model_config=model_config,
         # custom_task_directory=None, # if using a custom task
-        # metric_options=Metrics.expr_gold_metric,
+        metric_options={
+            "pass@32": {"num_samples": 1},
+            "exact_match@16": {"num_samples": 1}
+            # Add any other metrics you want to override
+        }
+
     )
+    
+    
     pipeline.evaluate()
     result = pipeline.get_results()
     print(result)
     print(f"NOW PRINTING result[results]")
     print(result["results"])
     save_result = pipeline.save_and_push_results()
-    show_result = pipeline.show_results()
+    # show_result = pipeline.show_results()
     
     return result["results"]
 
