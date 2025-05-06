@@ -55,7 +55,7 @@ def run_lighteval(
         )
 
     model_config = VLLMModelConfig(
-            pretrained=model,
+            model_name=model,
             revision=revision,
             gpu_memory_utilization=0.9,
             dtype="auto",
