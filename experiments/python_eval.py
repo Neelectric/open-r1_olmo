@@ -93,7 +93,7 @@ def run_lighteval(
     result = pipeline.get_results()
     print(result)
     print(f"NOW PRINTING result[results]")
-    print({result["results"]})
+    print(result["results"])
     save_result = pipeline.save_and_push_results()
     show_result = pipeline.show_results()
     
@@ -117,13 +117,14 @@ if __name__ == "__main__":
     # for revision in tqdm(revisions, desc=f"Processing {model_id}"):
     #     pass
     
-    run_lighteval(
+    result = run_lighteval(
         model=model_id,
         task=task,
         # revision=revision,
         num_gpus=num_gpus,
         max_model_len=max_model_len,
     )
+    print(f"top level function gets {result}")
     # api = wandb.Api()
 
     # run = api.run("<entity>/<project>/<run_id>")
