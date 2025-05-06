@@ -83,7 +83,10 @@ def run_lighteval(
         # custom_task_directory=None, # if using a custom task
         metric_options={
             "gpqa_pass@1:1_samples": {"num_samples": 1},
+            "gpqa_pass@1:4_samples": {"num_samples": 1},
+            "gpqa_pass@1:8_samples": {"num_samples": 1}
         }
+
 
     )
     
