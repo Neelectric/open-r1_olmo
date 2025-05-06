@@ -16,6 +16,8 @@ from lighteval.metrics.metrics import Metrics
 from datetime import timedelta
 
 from utils import list_revisions
+import wandb
+import tqdm
 
 
 if is_accelerate_available():
@@ -94,30 +96,37 @@ def run_lighteval(
     print({result["results"]})
     save_result = pipeline.save_and_push_results()
     show_result = pipeline.show_results()
-    import wandb
-
-    # api = wandb.Api()
-
-    # run = api.run("<entity>/<project>/<run_id>")
-    # run.config["key"] = updated_value
-    # run.update()
+    
+    return result["results"]
 
 
 if __name__ == "__main__":
-    model = "EleutherAI/pythia-14m"
+    model_id = "EleutherAI/pythia-14m"
     max_model_len = 2048
     # model = "allenai/OLMo-2-1124-7B-Instruct"
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
     # task = "lighteval|aime24|0|1"
-    task = "lighteval|aime24|0|0"
+    task = "lighteval|gpqa:diamond|0|0"
     # revision = None
-    num_gpus = 2
+    num_gpus = 8
+    
+    revisions = list_revisions(model_id=model_id)
+    print(f"Found {len(revisions)} revisions for {model_id}: {revisions}")
+    assert len(revisions) == 20   
+    
+    for revision in tqdm(revisions, desc=f"Processing {model_id}"):
+        pass
     
     run_lighteval(
-        model=model,
+        model=model_id,
         task=task,
         # revision=revision,
         num_gpus=num_gpus,
         max_model_len=max_model_len,
     )
+    # api = wandb.Api()
+
+    # run = api.run("<entity>/<project>/<run_id>")
+    # run.config["key"] = updated_value
+    # run.update()
