@@ -82,9 +82,7 @@ def run_lighteval(
         model_config=model_config,
         # custom_task_directory=None, # if using a custom task
         metric_options={
-            "pass@32": {"num_samples": 1},
-            "exact_match@16": {"num_samples": 1}
-            # Add any other metrics you want to override
+            "gpqa_pass@1:1_samples": {"num_samples": 1},
         }
 
     )
@@ -92,11 +90,11 @@ def run_lighteval(
     
     pipeline.evaluate()
     result = pipeline.get_results()
-    print(result)
-    print(f"NOW PRINTING result[results]")
-    print(result["results"])
+    # print(result)
+    # print(f"NOW PRINTING result[results]")
+    # print(result["results"])
     save_result = pipeline.save_and_push_results()
-    # show_result = pipeline.show_results()
+    show_result = pipeline.show_results()
     
     return result["results"]
 
