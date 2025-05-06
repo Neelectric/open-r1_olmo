@@ -111,12 +111,11 @@ if __name__ == "__main__":
     # revision = None
     num_gpus = 8
     
-    revisions = list_revisions(model_id=model_id)
-    print(f"Found {len(revisions)} revisions for {model_id}: {revisions}")
-    assert len(revisions) == 20   
-    
-    for revision in tqdm(revisions, desc=f"Processing {model_id}"):
-        pass
+    # revisions = list_revisions(model_id=model_id)
+    # print(f"Found {len(revisions)} revisions for {model_id}: {revisions}")
+    # assert len(revisions) == 20   
+    # for revision in tqdm(revisions, desc=f"Processing {model_id}"):
+    #     pass
     
     run_lighteval(
         model=model_id,
