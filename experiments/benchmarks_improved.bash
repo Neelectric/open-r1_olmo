@@ -1,4 +1,11 @@
 
+uv pip uninstall transformers
+uv pip uninstall vllm
+uv pip uninstall flash-attn
+uv pip install vllm==0.7.2
+# transformers==4.51.3
+#  + vllm==0.7.2
+# python3; import nltk; nltk.download('punkt_tab')
 
 NUM_GPUS=8
 NUM_TOKS=4096
@@ -68,13 +75,5 @@ accelerate launch -m lm_eval --model hf \
 ###    --use-chat-template \
  ##   --output-dir $OUTPUT_DIR 
 
-# uv pip uninstall transformers
-# uv pip uninstall vllm
-# uv pip uninstall flash-attn
-# uv pip install vllm==0.7.2
-# transformers==4.51.3
-#  + vllm==0.7.2
-# python3; import nltk; nltk.download('punkt_tab')
-
-# uv pip install vllm==0.8.5
-# uv pip install flash-attn
+uv pip install vllm==0.8.5
+uv pip install flash-attn
