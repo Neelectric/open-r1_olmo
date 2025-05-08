@@ -57,7 +57,7 @@ warmup_ratio: 0.1
 
 
 # GRPO hyperparams
-beta: 0.04
+beta: 0.04 ## this might have been too high as the model plateued earlier than v01.14
 dataset_prompt_column: problem
 disable_dropout: true #following this https://github.com/huggingface/trl/releases/tag/v0.17.0#:~:text=3276,to%20disable%20dropout
 epsilon: 0.1
