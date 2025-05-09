@@ -138,6 +138,14 @@ def main(script_args, training_args, model_args):
                 # print(f"\nprinting layer {4} params")
                 # for name, param in model.model.layers[layer_idx].named_parameters():
                 #     print(f"{name}, requires_grad = {param.requires_grad}")   
+    elif "unfrozen_qk" in training_args.hub_model_id:
+        print("*"*1000)
+        for name, param in model.model.layers[layer_idx].named_parameters(): 
+            param.requires_grad = False
+        for name, param in model.model.layers[layer_idx].named_parameters(): 
+            if ("q_proj" in name) or ("k_proj" in name):
+                param.requires_grad = True
+    
     else:
         print("\n"*15+ "FROZEN NOT IN HUB-MODEL-ID" + "\n"*15)       
         
