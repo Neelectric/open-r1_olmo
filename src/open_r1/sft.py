@@ -121,7 +121,7 @@ def main(script_args, training_args, model_args):
             print("frozen parameter not found in any configuration object")
             frozen = [19, 20, 21, 22, 23, 24, 25]  # Use the value from YAML
             print(f"using default frozen {frozen}")
-            print(model)
+            # print(model)
             for layer_idx in frozen:
                 # for name, param in model.model.layers[layer_idx].named_parameters():
                 #     print(f"{name}, requires_grad = {param.requires_grad}") 
@@ -138,9 +138,8 @@ def main(script_args, training_args, model_args):
                 # print(f"\nprinting layer {4} params")
                 # for name, param in model.model.layers[layer_idx].named_parameters():
                 #     print(f"{name}, requires_grad = {param.requires_grad}")   
-            quit()
-        print("FLASH ATTENTION IS TURNED OFF"*1000)
-            
+    else:
+        print("\n"*15+ "FROZEN NOT IN HUB-MODEL-ID" + "\n"*15)       
         
 
     if tokenizer.chat_template is None:
@@ -169,6 +168,13 @@ def main(script_args, training_args, model_args):
         checkpoint = training_args.resume_from_checkpoint
     elif last_checkpoint is not None:
         checkpoint = last_checkpoint
+    def param_count(m):
+        params = sum([p.numel() for p in m.parameters()])/1_000_000
+        trainable_params = sum([p.numel() for p in m.parameters() if p.requires_grad])/1_000_000
+        print(f"Total params: {params:.2f}M, Trainable: {trainable_params:.2f}M")
+        return params, trainable_params
+
+    params, trainable_params = param_count(model)
     train_result = trainer.train(resume_from_checkpoint=checkpoint)
     metrics = train_result.metrics
     metrics["train_samples"] = len(dataset[script_args.dataset_train_split])

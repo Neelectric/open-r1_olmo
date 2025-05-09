@@ -1,8 +1,8 @@
 # Model arguments
 model_name_or_path: allenai/OLMo-2-1124-7B-Instruct
 model_revision: main
-torch_dtype: bfloat16
-attn_implementation: flash_attention_2
+torch_dtype: auto
+# attn_implementation: flash_attention_2
 
 # Data training arguments
 system_prompt: "You are a helpful AI Assistant that provides well-reasoned and detailed responses. You first think about the reasoning process as an internal monologue and then provide the user with the answer. Respond in the following format: <think>\n...\n</think>\n<answer>\n...\n</answer>"
@@ -24,7 +24,7 @@ gradient_checkpointing_kwargs:
 hub_model_id: Neelectric/OLMo-2-1124-7B-Instruct_SFT${VERSION}
 hub_model_revision: ${VERSION}
 hub_strategy: every_save
-learning_rate: 5.0e-05
+learning_rate: 1.0e-05
 log_level: info
 logging_first_step: true
 logging_steps: 1
@@ -32,7 +32,7 @@ logging_strategy: steps
 lr_scheduler_type: constant_with_warmup 
 max_grad_norm: 0.2
 max_steps: -1 
-num_train_epochs: 3
+num_train_epochs: 2
 optim: adamw_torch
 output_dir: data/Neelectric/OLMo-2-1124-7B-Instruct_SFT${VERSION}
 overwrite_output_dir: true
@@ -57,3 +57,4 @@ warmup_ratio: 0.1
 #SFT hyperparams
 max_length: 4096 #16384 #32768
 # weight_decay: 0.0001
+frozen: [19, 20, 21, 22, 23, 24, 25,]
