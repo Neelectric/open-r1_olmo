@@ -36,7 +36,7 @@ uv pip install -e ".[math,ifeval,sentencepiece]"
 
 source .venv/bin/activate
 
-python3
+python3 << EOF
 import nltk
-nltk.download('punkt_tab')
-quit()
+nltk.download('punkt')
+EOF
