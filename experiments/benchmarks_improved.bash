@@ -7,11 +7,11 @@ uv pip install vllm==0.7.2
 #  + vllm==0.7.2
 # python3; import nltk; nltk.download('punkt_tab')
 
-NUM_GPUS=8
+NUM_GPUS=7
 NUM_TOKS=4096
 MAX_GPU_USAGE=0.8
-MODEL=allenai/OLMo-2-1124-7B-Instruct
-# MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.08_frozen
+# MODEL=allenai/OLMo-2-1124-7B-Instruct
+MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.08_unfrozen_qk
 # MODEL=Neelectric/OLMo-2-1124-7B-Instruct_GRPOv02.05
 REVISION=main
 # REVISION=v01.14-step-000000319
