@@ -105,7 +105,7 @@ def main(script_args, training_args, model_args):
     model = get_model(model_args, training_args)
     if "unfrozen_qk" in training_args.hub_model_id:
         print("*"*1000)
-        for name, param in model.model.parameters(): 
+        for param in model.model.parameters(): 
             param.requires_grad = False
         for name, param in model.model.named_parameters(): 
             if ("q_proj" in name) or ("k_proj" in name):
