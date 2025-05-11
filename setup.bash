@@ -24,6 +24,8 @@ uv pip install -U flash-attn
 uv pip install -U transformers
 uv pip install -U vllm
 
+uv pip install lighteval==0.9.2
+
 # uv pip install bigbench
 
 huggingface-cli download open-r1/OpenR1-Math-220k --repo-type dataset
