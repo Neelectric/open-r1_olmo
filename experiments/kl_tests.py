@@ -137,7 +137,7 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
         torch.cuda.empty_cache()
         del ft_model
         torch.cuda.empty_cache()
-        tqdm.write(kls_dict)
+        print(kls_dict)
         
     print(kls_dict)
     with open(save_path + "/kls.json", "r") as f:
