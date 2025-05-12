@@ -16,8 +16,8 @@ def list_revisions(model_id: str) -> list[str]:
 
 def download_all_revisions_fast():
   # ft_model_id = "Neelectric/Qwen2.5-7B-Instruct_SFTv00.13"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
-  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
+  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
   revisions = list_revisions(ft_model_id)
   print(revisions)
   command = [
