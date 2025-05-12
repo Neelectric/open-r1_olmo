@@ -132,7 +132,7 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
             kls_at_rev.append(kl)
         kl_tensor = torch.stack(kls_at_rev, dim=0)
         mean_for_rev = torch.mean(kl_tensor)
-        kls_dict[revision] = mean_for_rev
+        kls_dict[revision] = mean_for_rev.item()
         del ft_inputs, ft_outputs, ft_logits, ft_probs
         torch.cuda.empty_cache()
         del ft_model
