@@ -30,33 +30,99 @@ else:
     backend = "cpu"
 
 
-def calc_kl(base_logits, ft_model_id, prompts, tokenizer, benchmark_id):
-    """Process all revisions for a given model"""
+# def calc_kl(base_logits, ft_model_id, prompts, tokenizer, benchmark_id):
+#     """Process all revisions for a given model"""
     
+#     revisions = list_revisions(ft_model_id)
+#     print(f"Found {len(revisions)} revisions for {ft_model_id}: {revisions}")
+#     assert len(revisions) == 20   
+    
+#     base_probs = F.softmax(base_logits, dim=-1) # softmaxing in order to be able to compute KL
+    
+#     kls = []
+#     for revision in tqdm(revisions, desc=f"Processing {ft_model_id}"):
+#         pass
+#         print(f"Loading checkpoint model: {ft_model_id}, revision: {revision}")
+#         ft_logits = collect_logits(ft_model_id, prompts, tokenizer, benchmark_id, revision=revision, cache_dir=None, batch_size=10)
+#         kl = F.kl_div(
+#             F.log_softmax(ft_logits, dim=-1),
+#             base_probs,
+#             reduction='batchmean',
+#             log_target=False
+#             )
+#         kls.append(kl)
+#     return kls
+
+def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_size):
     revisions = list_revisions(ft_model_id)
     print(f"Found {len(revisions)} revisions for {ft_model_id}: {revisions}")
     assert len(revisions) == 20   
     
-    base_probs = F.softmax(base_logits, dim=-1) # softmaxing in order to be able to compute KL
-    
+    # prep inputs and hyperparams
     kls = []
+    num_prompts = len(prompts)
+    num_batches = math.ceil(num_prompts/batch_size)
+    throwaway_input_ids = tokenizer(prompts, return_tensors="pt", padding="longest").input_ids
+    print(f"our throwaway inputs had size {throwaway_input_ids.shape}")
+    max_length = throwaway_input_ids.shape[1]
+        
+    # let's loop through all revisions one at a time
     for revision in tqdm(revisions, desc=f"Processing {ft_model_id}"):
-        pass
-        print(f"Loading checkpoint model: {ft_model_id}, revision: {revision}")
-        ft_logits = collect_logits(ft_model_id, prompts, tokenizer, benchmark_id, revision=revision, cache_dir=None, bsz=10)
-        kl = F.kl_div(
-            F.log_softmax(ft_logits, dim=-1),
-            base_probs,
-            reduction='batchmean',
-            log_target=False
+        ft_model = AutoModelForCausalLM.from_pretrained(
+                pretrained_model_name_or_path=ft_model_id,
+                revision=revision,
+                device_map="cuda:1",
+                torch_dtype=torch.bfloat16,
+                cache_dir=None,
             )
-        kls.append(kl)
-    return kls
+        
+        kls_at_rev = []
+        
+        for i in tqdm(range(num_batches), dynamic_ncols=True):
+            # grab a batch, tokenize it to max length, make a copy, and send to base/ft models
+            batch_prompts = prompts[i*batch_size : (i+1)*batch_size]
+            base_inputs = tokenizer(batch_prompts, return_tensors="pt", padding="max_length", max_length=max_length)
+            ft_inputs = copy.deepcopy(base_inputs)
+            
+            base_inputs = base_inputs.to(base_model.device)            
+            with torch.inference_mode():
+                base_outputs = base_model(**base_inputs)
+            base_logits = base_outputs.logits.detach().cpu()
+            base_probs = F.softmax(base_logits, dim=-1) 
+            
+            ft_inputs = ft_inputs.to(ft_model.device)
+            with torch.inference_mode():
+                ft_outputs = ft_model(**ft_inputs)
+            ft_logits = ft_outputs.logits.detach().cpu()
+            ft_probs = F.softmax(ft_logits, dim=-1) 
+            
+            kl = F.kl_div(
+                ft_probs,
+                base_probs,
+                reduction='batchmean',
+                log_target=False
+            )
+            kls_at_rev.append(kl)
+        kl_tensor = torch.cat(kls_at_rev, dim=0)
+        
+        
+            
+            
+
+            
+    
+
+
+
+
+
+
+
 
 # torch.distributions.kl.kl_divergence
 
 def prepare_benchmark_prompts(tokenizer, benchmark_id):
-    """Applies the chat template and tokenizes a huggingface benchmark dataset."""
+    """Applies the chat template and tokenizes a huggingface benchmark dataset, returns list of formatted prompts in string format."""
     ds = load_dataset(benchmark_id)["test"]
     conversations = []
     for elt in ds:
@@ -75,7 +141,7 @@ def prepare_benchmark_prompts(tokenizer, benchmark_id):
     return templated_list
 
 
-def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", cache_dir=None, bsz=10):
+def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", cache_dir=None, batch_size=10):
     """Returns the predictions of a model on a set of prompts."""    
     save_path = "results/" + benchmark_id + "/" + model_id
     Path(save_path).mkdir(parents=True, exist_ok=True)
@@ -103,11 +169,11 @@ def collect_logits(model_id, prompts, tokenizer, benchmark_id, revision="main", 
         max_length = throwaway_input_ids.shape[1]
         
         num_prompts = len(prompts)
-        num_batches = math.ceil(num_prompts/bsz)
+        num_batches = math.ceil(num_prompts/batch_size)
         all_logits = []
         
         for i in tqdm(range(num_batches), dynamic_ncols=True):
-            batch_prompts = prompts[i*bsz : (i+1)*bsz]
+            batch_prompts = prompts[i*batch_size : (i+1)*batch_size]
             inputs = tokenizer(batch_prompts, return_tensors="pt", padding="max_length", max_length=max_length).to(model.device)
             with torch.inference_mode():
                 outputs = model(**inputs)
@@ -140,14 +206,25 @@ def process_all_models():
     
     benchmark_id = "HuggingFaceH4/MATH-500"
     
-    tokenizer = AutoTokenizer.from_pretrained(grpo_model_id, padding_side="left")
+    tokenizer = AutoTokenizer.from_pretrained(grpo_model_id, padding_side="left")    
     print(f"tokenizer comes from {grpo_model_id}")
+    base_model = AutoModelForCausalLM.from_pretrained(
+                pretrained_model_name_or_path=base_model_id,
+                device_map="auto",
+                torch_dtype=torch.bfloat16,
+            )
     prompts = prepare_benchmark_prompts(tokenizer, benchmark_id)
+    
+    
+    grpo_kls = base_vs_ft(base_model, grpo_model_id, prompts, tokenizer, benchmark_id, batch_size=4)
+    
+    
+    
 
-    base_logits = collect_logits(model_id=base_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id, bsz=10)
+    # base_logits = collect_logits(model_id=base_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id, batch_size=10)
     # grpo_logits = collect_logits(model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
     # KL (base, GRPO_ckpt) for all ckpts
-    grpo_kls = calc_kl(base_logits_list=base_logits, ft_model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
+    # grpo_kls = calc_kl(base_logits_list=base_logits, ft_model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
     
     # KL (base, sft_ckpt) for all ckpts
     # sft_kls = calc_kl(base_logits=base_logits, ft_model_id=sft_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id)
