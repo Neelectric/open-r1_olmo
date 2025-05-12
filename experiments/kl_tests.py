@@ -57,20 +57,16 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
     save_path = "results/" + benchmark_id + "/" + ft_model_id
     Path(save_path).mkdir(parents=True, exist_ok=True)
     
+    max_prompts = len(prompts)
+    prompts = prompts[0:max_prompts]
+    
     try:
-        with open(save_path + "/kls.json", "r") as f:
+        with open(save_path + f"/kls_{max_prompts}.json", "r") as f:
             kls_dict = json.load(f)
-        print(f"Found and loaded kls for {ft_model_id} on {benchmark_id}!")
+        print(f"Found and loaded kls for {ft_model_id} on {benchmark_id} with max_prompts {max_prompts}!")
         return kls_dict
     except:
-        print(f"Did not find kls for {ft_model_id} on {benchmark_id}, computing them now...")
-        
-    # try:
-    #     kls_tensor = torch.load(save_path +"/kls_tensor.pt", map_location="cpu", weights_only=True)
-    #     print(f"Found and loaded kls_tensor for {ft_model_id} on {benchmark_id}!")
-    #     return kls_tensor
-    # except:
-    #     print(f"Did not find kls_tensor for {ft_model_id} on {benchmark_id}, computing them now...")
+        print(f"Did not find kls for {ft_model_id} on {benchmark_id}, under kls_{max_prompts}.json, computing them now...")
     
     
     revisions = list_revisions(ft_model_id)
@@ -78,7 +74,6 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
     if len(revisions) != 20:
         print(f"WARNING! THERE ARE ONLY {len(revisions)} revisions!")
     
-    prompts = prompts[0:3]
     
     
     # prep inputs and hyperparams
@@ -140,7 +135,7 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
         print(kls_dict)
         
     print(kls_dict)
-    with open(save_path + "/kls.json", "w") as f:
+    with open(save_path + f"/kls_{max_prompts}.json", "w") as f:
             kls_dict = json.dump(kls_dict, f)
     # kls_tensor = torch.stack(kls, dim=0)
     # torch.save(kls_tensor, save_path + "/kls_tensor.pt")
@@ -215,7 +210,7 @@ def prepare_benchmark_prompts(tokenizer, benchmark_id):
 #     return logits_tensor
 
 
-def plot_kls(grpo_kls_dict, sft_kls_dict):
+def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
     import matplotlib.pyplot as plt
     import seaborn as sns
     import re
@@ -279,7 +274,10 @@ def plot_kls(grpo_kls_dict, sft_kls_dict):
     
     # Save figure
     plt.tight_layout()
-    plt.savefig('kl_divergence_training.png', dpi=300)
+    grpo_name = grpo_model_id.split("_")[1]
+    sft_name = sft_model_id.split("_")[1]
+    
+    plt.savefig(f'figures/kls/{grpo_name}_vs_{sft_name}.pdf', dpi=300)
     plt.show()
 
 def process_all_models():
@@ -305,10 +303,10 @@ def process_all_models():
     prompts = prepare_benchmark_prompts(tokenizer, benchmark_id)
     
     
-    # grpo_kls_dict = base_vs_ft(base_model=base_model, ft_model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id, batch_size=1)
+    grpo_kls_dict = base_vs_ft(base_model=base_model, ft_model_id=grpo_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id, batch_size=1)
     sft_kls_dict = base_vs_ft(base_model=base_model, ft_model_id=sft_model_id, prompts=prompts, tokenizer=tokenizer, benchmark_id=benchmark_id, batch_size=1)
     
-    plot_kls(grpo_kls_dict, sft_kls_dict)
+    plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict)
     
     # compare_training_regimes(training_regimes, bin_edges)
     
