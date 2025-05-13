@@ -90,11 +90,9 @@ def run_lighteval(
     )
     pipeline.evaluate()
     result = pipeline.get_results()
-    # print(result)
-    # print(f"NOW PRINTING result[results]")
-    # print(result["results"])
-    save_result = pipeline.save_and_push_results()
-    show_result = pipeline.show_results()
+
+    # save_result = pipeline.save_and_push_results()
+    # show_result = pipeline.show_results()
     
     return result["results"]
 
@@ -124,6 +122,6 @@ if __name__ == "__main__":
         num_gpus=num_gpus,
         max_model_len=max_model_len,
     )
-    print(f"top level function gets {result}")
+    # print(f"top level function gets {result}")
     result_pass_at1_1 = result["lighteval:gpqa:diamond:0"]["gpqa_pass@1:1_samples"]
     print(f"result at 1 seems to be {result_pass_at1_1}")
