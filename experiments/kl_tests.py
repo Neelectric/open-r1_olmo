@@ -26,7 +26,7 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
     save_path = "results/" + benchmark_id + "/" + ft_model_id
     Path(save_path).mkdir(parents=True, exist_ok=True)
     
-    max_prompts = len(prompts)
+    max_prompts = 20
     prompts = prompts[0:max_prompts]
     
     try:
@@ -86,13 +86,13 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
             kl = F.kl_div(
                 base_probs_log,
                 ft_probs_log,
-                reduction='batchmean',
+                reduction='sum',
                 log_target=True,
             )
             
             kl_directly = torch.mean(torch.sum(base_probs * (base_probs_log - ft_probs_log), dim=-1))
             print(f"pytorch calc gives {kl}, directly gives {kl_directly}")
-            
+            kl = kl_directly
             
             if torch.isnan(kl):
                 print(f"Warning: NaN KL detected in batch {i}, skipping this batch")
@@ -103,11 +103,11 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
             else:
                 kls_at_rev.append(kl)
 
-        tqdm.write(f"some KLs at revision {revision}: {kls_at_rev[0:5]}")
+       
         kl_tensor = torch.stack(kls_at_rev, dim=0)
-        print(kl_tensor)
+        tqdm.write(f"some KLs at revision {revision}: {kl_tensor[0:5]}")
         mean_for_rev = torch.mean(kl_tensor)
-        print(mean_for_rev)
+        tqdm.write(str(mean_for_rev.tolist()))
         kls_dict[revision] = mean_for_rev.item()
         del ft_inputs, ft_outputs, ft_logits, ft_probs
         torch.cuda.empty_cache()
@@ -146,7 +146,7 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
     
     # Set the style
     sns.set_style("whitegrid")
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(10, 8))
     
     # Function to extract step numbers from revision strings
     def extract_step(revision):
@@ -196,14 +196,14 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
     sft_steps_sorted, sft_kls_sorted = zip(*sft_data) if sft_data else ([], [])
     
     # Plot
-    plt.plot(grpo_steps_sorted, grpo_kls_sorted, 'o-', label='GRPO', linewidth=2, markersize=8)
-    plt.plot(sft_steps_sorted, sft_kls_sorted, 'o-', label='SFT', linewidth=2, markersize=8)
+    plt.plot(grpo_steps_sorted, grpo_kls_sorted, 'o-', label='GRPO', linewidth=2, markersize=10)
+    plt.plot(sft_steps_sorted, sft_kls_sorted, 'o-', label='SFT', linewidth=2, markersize=10)
     
     # Add labels and title
-    plt.xlabel('Training Steps', fontsize=14)
-    plt.ylabel('KL Divergence (base||fine-tuned)', fontsize=14)
-    plt.title('KL Divergence Between Base and Fine-tuned Models During Training', fontsize=16)
-    plt.legend(fontsize=12)
+    plt.xlabel('Training Steps', fontsize=18)
+    plt.ylabel('KL Divergence (base||fine-tuned)', fontsize=18)
+    plt.title('KL Divergence During Reasoning Training on MATH-500', fontsize=20)
+    plt.legend(fontsize=16)
     plt.grid(True, alpha=0.3)
     
     # Format x-axis to show step numbers clearly
