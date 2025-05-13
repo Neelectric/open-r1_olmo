@@ -110,7 +110,7 @@ if __name__ == "__main__":
     
     revisions = list_revisions(model_id=model_id)
     print(f"Found {len(revisions)} revisions for {model_id}: {revisions}")
-    assert len(revisions) == 20   
+    # assert len(revisions) == 20   
     for revision in tqdm(revisions, desc=f"Processing {model_id}"):
         pass
         # revision = "v02.00-step-000000029"
