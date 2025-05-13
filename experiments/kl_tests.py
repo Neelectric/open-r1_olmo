@@ -89,7 +89,12 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
                 reduction='batchmean',
                 log_target=True,
             )
-            kls_at_rev.append(kl)
+            if torch.isnan(kl):
+                print(f"Warning: NaN KL detected in batch {i}, skipping this batch")
+                continue  # Skip adding this NaN value
+            else:
+                kls_at_rev.append(kl)
+
         tqdm.write(f"some KLs at revision {revision}: {kls_at_rev[0:5]}")
         kl_tensor = torch.stack(kls_at_rev, dim=0)
         print(kl_tensor)
@@ -167,6 +172,11 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
     # Sort by steps to ensure proper line plotting
     grpo_data = sorted(zip(grpo_steps, grpo_kls))
     sft_data = sorted(zip(sft_steps, sft_kls))
+    
+    # protect vs nans
+    grpo_data = [(step, kl) for step, kl in grpo_data if not np.isnan(kl)]
+    sft_data = [(step, kl) for step, kl in sft_data if not np.isnan(kl)]
+
     
     # Unzip for plotting
     grpo_steps_sorted, grpo_kls_sorted = zip(*grpo_data) if grpo_data else ([], [])
