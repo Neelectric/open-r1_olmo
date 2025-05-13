@@ -17,7 +17,7 @@ from datetime import timedelta
 
 from utils import list_revisions
 import wandb
-import tqdm
+from tqdm import tqdm
 
 if is_accelerate_available():
     from accelerate import Accelerator, InitProcessGroupKwargs
