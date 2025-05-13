@@ -92,20 +92,19 @@ def run_lighteval(
     result = pipeline.get_results()
 
     # save_result = pipeline.save_and_push_results()
-    # show_result = pipeline.show_results()
+    show_result = pipeline.show_results()
     
     return result["results"]
 
 
 if __name__ == "__main__":
-    # model_id = "EleutherAI/pythia-14m"
     max_model_len = 4096
     # model = "allenai/OLMo-2-1124-7B-Instruct"
     model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
     # task = "lighteval|aime24|0|1"
-    task = "lighteval|gpqa:diamond|0|0"
-    # revision = None
+    # task = "lighteval|gpqa:diamond|0|0"
+    task = "lighteval|math_500|0|0"
     num_gpus = 7
     
     revisions = list_revisions(model_id=model_id)
@@ -113,7 +112,6 @@ if __name__ == "__main__":
     # assert len(revisions) == 20   
     for revision in tqdm(revisions, desc=f"Processing {model_id}"):
         
-        # revision = "v02.00-step-000000029"
         
         result = run_lighteval(
             model=model_id,
@@ -124,4 +122,6 @@ if __name__ == "__main__":
         )
         # print(f"top level function gets {result}")
         result_pass_at1_1 = result["lighteval:gpqa:diamond:0"]["gpqa_pass@1:1_samples"]
+        print("*"*200)
         print(f"result at 1 for revision {revision} seems to be {result_pass_at1_1}")
+        print("*"*200)
