@@ -82,11 +82,11 @@ def run_lighteval(
         evaluation_tracker=evaluation_tracker,
         model_config=model_config,
         # custom_task_directory=None, # if using a custom task
-        metric_options={
-            "gpqa_pass@1:1_samples": {"num_samples": 1},
-            "gpqa_pass@1:4_samples": {"num_samples": 1},
-            "gpqa_pass@1:8_samples": {"num_samples": 1}
-        }
+        # metric_options={
+        #     "gpqa_pass@1:1_samples": {"num_samples": 1},
+        #     "gpqa_pass@1:4_samples": {"num_samples": 1},
+        #     "gpqa_pass@1:8_samples": {"num_samples": 1}
+        # }
     )
     pipeline.evaluate()
     result = pipeline.get_results()
@@ -125,8 +125,5 @@ if __name__ == "__main__":
         max_model_len=max_model_len,
     )
     print(f"top level function gets {result}")
-    # api = wandb.Api()
-
-    # run = api.run("<entity>/<project>/<run_id>")
-    # run.config["key"] = updated_value
-    # run.update()
+    result_pass_at1_1 = result["lighteval:gpqa:diamond:0"]["gpqa_pass@1:1_samples"]
+    print(f"result at 1 seems to be {result_pass_at1_1}")
