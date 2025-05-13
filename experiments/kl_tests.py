@@ -89,6 +89,11 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
                 reduction='batchmean',
                 log_target=True,
             )
+            
+            kl_directly = torch.mean(torch.sum(base_probs * (base_probs_log - ft_probs_log), dim=-1))
+            print(f"pytorch calc gives {kl}, directly gives {kl_directly}")
+            
+            
             if torch.isnan(kl):
                 print(f"Warning: NaN KL detected in batch {i}, skipping this batch")
                 continue  
