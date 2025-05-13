@@ -103,8 +103,14 @@ if __name__ == "__main__":
     model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
     # task = "lighteval|aime24|0|1"
+    
     # task = "lighteval|gpqa:diamond|0|0"
+    task_entry = "lighteval:gpqa:diamond:0"
+    task_entry_result = "gpqa_pass@1:1_samples"
+    
     task = "lighteval|math_500|0|0"
+    task_entry = "lighteval:math_500:0"
+    task_entry_result = "math_pass@1:1_samples"
     num_gpus = 7
     
     revisions = list_revisions(model_id=model_id)
@@ -120,8 +126,8 @@ if __name__ == "__main__":
             num_gpus=num_gpus,
             max_model_len=max_model_len,
         )
-        # print(f"top level function gets {result}")
-        result_pass_at1_1 = result["lighteval:gpqa:diamond:0"]["gpqa_pass@1:1_samples"]
+        print(f"top level function gets {result}")
+        result_pass_at1_1 = result[task_entry][task_entry_result]
         print("*"*200)
         print(f"result at 1 for revision {revision} seems to be {result_pass_at1_1}")
         print("*"*200)
