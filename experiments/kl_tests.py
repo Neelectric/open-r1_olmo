@@ -26,7 +26,7 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
     save_path = "results/" + benchmark_id + "/" + ft_model_id
     Path(save_path).mkdir(parents=True, exist_ok=True)
     
-    max_prompts = 20
+    max_prompts = len(prompts)
     prompts = prompts[0:max_prompts]
     
     try:
@@ -196,18 +196,20 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
     sft_steps_sorted, sft_kls_sorted = zip(*sft_data) if sft_data else ([], [])
     
     # Plot
-    plt.plot(grpo_steps_sorted, grpo_kls_sorted, 'o-', label='GRPO', linewidth=2, markersize=10)
-    plt.plot(sft_steps_sorted, sft_kls_sorted, 'o-', label='SFT', linewidth=2, markersize=10)
+    plt.plot(grpo_steps_sorted, grpo_kls_sorted, 'o-', label='GRPO', linewidth=2, markersize=10, color="#FFCC4D")
+    plt.plot(sft_steps_sorted, sft_kls_sorted, 's--', label='SFT', linewidth=2, markersize=10, color="#4D6BFE")
     
     # Add labels and title
-    plt.xlabel('Training Steps', fontsize=18)
-    plt.ylabel('KL Divergence (base||fine-tuned)', fontsize=18)
-    plt.title('KL Divergence During Reasoning Training on MATH-500', fontsize=20)
+    plt.xlabel('Training Steps', fontsize=20)
+    plt.ylabel('KL Divergence (base||fine-tuned)', fontsize=20)
+    plt.title('KL Divergence During Reasoning Training on MATH-500', fontsize=22)
     plt.legend(fontsize=16)
     plt.grid(True, alpha=0.3)
     
     # Format x-axis to show step numbers clearly
     plt.ticklabel_format(style='plain', axis='x')
+    # Increase tick label size
+    plt.tick_params(axis='both', which='major', labelsize=16)  # Adjust 16 to desired size
     
     # Save figure
     plt.tight_layout()
