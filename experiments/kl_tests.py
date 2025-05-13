@@ -92,8 +92,8 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
                 reduction='batchmean',
                 log_target=True,
             )
-            print(f"kl according to F.kl_div = {kl}")
             kls_at_rev.append(kl)
+        tqdm.write(f"some KLs at revision {revision}: {kls_at_rev[0:5]}")
         kl_tensor = torch.stack(kls_at_rev, dim=0)
         mean_for_rev = torch.mean(kl_tensor)
         kls_dict[revision] = mean_for_rev.item()
