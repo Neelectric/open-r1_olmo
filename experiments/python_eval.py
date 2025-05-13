@@ -151,17 +151,21 @@ if __name__ == "__main__":
     max_model_len = 4096
     num_gpus = 7
     
-    
+    # aime24
     task = "lighteval|aime24|0|1"
+    task_entry = "lighteval:aime24:0"
+    task_entry_result = "math_pass@1:1_samples"
+    task_filename = task.split("|")[1]
+    perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
     
-    # task = "lighteval|math_500|0|0"
+    # math_500
+    task = "lighteval|math_500|0|0"
     task_entry = "lighteval:math_500:0"
     task_entry_result = "math_pass@1:1_samples"
     task_filename = task.split("|")[1]
-    
-    
     perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
     
+    # gpqa diamond
     task = "lighteval|gpqa:diamond|0|0"
     task_entry = "lighteval:gpqa:diamond:0"
     task_entry_result = "gpqa_pass@1:1_samples"
