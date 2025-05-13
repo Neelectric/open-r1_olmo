@@ -49,9 +49,6 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
     kls_dict = {}
     num_prompts = len(prompts)
     num_batches = math.ceil(num_prompts/batch_size)
-    throwaway_input_ids = tokenizer(prompts, return_tensors="pt", padding="longest").input_ids
-    print(f"our throwaway inputs had size {throwaway_input_ids.shape}")
-    max_length = throwaway_input_ids.shape[1]
         
     # let's loop through all revisions one at a time
     for revision in tqdm(revisions, desc=f"Processing {ft_model_id}", dynamic_ncols=True):
@@ -95,7 +92,9 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
             kls_at_rev.append(kl)
         tqdm.write(f"some KLs at revision {revision}: {kls_at_rev[0:5]}")
         kl_tensor = torch.stack(kls_at_rev, dim=0)
+        print(kl_tensor)
         mean_for_rev = torch.mean(kl_tensor)
+        print(mean_for_rev)
         kls_dict[revision] = mean_for_rev.item()
         del ft_inputs, ft_outputs, ft_logits, ft_probs
         torch.cuda.empty_cache()
