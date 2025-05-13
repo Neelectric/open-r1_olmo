@@ -138,7 +138,7 @@ def perform_eval(ft_model_id,
         
         # save results and store in json
         results_dict[revision] = result_pass_at1_1
-        with open(save_path + f"{task_filename}.json", "w") as f:
+        with open(save_path + f"/{task_filename}.json", "w") as f:
             json.dump(results_dict, f)
     print(f"final results:\n{results_dict}")
     return
