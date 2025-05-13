@@ -57,7 +57,7 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
     save_path = "results/" + benchmark_id + "/" + ft_model_id
     Path(save_path).mkdir(parents=True, exist_ok=True)
     
-    max_prompts = len(prompts)
+    max_prompts = 50
     prompts = prompts[0:max_prompts]
     
     try:
