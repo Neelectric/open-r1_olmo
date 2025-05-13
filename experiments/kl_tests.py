@@ -118,14 +118,27 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
                 ft_outputs = ft_model(**ft_inputs)
             ft_logits = ft_outputs.logits.detach().cpu()
             ft_probs = F.softmax(ft_logits, dim=-1) 
-            # tqdm.write("CAREFUL WTIH PAD TOKENS!!!!!!")
+            ft_probs_log = torch.log(ft_probs)
             
             kl = F.kl_div(
-                torch.log(ft_probs),
-                torch.log(base_probs),
+                base_probs_log,
+                ft_probs_log,
                 reduction='batchmean',
                 log_target=True,
             )
+            print(f"kl according to F.kl_div = {kl}")
+            input = F.log_softmax(ft_logits, dim=-1)
+            target = F.log_softmax(base_logits, dim=-1)
+            kl_gfg = F.kl_div(
+                input,
+                target,
+                size_average="batchmean",
+                log_target=True,
+            )
+            print(f"kl according to gfg F.kl_div = {kl}")
+            
+            
+        
             kls_at_rev.append(kl)
         kl_tensor = torch.stack(kls_at_rev, dim=0)
         mean_for_rev = torch.mean(kl_tensor)
