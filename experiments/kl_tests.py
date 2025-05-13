@@ -91,7 +91,10 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
             )
             if torch.isnan(kl):
                 print(f"Warning: NaN KL detected in batch {i}, skipping this batch")
-                continue  # Skip adding this NaN value
+                continue  
+            elif torch.isinf(kl):
+                print(f"Warning: Inf KL detected in batch {i}, skipping this batch")
+                continue 
             else:
                 kls_at_rev.append(kl)
 
@@ -176,6 +179,11 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
     # protect vs nans
     grpo_data = [(step, kl) for step, kl in grpo_data if not np.isnan(kl)]
     sft_data = [(step, kl) for step, kl in sft_data if not np.isnan(kl)]
+    
+    # protect vs infs
+    # protect vs nans
+    grpo_data = [(step, kl) for step, kl in grpo_data if not np.isinf(kl)]
+    sft_data = [(step, kl) for step, kl in sft_data if not np.isinf(kl)]
 
     
     # Unzip for plotting
