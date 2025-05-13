@@ -108,20 +108,20 @@ if __name__ == "__main__":
     # revision = None
     num_gpus = 7
     
-    # revisions = list_revisions(model_id=model_id)
-    # print(f"Found {len(revisions)} revisions for {model_id}: {revisions}")
-    # assert len(revisions) == 20   
-    # for revision in tqdm(revisions, desc=f"Processing {model_id}"):
-    #     pass
-    revision = "v02.00-step-000000029"
-    
-    result = run_lighteval(
-        model=model_id,
-        task=task,
-        revision=revision,
-        num_gpus=num_gpus,
-        max_model_len=max_model_len,
-    )
-    # print(f"top level function gets {result}")
-    result_pass_at1_1 = result["lighteval:gpqa:diamond:0"]["gpqa_pass@1:1_samples"]
-    print(f"result at 1 seems to be {result_pass_at1_1}")
+    revisions = list_revisions(model_id=model_id)
+    print(f"Found {len(revisions)} revisions for {model_id}: {revisions}")
+    assert len(revisions) == 20   
+    for revision in tqdm(revisions, desc=f"Processing {model_id}"):
+        pass
+        # revision = "v02.00-step-000000029"
+        
+        result = run_lighteval(
+            model=model_id,
+            task=task,
+            revision=revision,
+            num_gpus=num_gpus,
+            max_model_len=max_model_len,
+        )
+        # print(f"top level function gets {result}")
+        result_pass_at1_1 = result["lighteval:gpqa:diamond:0"]["gpqa_pass@1:1_samples"]
+        print(f"result at 1 for revision {revision} seems to be {result_pass_at1_1}")
