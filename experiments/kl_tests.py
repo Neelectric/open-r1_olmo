@@ -57,7 +57,7 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
     save_path = "results/" + benchmark_id + "/" + ft_model_id
     Path(save_path).mkdir(parents=True, exist_ok=True)
     
-    max_prompts = 50
+    max_prompts = len(prompts)
     prompts = prompts[0:max_prompts]
     
     try:
@@ -127,15 +127,15 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
                 log_target=True,
             )
             print(f"kl according to F.kl_div = {kl}")
-            input = F.log_softmax(ft_logits, dim=-1)
-            target = F.log_softmax(base_logits, dim=-1)
-            kl_gfg = F.kl_div(
-                input,
-                target,
-                size_average="batchmean",
-                log_target=True,
-            )
-            print(f"kl according to gfg F.kl_div = {kl}")
+            # input = F.log_softmax(ft_logits, dim=-1)
+            # target = F.log_softmax(base_logits, dim=-1)
+            # kl_gfg = F.kl_div(
+            #     input,
+            #     target,
+            #     size_average="batchmean",
+            #     log_target=True,
+            # )
+            # print(f"kl according to gfg F.kl_div = {kl}")
             
             
         
