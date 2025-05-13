@@ -100,9 +100,7 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
         for i in tqdm(range(num_batches), dynamic_ncols=True):
             # grab a batch, tokenize it to max length, make a copy, and send to base/ft models
             batch_prompts = prompts[i*batch_size : (i+1)*batch_size]
-            # base_inputs = tokenizer(batch_prompts, return_tensors="pt", padding="max_length", max_length=max_length)
             base_inputs = tokenizer(batch_prompts, return_tensors="pt")
-            # tqdm.write("not padding to max length but processing a prompt at a time out of fear of padding messing with predictions")
             ft_inputs = copy.deepcopy(base_inputs)
             
             base_inputs = base_inputs.to(base_model.device)            
@@ -120,9 +118,9 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
             
             kl = F.kl_div(
                 torch.log(ft_probs),
-                base_probs,
+                torch.log(base_probs),
                 reduction='batchmean',
-                log_target=False
+                log_target=True,
             )
             kls_at_rev.append(kl)
         kl_tensor = torch.stack(kls_at_rev, dim=0)
