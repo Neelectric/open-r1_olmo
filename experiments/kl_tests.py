@@ -136,7 +136,7 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
         
     print(kls_dict)
     with open(save_path + f"/kls_{max_prompts}.json", "w") as f:
-            kls_dict = json.dump(kls_dict, f)
+            json.dump(kls_dict, f)
     # kls_tensor = torch.stack(kls, dim=0)
     # torch.save(kls_tensor, save_path + "/kls_tensor.pt")
     
