@@ -107,7 +107,11 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
             with torch.inference_mode():
                 base_outputs = base_model(**base_inputs)
             base_logits = base_outputs.logits.detach().cpu()
+            print(f"base_logits have shape {base_logits.shape}")
             base_probs = F.softmax(base_logits, dim=-1) 
+            print(f"base_probs have shape {base_probs.shape}")
+            base_probs_log = torch.log(base_probs)
+            print(f"base_probs_log have shape {base_probs_log.shape}")
             
             ft_inputs = ft_inputs.to(ft_model.device)
             with torch.inference_mode():
