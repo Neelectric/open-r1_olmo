@@ -17,7 +17,7 @@ from datetime import timedelta
 
 from utils import list_revisions
 import wandb
-import tqdm
+from tqdm import tqdm
 
 if is_accelerate_available():
     from accelerate import Accelerator, InitProcessGroupKwargs
@@ -53,11 +53,12 @@ def run_lighteval(
     model_config = VLLMModelConfig(
             model_name=model,
             revision=revision,
-            gpu_memory_utilization=0.9,
+            gpu_memory_utilization=0.8,
             dtype="auto",
             use_chat_template=True,
             data_parallel_size=num_gpus,
             max_model_length=max_model_len,
+            max_num_batched_tokens=max_model_len,
             generation_parameters=generation_parameters,
     )
     
@@ -81,54 +82,46 @@ def run_lighteval(
         evaluation_tracker=evaluation_tracker,
         model_config=model_config,
         # custom_task_directory=None, # if using a custom task
-        metric_options={
-            "gpqa_pass@1:1_samples": {"num_samples": 1},
-            "gpqa_pass@1:4_samples": {"num_samples": 1},
-            "gpqa_pass@1:8_samples": {"num_samples": 1}
-        }
-
-
+        # metric_options={
+        #     "gpqa_pass@1:1_samples": {"num_samples": 1},
+        #     "gpqa_pass@1:4_samples": {"num_samples": 1},
+        #     "gpqa_pass@1:8_samples": {"num_samples": 1}
+        # }
     )
-    
-    
     pipeline.evaluate()
     result = pipeline.get_results()
-    # print(result)
-    # print(f"NOW PRINTING result[results]")
-    # print(result["results"])
-    save_result = pipeline.save_and_push_results()
-    show_result = pipeline.show_results()
+
+    # save_result = pipeline.save_and_push_results()
+    # show_result = pipeline.show_results()
     
     return result["results"]
 
 
 if __name__ == "__main__":
-    model_id = "EleutherAI/pythia-14m"
-    max_model_len = 2048
+    # model_id = "EleutherAI/pythia-14m"
+    max_model_len = 4096
     # model = "allenai/OLMo-2-1124-7B-Instruct"
-    # model = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv00.09"
-    # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv00.10"
+    model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+    # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
     # task = "lighteval|aime24|0|1"
     task = "lighteval|gpqa:diamond|0|0"
     # revision = None
-    num_gpus = 8
+    num_gpus = 7
     
-    # revisions = list_revisions(model_id=model_id)
-    # print(f"Found {len(revisions)} revisions for {model_id}: {revisions}")
+    revisions = list_revisions(model_id=model_id)
+    print(f"Found {len(revisions)} revisions for {model_id}: {revisions}")
     # assert len(revisions) == 20   
-    # for revision in tqdm(revisions, desc=f"Processing {model_id}"):
-    #     pass
-    
-    result = run_lighteval(
-        model=model_id,
-        task=task,
-        # revision=revision,
-        num_gpus=num_gpus,
-        max_model_len=max_model_len,
-    )
-    print(f"top level function gets {result}")
-    # api = wandb.Api()
-
-    # run = api.run("<entity>/<project>/<run_id>")
-    # run.config["key"] = updated_value
-    # run.update()
+    for revision in tqdm(revisions, desc=f"Processing {model_id}"):
+        
+        # revision = "v02.00-step-000000029"
+        
+        result = run_lighteval(
+            model=model_id,
+            task=task,
+            revision=revision,
+            num_gpus=num_gpus,
+            max_model_len=max_model_len,
+        )
+        # print(f"top level function gets {result}")
+        result_pass_at1_1 = result["lighteval:gpqa:diamond:0"]["gpqa_pass@1:1_samples"]
+        print(f"result at 1 for revision {revision} seems to be {result_pass_at1_1}")
