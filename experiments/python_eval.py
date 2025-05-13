@@ -94,33 +94,24 @@ def run_lighteval(
     result = pipeline.get_results()
 
     # save_result = pipeline.save_and_push_results()
-    # show_result = pipeline.show_results()
+    show_result = pipeline.show_results()
     
     return result["results"]
 
 
-if __name__ == "__main__":
-    max_model_len = 4096
-    # model = "allenai/OLMo-2-1124-7B-Instruct"
-    ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
-    # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
-    # task = "lighteval|aime24|0|1"
+def perform_eval(ft_model_id, 
+                 max_model_len, 
+                 task, 
+                 task_entry, 
+                 task_entry_result, 
+                 task_filename, 
+                 num_gpus):
     
-    # task = "lighteval|gpqa:diamond|0|0"
-    task_entry = "lighteval:gpqa:diamond:0"
-    task_entry_result = "gpqa_pass@1:1_samples"
-    
-    task = "lighteval|math_500|0|0"
-    task_entry = "lighteval:math_500:0"
-    task_entry_result = "math_pass@1:1_samples"
-    num_gpus = 7
-    
-    save_path = "results/python_evals/" + task + "/" + ft_model_id
+    save_path = "results/python_evals/" + task_filename + "/" + ft_model_id
     Path(save_path).mkdir(parents=True, exist_ok=True)
     
-    
     try:
-        with open(save_path + f"{task_entry_result}.json", "r") as f:
+        with open(save_path + f"{task_filename}.json", "r") as f:
             results_dict = json.load(f)
         print(f"Found and loaded results_dict for {ft_model_id} on {task}!")
     except:
@@ -139,7 +130,7 @@ if __name__ == "__main__":
             num_gpus=num_gpus,
             max_model_len=max_model_len,
         )
-        # print(f"top level function gets {result}")
+        print(f"top level function gets {result}")
         result_pass_at1_1 = result[task_entry][task_entry_result]
         print("*"*200)
         print(f"result at 1 for revision {revision} seems to be {result_pass_at1_1}")
@@ -147,6 +138,31 @@ if __name__ == "__main__":
         
         # save results and store in json
         results_dict[revision] = result_pass_at1_1
-        with open(save_path + f"{task_entry_result}.json", "w") as f:
+        with open(save_path + f"{task_filename}.json", "w") as f:
             json.dump(results_dict, f)
     print(f"final results:\n{results_dict}")
+    return
+
+
+if __name__ == "__main__":
+    # model = "allenai/OLMo-2-1124-7B-Instruct"
+    ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+    # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
+    max_model_len = 4096
+    num_gpus = 7
+    
+    
+    task = "lighteval|aime24|0|1"
+    
+    # task = "lighteval|math_500|0|0"
+    task_entry = "lighteval:math_500:0"
+    task_entry_result = "math_pass@1:1_samples"
+    task_filename = task.split("|")[1]
+    
+    
+    perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
+    
+    task = "lighteval|gpqa:diamond|0|0"
+    task_entry = "lighteval:gpqa:diamond:0"
+    task_entry_result = "gpqa_pass@1:1_samples"
+    perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
