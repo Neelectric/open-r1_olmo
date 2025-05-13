@@ -53,11 +53,12 @@ def run_lighteval(
     model_config = VLLMModelConfig(
             model_name=model,
             revision=revision,
-            gpu_memory_utilization=0.9,
+            gpu_memory_utilization=0.8,
             dtype="auto",
             use_chat_template=True,
             data_parallel_size=num_gpus,
             max_model_length=max_model_len,
+            max_num_batched_tokens=max_model_len,
             generation_parameters=generation_parameters,
     )
     
