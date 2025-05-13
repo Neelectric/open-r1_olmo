@@ -18,6 +18,8 @@ from datetime import timedelta
 from utils import list_revisions
 import wandb
 from tqdm import tqdm
+from pathlib import Path
+import json
 
 if is_accelerate_available():
     from accelerate import Accelerator, InitProcessGroupKwargs
@@ -92,7 +94,7 @@ def run_lighteval(
     result = pipeline.get_results()
 
     # save_result = pipeline.save_and_push_results()
-    show_result = pipeline.show_results()
+    # show_result = pipeline.show_results()
     
     return result["results"]
 
@@ -100,7 +102,7 @@ def run_lighteval(
 if __name__ == "__main__":
     max_model_len = 4096
     # model = "allenai/OLMo-2-1124-7B-Instruct"
-    model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+    ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
     # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
     # task = "lighteval|aime24|0|1"
     
@@ -113,21 +115,38 @@ if __name__ == "__main__":
     task_entry_result = "math_pass@1:1_samples"
     num_gpus = 7
     
-    revisions = list_revisions(model_id=model_id)
-    print(f"Found {len(revisions)} revisions for {model_id}: {revisions}")
+    save_path = "results/python_evals/" + task + "/" + ft_model_id
+    Path(save_path).mkdir(parents=True, exist_ok=True)
+    
+    
+    try:
+        with open(save_path + f"{task_entry_result}.json", "r") as f:
+            results_dict = json.load(f)
+        print(f"Found and loaded results_dict for {ft_model_id} on {task}!")
+    except:
+        print(f"Did not find results_dict for {ft_model_id} on {task}, under {save_path}, computing it now...") 
+        results_dict = {}
+    
+    
+    revisions = list_revisions(model_id=ft_model_id)
+    print(f"Found {len(revisions)} revisions for {ft_model_id}: {revisions}")
     # assert len(revisions) == 20   
-    for revision in tqdm(revisions, desc=f"Processing {model_id}"):
-        
-        
+    for revision in tqdm(revisions, desc=f"Processing {ft_model_id}", dynamic_ncols=True):
         result = run_lighteval(
-            model=model_id,
+            model=ft_model_id,
             task=task,
             revision=revision,
             num_gpus=num_gpus,
             max_model_len=max_model_len,
         )
-        print(f"top level function gets {result}")
+        # print(f"top level function gets {result}")
         result_pass_at1_1 = result[task_entry][task_entry_result]
         print("*"*200)
         print(f"result at 1 for revision {revision} seems to be {result_pass_at1_1}")
         print("*"*200)
+        
+        # save results and store in json
+        results_dict[revision] = result_pass_at1_1
+        with open(save_path + f"{task_entry_result}.json", "w") as f:
+            json.dump(results_dict, f)
+    print(f"final results:\n{results_dict}")
