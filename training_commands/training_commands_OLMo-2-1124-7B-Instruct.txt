@@ -7,7 +7,7 @@ MPSMPS VERSION=v02.08_frozen ACCELERATE_LOG_LEVEL=info envsubst < recipes/allena
 
 ### SFT with envsubst
 uv pip install flash-attn
-VERSION=v02.09 ACCELERATE_LOG_LEVEL=info envsubst < recipes/allenai/OLMo-2-1124-7B-Instruct/sft/sft_config_v02.09.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=7 src/open_r1/sft.py --config temp_config.yaml
+VERSION=v02.08_1epoch ACCELERATE_LOG_LEVEL=info envsubst < recipes/allenai/OLMo-2-1124-7B-Instruct/sft/sft_config_v02.08_1epoch.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=7 src/open_r1/sft.py --config temp_config.yaml
 
 
 ### GRPO with envsubst
