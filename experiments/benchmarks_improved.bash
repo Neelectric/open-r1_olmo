@@ -26,28 +26,28 @@ lighteval vllm $MODEL_ARGS "lighteval|aime24|0|0" \
     --use-chat-template \
     --output-dir $OUTPUT_DIR
 
-# MATH-500
-TASK=math_500
-lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # MATH-500
+# TASK=math_500
+# lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
-# GPQA Diamond
-TASK=gpqa:diamond
-lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # GPQA Diamond
+# TASK=gpqa:diamond
+# lighteval vllm $MODEL_ARGS "lighteval|$TASK|0|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
-# ifeval
-lighteval vllm $MODEL_ARGS "extended|ifeval|0|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # ifeval
+# lighteval vllm $MODEL_ARGS "extended|ifeval|0|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
 
-# # GSM8k
-lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# # # GSM8k
+# lighteval vllm $MODEL_ARGS "lighteval|gsm8k|5|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
 # MAX_GPU_USAGE=0.8
 # MODEL_ARGS="pretrained=$MODEL,dtype=bfloat16,data_parallel_size=$NUM_GPUS,max_model_length=$NUM_TOKS,gpu_memory_utilization=$MAX_GPU_USAGE,max_num_batched_tokens=4096,generation_parameters={max_new_tokens:$NUM_TOKS,temperature:0.6,top_p:0.95}"
