@@ -356,7 +356,7 @@ def norm_comparison(base_model_id:str, ft_model_id:str) -> None:
 if __name__ == '__main__':
   base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
   ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
-  # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.08_1epoch"
   
   # base_model_id = "Qwen/Qwen2.5-Math-7B"
   # ft_model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
