@@ -286,6 +286,8 @@ def norm_comparison(base_model_id:str, ft_model_id:str) -> None:
   for revision in tqdm(revisions, dynamic_ncols=True):
     if revision == "v02.08_1epoch-step-000000152":
       continue
+    elif revision == "v02.08-step-000000456":
+      continue
     print("*"*100)
     print(f"NOW COMPARING TO REVISION {revision}")
     if results_dicts.get(revision):
