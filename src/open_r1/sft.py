@@ -146,7 +146,7 @@ def main(script_args, training_args, model_args):
                 # for name, param in model.model.layers[layer_idx].named_parameters():
                 #     print(f"{name}, requires_grad = {param.requires_grad}")       
     else:
-        print("\n"*15+ "FROZEN NOT IN HUB-MODEL-ID" + "\n"*15)       
+        print("\n"*5+ "FROZEN NOT IN HUB-MODEL-ID" + "\n"*5)       
         
 
     if tokenizer.chat_template is None:
