@@ -12,6 +12,7 @@ def list_revisions(model_id: str) -> list[str]:
   refs = api.list_repo_refs(model_id)
   branch_names = [branch.name for branch in refs.branches]
   revisions = branch_names[:0:-1] 
+  revisions = sorted(revisions)
   return revisions
 
 def download_all_revisions_fast():
