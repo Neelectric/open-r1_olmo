@@ -146,17 +146,17 @@ def perform_eval(ft_model_id,
 
 if __name__ == "__main__":
     # model = "allenai/OLMo-2-1124-7B-Instruct"
-    ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
-    # model = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
+    ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.08"
+    # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
     max_model_len = 4096
     num_gpus = 7
     
-    # aime24
-    task = "lighteval|aime24|0|1"
-    task_entry = "lighteval:aime24:0"
-    task_entry_result = "math_pass@1:1_samples"
-    task_filename = task.split("|")[1]
-    perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
+    # # aime24
+    # task = "lighteval|aime24|0|1"
+    # task_entry = "lighteval:aime24:0"
+    # task_entry_result = "math_pass@1:1_samples"
+    # task_filename = task.split("|")[1]
+    # perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
     
     # math_500
     task = "lighteval|math_500|0|0"
@@ -165,8 +165,8 @@ if __name__ == "__main__":
     task_filename = task.split("|")[1]
     perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
     
-    # gpqa diamond
-    task = "lighteval|gpqa:diamond|0|0"
-    task_entry = "lighteval:gpqa:diamond:0"
-    task_entry_result = "gpqa_pass@1:1_samples"
-    perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
+    # # gpqa diamond
+    # task = "lighteval|gpqa:diamond|0|0"
+    # task_entry = "lighteval:gpqa:diamond:0"
+    # task_entry_result = "gpqa_pass@1:1_samples"
+    # perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
