@@ -55,7 +55,7 @@ def run_lighteval(
     model_config = VLLMModelConfig(
             model_name=model,
             revision=revision,
-            gpu_memory_utilization=0.8,
+            gpu_memory_utilization=0.95,
             dtype="auto",
             use_chat_template=True,
             data_parallel_size=num_gpus,
@@ -132,12 +132,13 @@ def perform_eval(ft_model_id,
         )
         print(f"top level function gets {result}")
         result_pass_at1_1 = result[task_entry][task_entry_result]
+        result_pass_at1_1_stderr = result[task_entry][task_entry_result + "_stderr"]
         print("*"*200)
-        print(f"result at 1 for revision {revision} seems to be {result_pass_at1_1}")
+        print(f"result at 1 for revision {revision} seems to be {result_pass_at1_1}, with stderr {result_pass_at1_1_stderr}")
         print("*"*200)
         
         # save results and store in json
-        results_dict[revision] = result_pass_at1_1
+        results_dict[revision] = [result_pass_at1_1, result_pass_at1_1_stderr]
         with open(save_path + f"/{task_filename}.json", "w") as f:
             json.dump(results_dict, f)
     print(f"final results:\n{results_dict}")
@@ -170,3 +171,16 @@ if __name__ == "__main__":
     # task_entry = "lighteval:gpqa:diamond:0"
     # task_entry_result = "gpqa_pass@1:1_samples"
     # perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
+    
+    
+    
+    
+    
+    
+    ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
+     # math_500
+    task = "lighteval|math_500|0|0"
+    task_entry = "lighteval:math_500:0"
+    task_entry_result = "math_pass@1:1_samples"
+    task_filename = task.split("|")[1]
+    perform_eval(ft_model_id=ft_model_id, max_model_len=max_model_len, task=task, task_entry=task_entry, task_entry_result=task_entry_result, task_filename=task_filename, num_gpus=num_gpus)
