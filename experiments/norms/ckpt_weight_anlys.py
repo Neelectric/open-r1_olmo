@@ -335,6 +335,10 @@ def norm_comparison(base_model_id:str, ft_model_id:str) -> None:
   print(f"we have {num_revisions} revisions, so our percentage intervals are {percentages}")
   figs = []
   for i, revision in enumerate(revisions):
+    if revision == "v02.08_1epoch-step-000000152":
+      continue
+    elif revision == "v02.08-step-000000456":
+      continue
     percentage_through_training = percentages[i]
     fig = plot_results(results_dicts[revision], ft_model_id, revision, global_min, global_max, percentage=percentage_through_training)
     figs.append(fig)
