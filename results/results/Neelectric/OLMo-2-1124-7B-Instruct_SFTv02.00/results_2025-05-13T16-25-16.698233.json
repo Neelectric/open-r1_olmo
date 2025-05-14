@@ -1,0 +1,138 @@
+{
+  "config_general": {
+    "lighteval_sha": "?",
+    "num_fewshot_seeds": 1,
+    "max_samples": null,
+    "job_id": 0,
+    "start_time": 3560602.419691107,
+    "end_time": 3560675.103807101,
+    "total_evaluation_time_secondes": "72.68411599425599",
+    "model_name": "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00",
+    "model_sha": "",
+    "model_dtype": null,
+    "model_size": null,
+    "generation_parameters": {
+      "early_stopping": null,
+      "repetition_penalty": null,
+      "frequency_penalty": null,
+      "length_penalty": null,
+      "presence_penalty": null,
+      "max_new_tokens": 4096,
+      "min_new_tokens": null,
+      "seed": null,
+      "stop_tokens": null,
+      "temperature": 0.6,
+      "top_k": null,
+      "min_p": null,
+      "top_p": 0.95,
+      "truncate_prompt": null,
+      "response_format": null
+    }
+  },
+  "results": {
+    "lighteval|gpqa:diamond|0": {
+      "gpqa_pass@1:1_samples": 0.26262626262626265,
+      "gpqa_pass@1:1_samples_stderr": 0.031353050095330855,
+      "gpqa_pass@1:4_samples": 0.27146464646464646,
+      "gpqa_pass@1:4_samples_stderr": 0.02623471261401078,
+      "gpqa_pass@1:8_samples": 0.2803030303030303,
+      "gpqa_pass@1:8_samples_stderr": 0.025774140280291995
+    },
+    "all": {
+      "gpqa_pass@1:1_samples": 0.26262626262626265,
+      "gpqa_pass@1:1_samples_stderr": 0.031353050095330855,
+      "gpqa_pass@1:4_samples": 0.27146464646464646,
+      "gpqa_pass@1:4_samples_stderr": 0.02623471261401078,
+      "gpqa_pass@1:8_samples": 0.2803030303030303,
+      "gpqa_pass@1:8_samples_stderr": 0.025774140280291995
+    }
+  },
+  "versions": {
+    "lighteval|gpqa:diamond|0": 1
+  },
+  "config_tasks": {
+    "lighteval|gpqa:diamond": {
+      "name": "gpqa:diamond",
+      "prompt_function": "gpqa_instruct",
+      "hf_repo": "Idavidrein/gpqa",
+      "hf_subset": "gpqa_diamond",
+      "metric": [
+        {
+          "metric_name": "gpqa_pass@1:1_samples",
+          "higher_is_better": true,
+          "category": "5",
+          "use_case": "6",
+          "sample_level_fn": "compute",
+          "corpus_level_fn": "mean"
+        },
+        {
+          "metric_name": "gpqa_pass@1:4_samples",
+          "higher_is_better": true,
+          "category": "5",
+          "use_case": "6",
+          "sample_level_fn": "compute",
+          "corpus_level_fn": "mean"
+        },
+        {
+          "metric_name": "gpqa_pass@1:8_samples",
+          "higher_is_better": true,
+          "category": "5",
+          "use_case": "6",
+          "sample_level_fn": "compute",
+          "corpus_level_fn": "mean"
+        }
+      ],
+      "hf_revision": null,
+      "hf_filter": null,
+      "hf_avail_splits": [
+        "train"
+      ],
+      "trust_dataset": true,
+      "evaluation_splits": [
+        "train"
+      ],
+      "few_shots_split": null,
+      "few_shots_select": null,
+      "generation_size": 32768,
+      "generation_grammar": null,
+      "stop_sequence": [],
+      "num_samples": null,
+      "suite": [
+        "lighteval"
+      ],
+      "original_num_docs": 198,
+      "effective_num_docs": 198,
+      "must_remove_duplicate_docs": false,
+      "version": 1
+    }
+  },
+  "summary_tasks": {
+    "lighteval|gpqa:diamond|0": {
+      "hashes": {
+        "hash_examples": "50ecb6f5d091bd95",
+        "hash_full_prompts": "50ecb6f5d091bd95",
+        "hash_input_tokens": "b7ba74f714a7ab13",
+        "hash_cont_tokens": "8e642f39f004ca08"
+      },
+      "truncated": 0,
+      "non_truncated": 198,
+      "padded": 0,
+      "non_padded": 198,
+      "effective_few_shots": 0.0,
+      "num_truncated_few_shots": 0
+    }
+  },
+  "summary_general": {
+    "hashes": {
+      "hash_examples": "a9318dbdd867770b",
+      "hash_full_prompts": "a9318dbdd867770b",
+      "hash_input_tokens": "4f46fdd0ea1dc7de",
+      "hash_cont_tokens": "d5a712c4f8237d1f"
+    },
+    "truncated": 0,
+    "non_truncated": 198,
+    "padded": 0,
+    "non_padded": 198,
+    "num_truncated_few_shots": 0
+  }
+}
