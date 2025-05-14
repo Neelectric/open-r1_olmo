@@ -11,7 +11,7 @@ NUM_GPUS=7
 NUM_TOKS=4096
 MAX_GPU_USAGE=0.8
 # MODEL=allenai/OLMo-2-1124-7B-Instruct
-MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.08_1epoch
+MODEL=Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.08_unfrozen_qk
 # MODEL=Neelectric/OLMo-2-1124-7B-Instruct_GRPOv02.05
 REVISION=main
 # REVISION=v01.14-step-000000319
@@ -20,11 +20,11 @@ MODEL_ARGS="model_name=$MODEL,revision=$REVISION,dtype=auto,data_parallel_size=$
 OUTPUT_DIR=data/evals/$MODEL
 
 
-### AIME 2024
-TASK=aime24
-lighteval vllm $MODEL_ARGS "lighteval|aime24|0|0" \
-    --use-chat-template \
-    --output-dir $OUTPUT_DIR
+# ### AIME 2024
+# TASK=aime24
+# lighteval vllm $MODEL_ARGS "lighteval|aime24|0|0" \
+#     --use-chat-template \
+#     --output-dir $OUTPUT_DIR
 
 # # MATH-500
 # TASK=math_500
@@ -38,10 +38,10 @@ lighteval vllm $MODEL_ARGS "lighteval|aime24|0|0" \
 #     --use-chat-template \
 #     --output-dir $OUTPUT_DIR
 
-# # ifeval
-# lighteval vllm $MODEL_ARGS "extended|ifeval|0|0" \
-#     --use-chat-template \
-#     --output-dir $OUTPUT_DIR
+# ifeval
+lighteval vllm $MODEL_ARGS "extended|ifeval|0|0" \
+    --use-chat-template \
+    --output-dir $OUTPUT_DIR
 
 
 # # # GSM8k
@@ -58,14 +58,14 @@ lighteval vllm $MODEL_ARGS "leaderboard|mmlu|5|0" \
     --output-dir $OUTPUT_DIR
 
 
-# ## MMMLU-Pro 
-leaderboard_mmlu_pro
-accelerate launch -m lm_eval --model hf \
-    --model_args pretrained=$MODEL,revision=$REVISION,dtype=auto \
-    --tasks leaderboard_mmlu_pro \
-    --output_path $OUTPUT_DIR \
-    --batch_size 16 \
-    --apply_chat_template 
+# # ## MMMLU-Pro 
+# leaderboard_mmlu_pro
+# accelerate launch -m lm_eval --model hf \
+#     --model_args pretrained=$MODEL,revision=$REVISION,dtype=auto \
+#     --tasks leaderboard_mmlu_pro \
+#     --output_path $OUTPUT_DIR \
+#     --batch_size 16 \
+#     --apply_chat_template 
 
 
 # lighteval vllm "pretrained=Neelectric/OLMo-2-1124-7B-Instruct_SFTv01.05,dtype=bfloat16,max_model_length=4096,gpu_memory_utilization=0.92,generation_parameters={max_new_tokens:4096,temperature:0.6,top_p:0.95}" "lighteval|gsm8k|5|0" \

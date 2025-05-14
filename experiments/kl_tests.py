@@ -155,6 +155,7 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
             return int(match.group(1))
         return None
     
+    
     # Process GRPO data
     grpo_steps = []
     grpo_kls = []
@@ -165,6 +166,7 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
             # Convert tensor to float if needed
             kl_value = float(kl) if hasattr(kl, 'item') else float(kl)
             grpo_kls.append(kl_value)
+            
     
     # Process SFT data
     sft_steps = []
@@ -176,6 +178,13 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
             # Convert tensor to float if needed
             kl_value = float(kl) if hasattr(kl, 'item') else float(kl)
             sft_kls.append(kl_value)
+            
+    print("TRYING TO CONVERT TO PERCENTAGES\n"*15)
+    ## find max
+    max_steps = max(grpo_steps)
+    grpo_steps = [item // max_steps for item in grpo_steps]
+    sft_steps = [item // max_steps for item in grpo_steps]
+    
     
     # Sort by steps to ensure proper line plotting
     grpo_data = sorted(zip(grpo_steps, grpo_kls))
