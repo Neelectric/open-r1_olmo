@@ -73,6 +73,7 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax, percentage):
   full_model_name = ft_model_id.split("/")[1]
   model_name = full_model_name.split("_")[0]
   method = full_model_name.split("_")[1]
+  method_no_version = method.split("v")[0]
   save_path = f"results/{ft_model_id}/plot_results.pdf"
   os.makedirs(os.path.dirname(save_path), exist_ok=True)
   
@@ -111,7 +112,7 @@ def plot_results(results_dict, ft_model_id, revision, vmin, vmax, percentage):
   ax.set_xlabel("Parameters", fontsize=label_size)
   ax.set_ylabel("Layers", fontsize=label_size)
   ax.set_title(
-      f"Normalized frobenius norm of the differences for each matrix:\n{model_name} with {percentage}% of {method}", 
+      f"Normalized frobenius norm of the differences for each matrix:\n{model_name} after {percentage}% of {method_no_version}", 
       fontsize=title_size
   )
   
@@ -353,10 +354,10 @@ def norm_comparison(base_model_id:str, ft_model_id:str) -> None:
 
 
 if __name__ == '__main__':
-  # base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
-  # # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
+  base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
+  ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
   # ft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
   
-  base_model_id = "Qwen/Qwen2.5-Math-7B"
-  ft_model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
+  # base_model_id = "Qwen/Qwen2.5-Math-7B"
+  # ft_model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
   norm_comparison(base_model_id=base_model_id, ft_model_id=ft_model_id)

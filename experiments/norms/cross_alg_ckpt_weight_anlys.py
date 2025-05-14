@@ -116,7 +116,7 @@ def compare_norm_trajectories(sft_model_id, grpo_model_id, output_dir="results/c
     # Customize the plot
     plt.title('Mean Norm Trajectory Comparison: SFT vs GRPO', fontsize=24, pad=20)
     plt.xlabel('Training Progress (%)', fontsize=20, labelpad=15)
-    plt.ylabel('Mean Frobenius Norm', fontsize=20, labelpad=15)
+    plt.ylabel('Mean Frobenius Norm of Difference', fontsize=20, labelpad=15)
     plt.grid(True)
     
     from matplotlib.lines import Line2D
@@ -145,7 +145,7 @@ def compare_norm_trajectories(sft_model_id, grpo_model_id, output_dir="results/c
     plt.tight_layout()
     grpo_version = grpo_model_id.split("_")[1]
     sft_version = sft_model_id.split("_")[1]
-    final_plot_path = f"{output_dir}/{grpo_version}_vs_{sft_version}_norm_comparison.png"
+    final_plot_path = f"{output_dir}/{grpo_version}_vs_{sft_version}_norm_comparison.pdf"
     plt.savefig(final_plot_path, dpi=300, bbox_inches="tight")
     print(f"Comparison plot saved to {final_plot_path}")
     
