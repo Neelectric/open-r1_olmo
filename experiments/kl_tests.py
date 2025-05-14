@@ -224,7 +224,7 @@ def process_all_models():
     ### params
     base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
     grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
-    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
+    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.08"
     benchmark_id = "HuggingFaceH4/MATH-500"
     
     ### prep tokenizer, base model and prompts
