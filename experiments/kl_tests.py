@@ -52,6 +52,9 @@ def base_vs_ft(base_model, ft_model_id, prompts, tokenizer, benchmark_id, batch_
         
     # let's loop through all revisions one at a time
     for revision in tqdm(revisions, desc=f"Processing {ft_model_id}", dynamic_ncols=True):
+        if revision == "v02.08-step-000000456":
+            print(f"Found revision v02.08-step-000000456 which seems to crash the script, skipping")
+            continue
         print(f"Loading in model {ft_model_id} revision {revision}")
         ft_model = AutoModelForCausalLM.from_pretrained(
                 pretrained_model_name_or_path=ft_model_id,
