@@ -127,6 +127,9 @@ def perform_eval(ft_model_id,
     print(f"Found {len(revisions)} revisions for {ft_model_id}: {revisions}")
     # assert len(revisions) == 20   
     for revision in tqdm(revisions, desc=f"Processing {ft_model_id}", dynamic_ncols=True):
+        if results_dict.get(revision) != None:
+            print(f"Found an entry in results_dict for {revision}, skipping...")
+            continue
         result = run_lighteval(
             model=ft_model_id,
             task=task,
