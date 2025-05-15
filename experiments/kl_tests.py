@@ -182,11 +182,13 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
             kl_value = float(kl) if hasattr(kl, 'item') else float(kl)
             sft_kls.append(kl_value)
             
-    print("TRYING TO CONVERT TO PERCENTAGES\n"*15)
-    ## find max
-    max_steps = max(grpo_steps)
-    grpo_steps = [item // max_steps for item in grpo_steps]
-    sft_steps = [item // max_steps for item in grpo_steps]
+    # print("TRYING TO CONVERT TO PERCENTAGES\n"*15)
+    # ## find max
+    # max_steps = max(grpo_steps)
+    # grpo_steps = [item // max_steps for item in grpo_steps]
+    # sft_steps = [item // max_steps for item in grpo_steps]
+    print(grpo_steps)
+    print(sft_steps)
     
     
     # Sort by steps to ensure proper line plotting
