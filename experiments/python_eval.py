@@ -2,6 +2,7 @@
 ### The point of this file is to let me use the Cross-Model Activation Patching techniques as proposed by Prakash et al., 2024
 
 
+from numpy import save
 import lighteval
 from lighteval.logging.evaluation_tracker import EvaluationTracker
 from lighteval.models.vllm.vllm_model import VLLMModelConfig
@@ -20,6 +21,7 @@ import wandb
 from tqdm import tqdm
 from pathlib import Path
 import json
+import os
 
 if is_accelerate_available():
     from accelerate import Accelerator, InitProcessGroupKwargs
@@ -108,10 +110,12 @@ def perform_eval(ft_model_id,
                  num_gpus):
     
     save_path = "results/python_evals/" + task_filename + "/" + ft_model_id
+    contents = os.listdir(save_path)
+    print(contents)
     Path(save_path).mkdir(parents=True, exist_ok=True)
     
     try:
-        with open(save_path + f"{task_filename}.json", "r") as f:
+        with open(save_path + f"/{task_filename}.json", "r") as f:
             results_dict = json.load(f)
         print(f"Found and loaded results_dict for {ft_model_id} on {task}!")
     except:
@@ -123,6 +127,9 @@ def perform_eval(ft_model_id,
     print(f"Found {len(revisions)} revisions for {ft_model_id}: {revisions}")
     # assert len(revisions) == 20   
     for revision in tqdm(revisions, desc=f"Processing {ft_model_id}", dynamic_ncols=True):
+        if results_dict.get(revision) != None:
+            print(f"Found an entry in results_dict for {revision}, skipping...")
+            continue
         result = run_lighteval(
             model=ft_model_id,
             task=task,
