@@ -115,7 +115,7 @@ def perform_eval(ft_model_id,
     Path(save_path).mkdir(parents=True, exist_ok=True)
     
     try:
-        with open(save_path + f"{task_filename}.json", "r") as f:
+        with open(save_path + f"/{task_filename}.json", "r") as f:
             results_dict = json.load(f)
         print(f"Found and loaded results_dict for {ft_model_id} on {task}!")
     except:
