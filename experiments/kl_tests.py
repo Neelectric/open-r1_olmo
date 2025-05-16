@@ -149,7 +149,7 @@ def plot_kls(grpo_model_id, grpo_kls_dict, sft_model_id, sft_kls_dict):
     
     # Set the style
     sns.set_style("whitegrid")
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(10, 5))
     
     # Function to extract step numbers from revision strings
     def extract_step(revision):
@@ -238,16 +238,17 @@ def process_all_models():
     ### params
     base_model_id = "allenai/OLMo-2-1124-7B-Instruct"
     grpo_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_GRPOv01.14"
-    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.08"
+    sft_model_id = "Neelectric/OLMo-2-1124-7B-Instruct_SFTv02.00"
     benchmark_id = "HuggingFaceH4/MATH-500"
     
     ### prep tokenizer, base model and prompts
     tokenizer = AutoTokenizer.from_pretrained(grpo_model_id, padding_side="left")    
-    base_model = AutoModelForCausalLM.from_pretrained(
-                pretrained_model_name_or_path=base_model_id,
-                device_map="cuda:0",
-                torch_dtype=torch.bfloat16,
-            )
+    # base_model = AutoModelForCausalLM.from_pretrained(
+    #             pretrained_model_name_or_path=base_model_id,
+    #             device_map="cuda:0",
+    #             torch_dtype=torch.bfloat16,
+    #         )
+    base_model = None
     prompts = prepare_benchmark_prompts(tokenizer, benchmark_id)
     print(f"tokenizer comes from {grpo_model_id}")
     
