@@ -19,6 +19,7 @@ VERSION=v02.05 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 ACCELERATE_LOG_LEVEL=info envs
 
 
 ### GRPO with envsubst only 7 GPUs
+uv pip install transformers==4.51
 CUDA_VISIBLE_DEVICES=6 trl vllm-serve --model allenai/OLMo-2-1124-7B-Instruct --host 0.0.0.0 --port 8000
 
-VERSION=v02.05 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 ACCELERATE_LOG_LEVEL=info envsubst < recipes/allenai/OLMo-2-1124-7B-Instruct/grpo/grpo_config_v02.05.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=6 src/open_r1/grpo.py --config temp_config.yaml
+VERSION=v02.06 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 ACCELERATE_LOG_LEVEL=info envsubst < recipes/allenai/OLMo-2-1124-7B-Instruct/grpo/grpo_config_v02.06.yaml > temp_config.yaml && accelerate launch --config_file recipes/accelerate_configs/zero2.yaml --num_processes=6 src/open_r1/grpo.py --config temp_config.yaml
