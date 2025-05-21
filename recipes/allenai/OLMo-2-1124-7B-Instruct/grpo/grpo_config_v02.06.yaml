@@ -80,4 +80,4 @@ temperature: 0.6 #taken from https://wandb.ai/huggingface/open-r1/runs/2d9grsso?
 # use_liger_loss: false #unfortunately only compatible with bnpo
 use_vllm: true
 vllm_device: "cuda:6"
-vllm_gpu_memory_utilization: 0.7
+vllm_gpu_memory_utilization: 0.8
