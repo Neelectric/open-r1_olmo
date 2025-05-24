@@ -110,9 +110,10 @@ def perform_eval(ft_model_id,
                  num_gpus):
     
     save_path = "results/python_evals/" + task_filename + "/" + ft_model_id
+    Path(save_path).mkdir(parents=True, exist_ok=True)
     contents = os.listdir(save_path)
     print(contents)
-    Path(save_path).mkdir(parents=True, exist_ok=True)
+    
     
     try:
         with open(save_path + f"/{task_filename}.json", "r") as f:
