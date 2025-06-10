@@ -3,7 +3,7 @@
 # uv pip uninstall flash-attn
 # uv pip install vllm==0.7.2
 
-NUM_GPUS=4
+NUM_GPUS=8
 NUM_TOKS=16384
 MAX_GPU_USAGE=0.8
 MODEL=meta-llama/Llama-3.3-70B-Instruct
